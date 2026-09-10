@@ -10,13 +10,14 @@ A documentação de produto, arquitetura e descoberta clínica está em [`docs/`
 
 ## Aplicação (Sprint 1)
 
-Next.js (App Router) + TypeScript, PostgreSQL, Prisma, Better Auth (e-mail + senha) e Resend.
+Next.js 16 (App Router) + TypeScript, PostgreSQL, Prisma, Better Auth (e-mail + senha) e Resend.
 
 ```bash
 npm install
-npx prisma migrate deploy
 npm run dev
 ```
+
+`prisma migrate deploy` somente com `DATABASE_ENV` (ou `VERCEL_ENV`) igual a `development`, `preview` ou `test`. Não aplicar em Production sem autorização.
 
 Variáveis: copie `.env.example` para `.env`. Nenhum secret entra no Git. Nenhum secret usa `NEXT_PUBLIC_`.
 
@@ -25,6 +26,7 @@ Cadastro do piloto: `PILOT_REGISTRATION_ENABLED` + `PILOT_ALLOWED_EMAILS` (serve
 ## Scripts
 
 - `npm run dev` — desenvolvimento
-- `npm run build` / `npm run typecheck` / `npm run lint` / `npm test`
+- `npm run lint` — ESLint CLI
+- `npm run typecheck` / `npm test` / `npm run test:integration` / `npm run build`
 - `npm run db:migrate` — criar migration (dev)
 - `npm run db:deploy` — aplicar migrations
