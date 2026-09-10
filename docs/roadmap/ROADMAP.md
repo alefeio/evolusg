@@ -1,6 +1,8 @@
 # Roadmap — evolUSG
 
-Sprints de **duas semanas** são um **calendário de referência**, não um contrato. Implementação de produto **não** começa nesta Sprint 0.
+Sprints de **duas semanas** são um **calendário de referência**, não um contrato.
+
+A **descoberta clínica da Sprint 0 continua em paralelo e não foi encerrada**. A Sprint 1 de fundação/autenticação está **autorizada** porque é independente das regras clínicas pendentes. Vertical slice clínico continua bloqueado pela saída da Sprint 0.
 
 Numeração **não** foi alterada nesta auditoria. O que muda é o **grau de compromisso**.
 
@@ -8,9 +10,9 @@ Numeração **não** foi alterada nesta auditoria. O que muda é o **grau de com
 
 ### Horizonte próximo (concreto o bastante para planejar a semana)
 
-- **Sprint 0** — descoberta e consolidação documental.
-- Nada além disso está autorizado como execução de produto.
-- Sprints 1–2 só entram no horizonte próximo **depois** dos [critérios de saída da Sprint 0](../clinical-discovery/SPRINT_0.md#sprint-0-exit-criteria). Até lá são *preparação indicativa*.
+- **Sprint 0** — descoberta clínica (em andamento, em paralelo).
+- **Sprint 1** — fundação técnica e autenticação. Ver [`SPRINT_1.md`](SPRINT_1.md).
+- Vertical slice clínico **não** está autorizado até os [critérios de saída da Sprint 0](../clinical-discovery/SPRINT_0.md#sprint-0-exit-criteria).
 
 ### Horizonte intermediário (indicativo; sujeito à descoberta)
 
@@ -71,11 +73,9 @@ Horizonte próximo. Ver [`../clinical-discovery/SPRINT_0.md`](../clinical-discov
 
 ---
 
-### Sprint 1 — Fundação da plataforma
+### Sprint 1 — Fundação e autenticação
 
-Indicativa. Monólito modular, CI, ambientes. Sem formulário clínico. Sem aceitar `organization_id` ubíquo só porque a sprint existe (ADR-010).
-
-**Gate (quando esta sprint for autorizada):** staging vazio; ADR-001 e inventário ADR-011 em discussão; Sprint 0 com critérios de saída atendidos **ou** risco de retrabalho explícito e aceito.
+**Autorizada.** Independente da clínica. Detalhe: [`SPRINT_1.md`](SPRINT_1.md). ADR-013 `ACCEPTED` (somente auth desta sprint). Sem `ProfessionalProfile`, admin, billing ou entidades clínicas.
 
 ---
 

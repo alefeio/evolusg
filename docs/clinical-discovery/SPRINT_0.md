@@ -1,8 +1,9 @@
 # Sprint 0 — Descoberta clínica obstétrica
 
-**Status:** em andamento (início formal).  
+**Status:** em andamento (descoberta clínica **não encerrada**).  
 **Duração prevista:** 2 semanas, em ondas.  
-**Implementação de produto:** proibida.
+**Implementação clínica:** continua proibida.  
+**Paralelo:** a Sprint 1 (fundação e autenticação) está autorizada porque não depende de regras clínicas. Ver [`../roadmap/SPRINT_1.md`](../roadmap/SPRINT_1.md).
 
 ## Objetivo
 
