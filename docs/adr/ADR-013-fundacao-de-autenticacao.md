@@ -37,6 +37,8 @@ O evolUSG precisa de identidade web (`User` = acesso, não perfil médico) para 
 
 - Configuração de e-mail/domínio incompleta (`IMPLEMENTED BUT OPERATIONAL CONFIGURATION PENDING`).
 - Connection pooling serverless se só existir host direto `db.prisma.io`.
+- Runtime (`DATABASE_URL`) e migrations (`DIRECT_URL` / `POSTGRES_URL`) devem ser separáveis; migrate só com `DATABASE_ENV`/`VERCEL_ENV` development|preview|test.
+- Redirect em `src/proxy.ts` é otimista; autorização continua em `requireSession()`.
 - Mensagens de erro não devem revelar existência de conta.
 
 ## Invalidation / substituição futura

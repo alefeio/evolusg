@@ -1,6 +1,6 @@
 # Sprint 1 — Fundação e autenticação
 
-**Status:** autorizada; implementação da fundação no código.  
+**Status:** implementada; **ainda não aceita tecnicamente**. Hardening & Integration Gate em andamento.  
 **Descoberta clínica (Sprint 0):** continua **em paralelo** e **não está encerrada**.
 
 A Sprint 1 está autorizada porque o escopo é **independente** das regras clínicas ainda pendentes. O encerramento da Sprint 0 clínica continua necessário antes de um vertical slice clínico.
@@ -106,7 +106,31 @@ Fail-safe: em Preview/Production, piloto com allowlist ausente ou vazia **bloque
 2. Preencher `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`.
 3. Preencher `PILOT_ALLOWED_EMAILS` com o e-mail autorizado do piloto.
 4. `npm install` (gera o client Prisma).
-5. `npx prisma migrate deploy` somente contra banco claramente identificado.
+5. `npx prisma migrate deploy` somente se `DATABASE_ENV` (ou `VERCEL_ENV`) for `development`, `preview` ou `test`.
 6. `npm run dev`
 
+Scripts: `npm run lint` (ESLint CLI), `npm run typecheck`, `npm test`, `npm run test:integration`, `npm run build`.
+
 Sem Resend configurado, o envio transacional não completa em produção. Em desenvolvimento, o sender é no-op se a chave/from estiverem vazios (`IMPLEMENTED BUT OPERATIONAL CONFIGURATION PENDING`).
+
+## Hardening & Integration Gate
+
+Esta seção registra o gate técnico **antes do merge**. A Sprint 1 não está aceita só porque o código existe. A Sprint 0 clínica permanece aberta e fora deste gate.
+
+| Item | Estado | Notas |
+|---|---|---|
+| Next.js 16.3.4 | `PASSED` | Upgrade de 15.5.9. React 19.1 mantido. |
+| `src/proxy.ts` | `PASSED` | Redirect otimista por cookie. Autorização real em `requireSession()`. |
+| ESLint CLI | `PASSED` | `npm run lint` → `eslint .`. `next lint` removido. |
+| typecheck / build | `PASSED` | `tsc --noEmit` e `next build` (Turbopack). |
+| Testes in-memory | `PASSED` | 30 testes passando (Vitest). |
+| Integração Better Auth + Prisma + PostgreSQL | `BLOCKED` | Suíte escrita; 2 testes skip. Sem `DATABASE_ENV`/`VERCEL_ENV` seguro. |
+| Runtime vs migration URL | `PASSED` com pendência operacional | Runtime: `DATABASE_URL`. CLI: `DIRECT_URL` \|\| `POSTGRES_URL` \|\| `DATABASE_URL`. As três URLs atuais são TCP direto `db.prisma.io`, **sem** pooler. URL pooled: `PENDING OPERATIONAL CONFIGURATION`. |
+| Migration `auth_foundation` | `BLOCKED — DATABASE ENVIRONMENT NOT IDENTIFIED` | Não aplicada. Sem rótulo development/preview. Production não autorizada. |
+| Browser / HTTP real | `BLOCKED` para fluxos autenticados | Página estática `/esqueci-senha` e `/redefinir-senha` (token ausente) renderizaram. Proxy redirecionou `/app` sem cookie para `/entrar?next=/app`. Páginas dinâmicas (`/entrar`, `/cadastro`) falharam: `BETTER_AUTH_SECRET` ausente. Cadastro/login/sessão/reset reais dependem também da migration em ambiente identificado. |
+| Resend | `IMPLEMENTED BUT OPERATIONAL CONFIGURATION PENDING` | `RESEND_API_KEY` e `EMAIL_FROM` ausentes. Sem domínio inventado. Mock nos testes. |
+| Preview Vercel | `PREVIEW DEPLOYMENT BLOCKED` | CLI deslogada (`vercel whoami` → Logged out). Sem Production. Sem merge. |
+| Secrets no Git | `PASSED` | `.env` ignorado; `.env.example` só nomes/valores vazios. Sem `NEXT_PUBLIC_` em secrets. |
+| Allowlist fail-safe | `PASSED` (unitário) | Confirmado in-memory; persistência real bloqueada pelo banco. |
+
+Não iniciar Sprint 2. Não fazer merge em `main` neste gate.
