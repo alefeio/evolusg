@@ -3,50 +3,69 @@ import fs from "node:fs";
 import path from "node:path";
 
 const envPath = path.resolve(process.cwd(), ".env");
+const TEST_ALLOWLIST = "sprint1.local@example.test,sprint1.integration@example.test";
 
 if (!fs.existsSync(envPath)) {
-  console.log("No local .env file found; skipped secret append.");
+  console.log("No local .env file found; skipped.");
   process.exit(0);
 }
 
-const current = fs.readFileSync(envPath, "utf8");
-const additions = [];
-
-function missing(key) {
-  return !new RegExp(`^${key}=`, "m").test(current);
+let current = fs.readFileSync(envPath, "utf8");
+if (!current.endsWith("\n")) {
+  current += "\n";
 }
 
-if (missing("BETTER_AUTH_SECRET")) {
-  additions.push(`BETTER_AUTH_SECRET=${crypto.randomBytes(32).toString("base64url")}`);
+function readValue(key) {
+  const match = current.match(new RegExp(`^${key}=(.*)`, "m"));
+  if (!match) {
+    return null;
+  }
+  return match[1].trim().replace(/^["']|["']$/g, "");
 }
 
-if (missing("BETTER_AUTH_URL")) {
-  additions.push("BETTER_AUTH_URL=http://localhost:3000");
+function upsert(key, value) {
+  const line = `${key}=${value}`;
+  if (new RegExp(`^${key}=`, "m").test(current)) {
+    current = current.replace(new RegExp(`^${key}=.*$`, "m"), line);
+    return "updated";
+  }
+  current += `${line}\n`;
+  return "appended";
 }
 
-if (missing("RESEND_API_KEY")) {
-  additions.push("RESEND_API_KEY=");
+const actions = [];
+
+const secret = readValue("BETTER_AUTH_SECRET");
+if (!secret) {
+  actions.push(`BETTER_AUTH_SECRET:${upsert("BETTER_AUTH_SECRET", crypto.randomBytes(32).toString("base64url"))}`);
+} else {
+  actions.push("BETTER_AUTH_SECRET:preserved");
 }
 
-if (missing("EMAIL_FROM")) {
-  additions.push("EMAIL_FROM=");
+if (!readValue("BETTER_AUTH_URL")) {
+  actions.push(`BETTER_AUTH_URL:${upsert("BETTER_AUTH_URL", "http://localhost:3000")}`);
+} else {
+  actions.push("BETTER_AUTH_URL:preserved");
 }
 
-if (missing("PILOT_REGISTRATION_ENABLED")) {
-  additions.push("PILOT_REGISTRATION_ENABLED=true");
+if (!readValue("PILOT_REGISTRATION_ENABLED")) {
+  actions.push(`PILOT_REGISTRATION_ENABLED:${upsert("PILOT_REGISTRATION_ENABLED", "true")}`);
+} else {
+  actions.push("PILOT_REGISTRATION_ENABLED:preserved");
 }
 
-if (missing("PILOT_ALLOWED_EMAILS")) {
-  additions.push("PILOT_ALLOWED_EMAILS=");
+const allowlist = readValue("PILOT_ALLOWED_EMAILS");
+if (!allowlist) {
+  actions.push(`PILOT_ALLOWED_EMAILS:${upsert("PILOT_ALLOWED_EMAILS", TEST_ALLOWLIST)}`);
+} else {
+  actions.push("PILOT_ALLOWED_EMAILS:preserved");
 }
 
-if (additions.length === 0) {
-  console.log("Sprint 1 env keys already present (values not printed).");
-  process.exit(0);
+if (!readValue("AUTH_EMAIL_CAPTURE_FILE")) {
+  actions.push(`AUTH_EMAIL_CAPTURE_FILE:${upsert("AUTH_EMAIL_CAPTURE_FILE", ".local-email-capture.json")}`);
+} else {
+  actions.push("AUTH_EMAIL_CAPTURE_FILE:preserved");
 }
 
-fs.appendFileSync(
-  envPath,
-  `\n# Sprint 1 local keys (do not commit)\n${additions.join("\n")}\n`,
-);
-console.log(`Appended ${additions.length} Sprint 1 env keys (values not printed).`);
+fs.writeFileSync(envPath, current);
+console.log(JSON.stringify({ envFile: "ignored", actions }));

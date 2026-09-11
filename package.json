@@ -30,7 +30,6 @@
     "zod": "^4.6.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.7",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.20.2",
     "@types/pg": "^8.23.1",
@@ -44,6 +43,6 @@
     "vitest": "^4.1.11"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=20.19.0"
   }
 }
