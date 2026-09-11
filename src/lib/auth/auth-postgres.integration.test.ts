@@ -38,7 +38,7 @@ describe.skipIf(!enabled)("Better Auth + Prisma + PostgreSQL", () => {
         rateLimitEnabled: false,
       }),
     );
-  });
+  }, 30_000);
 
   afterAll(async () => {
     if (!prisma) {
@@ -50,9 +50,18 @@ describe.skipIf(!enabled)("Better Auth + Prisma + PostgreSQL", () => {
         email: { endsWith: "@sprint1-gate.test" },
       },
     });
-  });
+    await prisma.verification.deleteMany({
+      where: {
+        identifier: { endsWith: "@sprint1-gate.test" },
+      },
+    });
+    await prisma.$disconnect();
+  }, 30_000);
 
-  it("blocks an email outside the allowlist before persistence", async () => {
+  it(
+    "blocks an email outside the allowlist before persistence",
+    { timeout: 30_000 },
+    async () => {
     const before = await prisma.user.count({
       where: { email: outsiderEmail },
     });
@@ -73,7 +82,10 @@ describe.skipIf(!enabled)("Better Auth + Prisma + PostgreSQL", () => {
     expect(after).toBe(before);
   });
 
-  it("persists a normalized allowlisted user, verifies, authenticates and resets", async () => {
+  it(
+    "persists a normalized allowlisted user, verifies, authenticates and resets",
+    { timeout: 60_000 },
+    async () => {
     await auth.api.signUpEmail({
       body: {
         name: "Gate User",
@@ -85,6 +97,8 @@ describe.skipIf(!enabled)("Better Auth + Prisma + PostgreSQL", () => {
     const created = await prisma.user.findUnique({ where: { email: allowedEmail } });
     expect(created?.email).toBe(allowedEmail);
     expect(created?.emailVerified).toBe(false);
+    const accounts = await prisma.account.count({ where: { userId: created!.id } });
+    expect(accounts).toBeGreaterThan(0);
 
     await expect(
       auth.api.signInEmail({
@@ -101,6 +115,8 @@ describe.skipIf(!enabled)("Better Auth + Prisma + PostgreSQL", () => {
     const session = await signInWithCookies(auth, allowedEmail, password);
     const current = await auth.api.getSession({ headers: session.headers });
     expect(current?.user.email).toBe(allowedEmail);
+    const persistedSessions = await prisma.session.count({ where: { userId: created!.id } });
+    expect(persistedSessions).toBeGreaterThan(0);
 
     await auth.api.requestPasswordReset({
       body: { email: allowedEmail, redirectTo: "/redefinir-senha" },
