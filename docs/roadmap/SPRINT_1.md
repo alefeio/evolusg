@@ -178,3 +178,25 @@ A Sprint 1 está tecnicamente aceita porque foram validados:
 - smoke test de Preview
 
 A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== production`, sem `VERCEL_ENV`, `DATABASE_ENV=development` e arquivo explícito). Classificação: `LOCAL EMAIL CAPTURE: SAFE FOR MERGE`.
+
+## Pilot Operational Readiness
+
+**Status desta seção:** em validação. A Sprint 1 permanece `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Production **não** foi o alvo desta configuração.
+
+### Runtime PostgreSQL
+
+- Runtime da aplicação: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (`src/lib/db/urls.ts`).
+- Preview: `RUNTIME_DATABASE_URL` = conexão pooled oficial (`pooled.db.prisma.io`). Classificação: `RUNTIME_DATABASE_URL = POOLED RUNTIME CONNECTION`.
+- `DATABASE_URL` gerenciada pela integração Prisma/Vercel permanece intacta.
+- Migrations/CLI: `DIRECT_URL || POSTGRES_URL || DATABASE_URL`. Preview: `POSTGRES_URL` = direct (`db.prisma.io`). Classificação: `POSTGRES_URL = DIRECT MIGRATION CONNECTION`.
+- `PRISMA_DATABASE_URL`: `UNUSED BY CURRENT RUNTIME` (não removida).
+- `DATABASE_ENV=preview` no Preview. Captura local: `AUTH_EMAIL_CAPTURE_FILE` ausente no Preview. `LOCAL EMAIL CAPTURE = DISABLED`.
+
+### Segurança (Preview)
+
+- `BETTER_AUTH_SECRET` rotacionado (valor não registrado nesta documentação).
+- APIMG: `APIMG SECRET ROTATION CONFIRMED`. APIMG **não** implementada nesta sprint; chave estática não deve ir ao navegador em integração futura.
+
+### Pendências de prova no Preview
+
+Smoke sintético com e-mail real (cadastro, verificação Resend, sessão, reset) e novo deployment que **inclua** o código `RUNTIME_DATABASE_URL` ainda precisam ser executados antes de `PILOT READY`.
