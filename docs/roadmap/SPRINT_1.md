@@ -1,9 +1,11 @@
 # Sprint 1 — Fundação e autenticação
 
-**Status:** `READY FOR MERGE WITH OPERATIONAL PENDENCIES`  
+**Status:** `ACCEPTED WITH OPERATIONAL PENDENCIES`  
 **Descoberta clínica (Sprint 0):** continua **em paralelo** e **não está encerrada**.
 
-A Sprint 1 **não** foi mergeada em `main`. A Sprint 2 **não** foi iniciada. Pendências restantes são de configuração externa (Vercel, pooler, Resend/domínio, e-mail real do piloto), não de código da fundação. A Sprint 1 permanece independente das regras clínicas ainda pendentes.
+A Sprint 1 foi **aceita tecnicamente**. Pendências restantes são de configuração externa (Vercel, pooler, Resend/domínio, e-mail real do piloto) e **não** de código da fundação. A Sprint 2 **não** foi iniciada.
+
+> Estas pendências não bloqueiam o merge técnico da Sprint 1, mas bloqueiam o início do piloto com a Dra. Karen.
 
 ## Objetivo
 
@@ -142,4 +144,37 @@ Rodada local para destravar o que pudesse ser validado sem ações manuais exter
 | Resend / domínio de envio | `IMPLEMENTED BUT OPERATIONAL CONFIGURATION PENDING` |
 | E-mail real do piloto (`PILOT_ALLOWED_EMAILS` de produção) | Pendente de configuração pelo proprietário. Allowlist local usa apenas endereços sintéticos `.test`. Nunca hardcodar a Dra. Karen. |
 
-Não iniciar Sprint 2. Não fazer merge em `main` sem nova autorização.
+Não iniciar Sprint 2. Não resolver Vercel, Resend ou pooled URL nesta aceitação.
+
+## Aceitação formal
+
+A Sprint 1 está tecnicamente aceita porque foram validados:
+
+- Next.js 16
+- TypeScript
+- Prisma
+- PostgreSQL real em Development
+- migration versionada `20260910200000_auth_foundation`
+- Better Auth (e-mail + senha)
+- cadastro piloto com allowlist server-side
+- sessão
+- login / logout
+- verificação de e-mail
+- reset de senha
+- alteração de credenciais (nome, senha, sessões)
+- proteção server-side de `/app`
+- testes in-memory
+- testes PostgreSQL reais
+- lint / typecheck / build
+
+### Pendências operacionais (bloqueiam o piloto, não o merge técnico)
+
+- pooled PostgreSQL para runtime Vercel
+- autenticação/configuração da Vercel
+- Preview Vercel
+- Resend real
+- domínio/remetente
+- e-mail real do piloto
+- smoke test de Preview
+
+A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== production`, sem `VERCEL_ENV`, `DATABASE_ENV=development` e arquivo explícito). Classificação: `LOCAL EMAIL CAPTURE: SAFE FOR MERGE`.
