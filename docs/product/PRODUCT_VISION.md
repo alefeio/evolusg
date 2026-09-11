@@ -59,4 +59,7 @@ Feedback classificado em: `BUG` | `REGRA CLÍNICA` | `UX` | `FRASEOLOGIA` | `MEL
 
 ## Estado
 
-Visão aprovada em direção geral. Detalhe do MVP 1: `PENDING CLINICAL DISCOVERY`.
+Visão aprovada em direção geral. Detalhe do MVP 1: `PENDING CLINICAL DISCOVERY`.  
+Sprint 0 clínica em paralelo. Sprint 1: fundação de identidade (sem clínica).
+
+Produto pago no futuro (assinatura com períodos a definir: `PENDING PRODUCT/BUSINESS DECISION`). Indicação com comissão: `PROPOSED FUTURE CAPABILITY`. Administração: futuro, escopo indefinido. Nenhum desses está no código da Sprint 1.

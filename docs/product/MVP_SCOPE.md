@@ -64,6 +64,18 @@ Campos mínimos do cadastro: **PENDING CLINICAL DISCOVERY**.
 | **Spike multiprotocolo** | Um exame estruturalmente diferente, só para testar o motor. |
 | **V1 multiprotocolo** | Fora deste ciclo. |
 
+## Capacidades comerciais futuras (não implementadas)
+
+O evolUSG será um produto **pago** para médicos.
+
+**Assinaturas** — períodos previstos: mensal, trimestral, semestral, anual. Combinação definitiva de períodos, preços e regras: `PENDING PRODUCT/BUSINESS DECISION`. Não implementar `Subscription` / `Plan` / `Payment` agora.
+
+**Programa de indicação** — `PROPOSED FUTURE CAPABILITY`: um usuário/médico poderá indicar outro médico e receber uma porcentagem sobre a assinatura do indicado. Percentual, duração, recorrência, atribuição, estorno, tributação, antifraude e correlatos **não** estão definidos. Não implementar `Referral` / `Commission` / códigos agora.
+
+**Administração** — haverá funções administrativas no futuro. Escopo exato indefinido. Não implementar admin/RBAC nesta fundação.
+
+**Exclusão de conta:** `PENDING PRODUCT/LEGAL/ARCHITECTURAL DECISION` (retenção, documentos, billing).
+
 ## Gate para congelar este documento
 
 - resposta da Dra. Karen: qual exame primeiro
