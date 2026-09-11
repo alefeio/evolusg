@@ -26,7 +26,7 @@ export default async function SignInPage({
       footer={
         <p>
           Não tem conta? <AuthLink href="/cadastro">Criar conta</AuthLink>
-          <span className="mx-2 text-stone-300">·</span>
+          <span className="mx-2 text-brand-line">·</span>
           <AuthLink href="/esqueci-senha">Esqueci minha senha</AuthLink>
         </p>
       }

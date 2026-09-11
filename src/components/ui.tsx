@@ -14,10 +14,10 @@ export function Button({
 }) {
   const styles = {
     primary:
-      "bg-stone-900 text-amber-50 hover:bg-stone-800 disabled:bg-stone-400",
+      "bg-[linear-gradient(135deg,#0a2a6e,#0072ef_48%,#00b4ff)] text-white shadow-sm hover:brightness-110 disabled:bg-none disabled:bg-brand-line disabled:text-white/80",
     secondary:
-      "border border-stone-300 bg-white text-stone-900 hover:bg-stone-50 disabled:text-stone-400",
-    ghost: "text-stone-700 hover:bg-stone-100 disabled:text-stone-400",
+      "border border-brand-line bg-white text-brand-ink hover:bg-brand-ice disabled:text-brand-muted",
+    ghost: "text-brand-muted hover:bg-white/10 hover:text-white disabled:text-brand-muted/60",
   } as const;
 
   return (
@@ -41,7 +41,7 @@ export function Input({
   return (
     <input
       className={cn(
-        "w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 outline-none ring-stone-400 placeholder:text-stone-400 focus:border-stone-500 focus:ring-2",
+        "w-full rounded-lg border border-brand-line bg-white px-3 py-2.5 text-sm text-brand-ink outline-none ring-brand-cyan placeholder:text-brand-muted focus:border-brand-blue focus:ring-2",
         className,
       )}
       {...props}
@@ -62,7 +62,7 @@ export function Field({
 }) {
   return (
     <label className="block space-y-1.5" htmlFor={htmlFor}>
-      <span className="text-sm font-medium text-stone-800">{label}</span>
+      <span className="text-sm font-medium text-brand-ink">{label}</span>
       {children}
       {error ? <span className="block text-sm text-red-700">{error}</span> : null}
     </label>
@@ -79,7 +79,7 @@ export function Alert({
   const styles = {
     error: "border-red-200 bg-red-50 text-red-800",
     success: "border-emerald-200 bg-emerald-50 text-emerald-800",
-    info: "border-stone-200 bg-stone-50 text-stone-700",
+    info: "border-brand-line bg-brand-ice text-brand-ink",
   } as const;
 
   return (

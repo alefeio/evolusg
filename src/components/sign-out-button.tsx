@@ -14,7 +14,12 @@ export function SignOutButton() {
   }
 
   return (
-    <Button onClick={() => void signOut()} type="button" variant="secondary">
+    <Button
+      className="border-white/20 bg-white/10 text-white hover:bg-white/20"
+      onClick={() => void signOut()}
+      type="button"
+      variant="secondary"
+    >
       Sair
     </Button>
   );

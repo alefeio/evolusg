@@ -68,16 +68,16 @@ export function SessionsPanel({
           const createdAt = new Date(session.createdAt).toLocaleString("pt-BR");
           return (
             <li
-              className="flex flex-col gap-2 rounded-lg border border-stone-200 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 rounded-lg border border-brand-line px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
               key={session.id}
             >
               <div>
-                <p className="text-sm font-medium text-stone-900">
+                <p className="text-sm font-medium text-brand-ink">
                   {current ? "Sessão atual" : "Outro dispositivo"}
                 </p>
-                <p className="text-xs text-stone-500">{createdAt}</p>
+                <p className="text-xs text-brand-muted">{createdAt}</p>
                 {session.userAgent ? (
-                  <p className="mt-1 max-w-md truncate text-xs text-stone-500">{session.userAgent}</p>
+                  <p className="mt-1 max-w-md truncate text-xs text-brand-muted">{session.userAgent}</p>
                 ) : null}
               </div>
               {current ? null : (
