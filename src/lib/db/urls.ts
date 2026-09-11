@@ -1,18 +1,20 @@
-export function getRuntimeDatabaseUrl(): string {
-  const url = process.env.DATABASE_URL?.trim();
+export function getRuntimeDatabaseUrl(
+  env: Record<string, string | undefined> = process.env,
+): string {
+  const url = env.RUNTIME_DATABASE_URL?.trim() || env.DATABASE_URL?.trim();
 
   if (!url) {
-    throw new Error("DATABASE_URL is not set");
+    throw new Error("RUNTIME_DATABASE_URL or DATABASE_URL is not set");
   }
 
   return url;
 }
 
-export function getDirectDatabaseUrl(): string {
+export function getDirectDatabaseUrl(
+  env: Record<string, string | undefined> = process.env,
+): string {
   const url =
-    process.env.DIRECT_URL?.trim() ||
-    process.env.POSTGRES_URL?.trim() ||
-    process.env.DATABASE_URL?.trim();
+    env.DIRECT_URL?.trim() || env.POSTGRES_URL?.trim() || env.DATABASE_URL?.trim();
 
   if (!url) {
     throw new Error("DIRECT_URL, POSTGRES_URL or DATABASE_URL is not set");
