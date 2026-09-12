@@ -185,40 +185,55 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico foi implementado.
 
-O runtime pooled foi versionado e mergeado. O smoke sintético completo **não** pôde ser executado porque o Preview está atrás de Vercel Deployment Protection (SSO). Sem acesso à aplicação, cadastro, Resend real, verificação, login, sessão, proteção, logout e reset permanecem **não comprovados** neste ambiente.
+Revalidação (HEAD `1b0d9db` = `origin/main`): o fix pooled e o merge do PR #2 já estão em `main`. Não foi recriada branch/PR. Working tree local só com `next-env.d.ts` auto-gerado (não commitado).
 
 ### Runtime PostgreSQL
 
 - Runtime da aplicação: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (`src/lib/db/urls.ts`). Merge: PR #2, commit `06fed6b`, merge commit `a754053`.
-- Preview: `RUNTIME_DATABASE_URL` presente e pooled (`pooled.db.prisma.io`). Classificação: `PREVIEW RUNTIME POOLED = PASSED`.
-- `DATABASE_URL` gerenciada pela integração Prisma/Vercel permanece intacta (fallback).
-- Migrations/CLI: `DIRECT_URL || POSTGRES_URL || DATABASE_URL`. `RUNTIME_DATABASE_URL` não participa. Preview: `POSTGRES_URL` = direct (`db.prisma.io`).
+- Preview: `RUNTIME_DATABASE_URL` presente (secret) e classificada pooled nas auditorias anteriores. Classificação: `PREVIEW RUNTIME POOLED = PASSED`.
+- `DATABASE_URL` / `POSTGRES_URL` presentes (secrets); migrations usam direct. `RUNTIME_DATABASE_URL` não participa do migrate.
 - `PRISMA_DATABASE_URL`: `UNUSED BY CURRENT RUNTIME` (não removida).
-- Captura local: `AUTH_EMAIL_CAPTURE_FILE` ausente no Preview. `LOCAL EMAIL CAPTURE = DISABLED`.
+- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview (cwd limpo, sem overlay de `.env` local). `LOCAL EMAIL CAPTURE = DISABLED`.
 
 ### Banco Preview
 
-- Classificação: `PREVIEW SHARES DEVELOPMENT DATABASE` (mesmo host/path mascarado que o Development local). Risco: dados de teste Preview e Development compartilham a instância.
-- Migration `20260910200000_auth_foundation`: `MIGRATION ALREADY APPLIED`. Tabelas presentes: `_prisma_migrations`, `user`, `session`, `account`, `verification`. `prisma migrate deploy` não foi reexecutado.
-- `DATABASE_ENV` no dashboard de Preview foi confirmado pelo proprietário como `preview`. `vercel env run -e preview` a partir do repositório local também observou `VERCEL_ENV=preview`. Não destruir nem recriar o banco.
+- Classificação: `PREVIEW SHARES DEVELOPMENT DATABASE` (auditoria anterior). Não destruir nem recriar.
+- Migration `20260910200000_auth_foundation`: `MIGRATION ALREADY APPLIED`. `prisma migrate deploy` não foi reexecutado nesta rodada.
+- `DATABASE_ENV=preview` e `VERCEL_ENV=preview` confirmados via `vercel env run -e preview` em diretório limpo (sem `.env` local). `PILOT_REGISTRATION_ENABLED=true`.
+
+### Deployment Protection
+
+- `ssoProtection.deploymentType = all_except_custom_domains` (Standard Protection). Preview `*.vercel.app` exige SSO da Vercel.
+- CLI `vercel project protection disable --sso` desativaria SSO do **projeto inteiro**, incluindo URLs `*.vercel.app` de Production. **Não executado** (não abrir Production).
+- Não há ação CLI segura para “só Preview”. Ajuste granular exige dashboard do proprietário.
+- Domínio customizado público responde 200 (exceção do modo `all_except_custom_domains`). Tratado como superfície de Production — **não** usado para smoke/cadastro nesta rodada.
+- `vercel curl` gerou `automation-bypass` (secret de projeto, `isEnvVar=true`) para o agente alcançar páginas do Preview. SSO de browser **permanece**. Rotacionar/revisar o bypass no dashboard se desejado.
 
 ### Preview deployments
 
-- Git Preview (código da correção, SHA `06fed6b`): Ready, mas redireciona para login SSO da Vercel. **Não serve para smoke anônimo nem para a Dra. Karen.**
-- Preview CLI do merge `a754053`: Ready; também protegido. Sem `gitSource` (upload CLI). Não usar como prova do piloto.
-- Production: a Vercel publicou `a754053` automaticamente após o merge em `main` (integração Git). Este agente **não** executou `vercel --prod`, **não** promoveu Preview e **não** alterou env/migrate/usuários de Production.
+- Git Preview SHA `06fed6b` (branch operacional): Ready; SSO no acesso anônimo.
+- Preview com merge `a754053`: Ready; SSO no acesso anônimo.
+- Production: deploys Git automáticos após merge em `main` (incl. docs). Este agente **não** executou `vercel --prod`, **não** promoveu Preview e **não** alterou env/migrate/usuários de Production.
 
-### Resend
+### Better Auth / Resend
 
-- `RESEND_API_KEY` e `EMAIL_FROM` presentes no Preview. Domínio com formato real; verificação do domínio no provedor não foi reaberta nesta rodada.
-- Delivery, verificação e reset **não comprovados** (SSO bloqueou o app).
+- `BETTER_AUTH_URL` no Preview classifica como domínio customizado do produto (não `localhost`, não `*.vercel.app`).
+- `RESEND_API_KEY` e `EMAIL_FROM` presentes. Allowlist Preview: 2 endereços (caixas consumer); um marcador compatível com identidade do piloto — **não** usado para escolher senha. Sem candidato dedicado `smoke`/`+tag`/`test`.
+- Delivery real de verificação/reset: **não comprovado** nesta rodada.
 
 ### Smoke sintético
 
-Todos os casos de UI/HTTP da aplicação no Preview: `FAILED` (bloqueados por Deployment Protection). Nenhum usuário sintético foi persistido nesta rodada (tabelas auth em 0 linhas no audit readonly).
+| Fluxo | Resultado |
+|---|---|
+| Preview anônimo (browser sem SSO) | `BLOCKED` (SSO Vercel) |
+| App HTML via bypass autenticado (`vercel curl`) | alcançável |
+| Cadastro não autorizado (API Preview + bypass) | `PASSED` (`403 REGISTRATION_NOT_ALLOWED`; sem persistência esperada) |
+| Cadastro autorizado + Resend + verificação + login + sessão + logout + reset | `BLOCKED` — sem inbox sintético dedicado na allowlist; não usar e-mail do piloto; sem acesso à caixa consumer nesta sessão; não operar no domínio customizado público |
 
 ### Próximas ações (bloqueiam `PILOT READY`)
 
-1. Liberar acesso ao Preview sem SSO da Vercel para o piloto (desativar Deployment Protection no Preview, ou equivalente seguro que permita a Dra. Karen abrir a URL).
-2. Repetir o smoke sintético completo com caixa real controlada na allowlist (cadastro, recusa, Resend, verificação, login, sessão, proteção, logout, reset).
-3. Só então classificar `PILOT READY`. A Dra. Karen deve criar a própria conta e senha (`MANUAL USER ACTION REQUIRED`); não criar senha em nome dela.
+1. No dashboard Vercel: liberar Preview sem SSO **sem** desproteger Production (ou equivalente aceito pelo proprietário para a Dra. Karen abrir a URL do Preview).
+2. Incluir na allowlist de Preview uma caixa real **controlada e dedicada ao smoke** (não a senha pessoal da Dra. Karen).
+3. Alinhar `BETTER_AUTH_URL` / trusted origins ao host do Preview usado no piloto (mínimo necessário; sem `*.vercel.app` indiscriminado).
+4. Repetir smoke sintético completo (cadastro, recusa, Resend, verificação, login, sessão, proteção, logout, reset).
+5. Só então `PILOT READY`. Conta da Dra. Karen: `MANUAL USER ACTION REQUIRED`.
