@@ -1,26 +1,38 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/auth-client";
 import { Button } from "@/components/ui";
 
-export function SignOutButton() {
+export function SignOutButton({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const router = useRouter();
+  const [pending, setPending] = useState(false);
 
   async function signOut() {
-    await authClient.signOut();
-    router.push("/entrar");
-    router.refresh();
+    setPending(true);
+    try {
+      await authClient.signOut();
+      router.push("/entrar");
+      router.refresh();
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
     <Button
-      className="border-white/20 bg-white/10 text-white hover:bg-white/20"
+      className={
+        tone === "dark"
+          ? "w-full border-white/20 bg-white/10 text-text-on-dark hover:bg-white/20"
+          : undefined
+      }
       onClick={() => void signOut()}
+      pending={pending}
       type="button"
-      variant="secondary"
+      variant={tone === "dark" ? "secondary" : "secondary"}
     >
-      Sair
+      {pending ? "Saindo..." : "Sair"}
     </Button>
   );
 }
