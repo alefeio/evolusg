@@ -106,9 +106,11 @@ Tons `success | warning | error | info` com borda + fundo suave + texto.
 - **Desktop ≥ 1024px:** split — área institucional (~45–50%, navy/gradiente + logo) + formulário claro (~400–460px).
 - **Mobile:** coluna — logo → título → descrição → formulário → links. Sem split.
 
-Logomarca oficial: `public/brand/evolusg-logo.png`. Não redesenhar, recolorir ou deformar. Alt: `evolUSG`.
+Logomarca oficial: `public/brand/evolusg-logo.png` (fundo transparente). Não redesenhar, recolorir ou deformar. Alt: `evolUSG`. Sem placa/background/padding no compartimento da logo.
 
-Favicon dedicado (somente símbolo): `PENDING BRAND ASSET` se não houver asset oficial do mark isolado.
+Favicon dedicado (somente símbolo): `PENDING BRAND ASSET` — não bloquear merge; não recortar o símbolo da logomarca automaticamente.
+
+Home pública: conteúdo (logo + texto + CTAs) centralizado na viewport (horizontal e vertical).
 
 ## App shell
 

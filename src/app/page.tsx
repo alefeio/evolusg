@@ -29,7 +29,7 @@ export default async function HomePage() {
         className="pointer-events-none absolute bottom-0 left-10 size-72 rounded-full bg-brand-navy-800/50 blur-3xl"
       />
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-16">
+      <div className="relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-16 text-center">
         <BrandLogo priority size="lg" />
         <p className="mt-10 text-xs font-semibold uppercase tracking-[0.22em] text-brand-cyan-300">
           Plataforma de laudos
@@ -41,7 +41,7 @@ export default async function HomePage() {
           Cadastro controlado, verificação de e-mail, sessão e configurações básicas da conta. Os
           módulos clínicos serão disponibilizados posteriormente.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/entrar">
             <Button type="button">Entrar</Button>
           </Link>

@@ -25,7 +25,7 @@ export function BrandLogo({
   const image = (
     <Image
       alt="evolUSG"
-      className={cn("h-auto w-auto object-contain", className)}
+      className={cn("m-0 block h-auto w-auto object-contain p-0", className)}
       height={dims.height}
       priority={priority}
       src={SRC}
@@ -38,7 +38,7 @@ export function BrandLogo({
   }
 
   return (
-    <Link aria-label="evolUSG" className="inline-flex shrink-0" href={href}>
+    <Link aria-label="evolUSG" className="m-0 inline-flex shrink-0 p-0" href={href}>
       {image}
     </Link>
   );

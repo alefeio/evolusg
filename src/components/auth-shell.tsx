@@ -54,8 +54,8 @@ export function AuthShell({
       </aside>
 
       <main className="flex min-h-screen flex-col justify-center px-4 py-10 sm:px-8">
-        <div className="mx-auto w-full max-w-[28rem]">
-          <div className="mb-8 lg:hidden">
+        <div className="mx-auto flex w-full max-w-[28rem] flex-col gap-8">
+          <div className="m-0 p-0 lg:hidden">
             <BrandLogo href="/" priority size="sm" />
           </div>
 

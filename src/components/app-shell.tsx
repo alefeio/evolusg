@@ -84,7 +84,7 @@ export function AppShell({
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[16rem_minmax(0,1fr)]">
       <aside className="hidden flex-col bg-brand-navy-950 text-text-on-dark lg:flex">
-        <div className="border-b border-white/10 px-5 py-5">
+        <div className="border-b border-white/10 m-0 p-0">
           <BrandLogo href="/app" size="sm" />
         </div>
         <div className="flex flex-1 flex-col px-3 py-4">
@@ -137,7 +137,7 @@ export function AppShell({
               type="button"
             />
             <div className="absolute inset-y-0 left-0 flex w-[min(18rem,88vw)] flex-col bg-brand-navy-950 text-text-on-dark shadow-[var(--shadow-elevated)]">
-              <div className="border-b border-white/10 px-5 py-5">
+              <div className="border-b border-white/10 m-0 p-0">
                 <BrandLogo href="/app" size="sm" />
               </div>
               <div className="flex flex-1 flex-col px-3 py-4">
