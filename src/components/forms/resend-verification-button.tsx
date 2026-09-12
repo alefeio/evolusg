@@ -43,7 +43,7 @@ export function ResendVerificationButton() {
       <Field htmlFor="email" label="E-mail">
         <Input autoComplete="email" id="email" name="email" required type="email" />
       </Field>
-      <Button disabled={pending} type="submit" variant="secondary">
+      <Button pending={pending} type="submit" variant="secondary">
         {pending ? "Reenviando..." : "Reenviar e-mail de verificação"}
       </Button>
     </form>
