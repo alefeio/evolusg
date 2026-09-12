@@ -63,10 +63,6 @@ export function AppShell({
   const pageTitle = pathname.startsWith("/app/conta") ? "Conta" : "Início";
 
   useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
     if (!open) {
       return;
     }
@@ -80,6 +76,10 @@ export function AppShell({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
+
+  function closeMenu() {
+    setOpen(false);
+  }
 
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[16rem_minmax(0,1fr)]">
@@ -133,7 +133,7 @@ export function AppShell({
             <button
               aria-label="Fechar menu"
               className="absolute inset-0 bg-brand-navy-950/45"
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
               type="button"
             />
             <div className="absolute inset-y-0 left-0 flex w-[min(18rem,88vw)] flex-col bg-brand-navy-950 text-text-on-dark shadow-[var(--shadow-elevated)]">
@@ -141,7 +141,7 @@ export function AppShell({
                 <BrandLogo href="/app" size="sm" />
               </div>
               <div className="flex flex-1 flex-col px-3 py-4">
-                <NavLinks onNavigate={() => setOpen(false)} />
+                <NavLinks onNavigate={closeMenu} />
                 <div className="mt-auto space-y-3 border-t border-white/10 px-2 pt-4">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold">{userName}</p>
