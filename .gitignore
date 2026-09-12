@@ -13,3 +13,8 @@ src/generated
 *.tsbuildinfo
 .vercel
 npm-debug.log*
+
+# Local operational gate scratch (never commit)
+.local-pilot-gate/
+.local-*.png
+
