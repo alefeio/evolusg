@@ -1,20 +1,58 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-black: #000000;
-  --color-brand-navy: #050d1c;
-  --color-brand-deep: #0a2a6e;
-  --color-brand-blue: #0072ef;
-  --color-brand-cyan: #00b4ff;
-  --color-brand-ice: #e7f6ff;
-  --color-brand-paper: #f3f8fc;
-  --color-brand-ink: #071428;
-  --color-brand-muted: #4d6a86;
-  --color-brand-line: #c9e3f5;
+  /* Brand */
+  --color-brand-navy-950: #011b4b;
+  --color-brand-navy-800: #01387e;
+  --color-brand-blue-700: #0152ac;
+  --color-brand-blue-600: #0175d1;
+  --color-brand-cyan-500: #01a8e8;
+  --color-brand-cyan-300: #06d5f4;
+
+  /* Semantic surfaces */
+  --color-background: #f6fafd;
+  --color-surface: #ffffff;
+  --color-surface-soft: #eef6fb;
+  --color-border: #d8e4ec;
+
+  /* Text */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #5f6f7f;
+  --color-text-on-dark: #ffffff;
+
+  /* Functional states (sóbrios, sem competir com a marca) */
+  --color-success: #0f766e;
+  --color-success-soft: #ecfdf8;
+  --color-success-border: #99f6e4;
+  --color-warning: #b45309;
+  --color-warning-soft: #fffbeb;
+  --color-warning-border: #fcd34d;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+  --color-danger-border: #fecaca;
+  --color-info: #0152ac;
+  --color-info-soft: #eef6fb;
+  --color-info-border: #bfd9f2;
+
+  /* Radius */
+  --radius-control: 0.75rem;
+  --radius-card: 0.875rem;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-elevated: 0 10px 30px rgb(1 27 75 / 0.1), 0 2px 8px rgb(1 27 75 / 0.06);
+
+  /* Motion */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 160ms;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
   color-scheme: light;
+  --brand-gradient: linear-gradient(135deg, #011b4b 0%, #0152ac 52%, #06d5f4 100%);
 }
 
 html,
@@ -24,11 +62,35 @@ body {
 
 body {
   margin: 0;
-  background: var(--color-brand-paper);
-  color: var(--color-brand-ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
   color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand-cyan-500) 28%, white);
+  color: var(--color-brand-navy-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-cyan-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
