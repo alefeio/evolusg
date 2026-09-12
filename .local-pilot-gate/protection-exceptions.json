@@ -1,0 +1,7 @@
+﻿npx : Error: Invalid arguments. Use an API path starting with /, or run `vercel api` interactively.
+No C:\Users\IGH\AppData\Local\Temp\ps-script-3690bbd8-b911-424e-83a2-aa0757c05b09.ps1:109 caractere:1
++ npx vercel api "v1/projects/prj_la9ciHlArZ7byFsmPmrNxsY1O0Th/deployme ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: Invalid ... interactively.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

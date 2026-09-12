@@ -1,0 +1,634 @@
+﻿{
+  "accountId": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+  "creator": {
+    "type": "user",
+    "user": {
+      "id": "oH97OTA59BcP4YFRM3xIGzFT"
+    },
+    "via": null
+  },
+  "alias": [],
+  "speedInsights": {
+    "id": "WrQkh64xjgEADCMNRd3PgD8nsBi",
+    "hasData": false
+  },
+  "autoExposeSystemEnvs": true,
+  "autoAssignCustomDomains": true,
+  "autoAssignCustomDomainsUpdatedBy": "system",
+  "buildCommand": null,
+  "createdAt": 1789014423718,
+  "crons": {
+    "enabledAt": 1789014428181,
+    "disabledAt": null,
+    "updatedAt": 1789242574893,
+    "deploymentId": "dpl_73Sj1caZtU5Y82UaSWbY9VkPhwTG",
+    "definitions": []
+  },
+  "deploymentExpiration": {
+    "expirationDays": 180,
+    "expirationDaysProduction": 365,
+    "expirationDaysCanceled": 30,
+    "expirationDaysErrored": 90,
+    "deploymentsToKeep": 10
+  },
+  "devCommand": null,
+  "directoryListing": false,
+  "env": [
+    {
+      "value": "",
+      "type": "sensitive",
+      "contentHint": {
+        "type": "integration-store-secret",
+        "storeId": "store_qI44qsXKg2Gz3E0v",
+        "integrationId": "oac_dvcsPE0rtgXJvAe4DAk8cudh",
+        "integrationProductId": "iap_yVdbiKqs5fLkYDAB",
+        "integrationConfigurationId": "icfg_eR6xZHGoGhXNAEZTmW2u7MbE"
+      },
+      "target": [
+        "production",
+        "preview"
+      ],
+      "id": "bQON9s0TEL04SQ7v",
+      "key": "DATABASE_URL",
+      "configurationId": null,
+      "createdAt": 1789014891758,
+      "updatedAt": 1789014891758,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "value": "",
+      "type": "sensitive",
+      "contentHint": {
+        "type": "integration-store-secret",
+        "storeId": "store_qI44qsXKg2Gz3E0v",
+        "integrationId": "oac_dvcsPE0rtgXJvAe4DAk8cudh",
+        "integrationProductId": "iap_yVdbiKqs5fLkYDAB",
+        "integrationConfigurationId": "icfg_eR6xZHGoGhXNAEZTmW2u7MbE"
+      },
+      "target": [
+        "production",
+        "preview"
+      ],
+      "id": "Ht7naaNIcLweN5UJ",
+      "key": "PRISMA_DATABASE_URL",
+      "configurationId": null,
+      "createdAt": 1789014891758,
+      "updatedAt": 1789014891758,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "value": "",
+      "type": "sensitive",
+      "contentHint": {
+        "type": "integration-store-secret",
+        "storeId": "store_qI44qsXKg2Gz3E0v",
+        "integrationId": "oac_dvcsPE0rtgXJvAe4DAk8cudh",
+        "integrationProductId": "iap_yVdbiKqs5fLkYDAB",
+        "integrationConfigurationId": "icfg_eR6xZHGoGhXNAEZTmW2u7MbE"
+      },
+      "target": [
+        "production",
+        "preview"
+      ],
+      "id": "IMDimvA1eHqZBYoS",
+      "key": "POSTGRES_URL",
+      "configurationId": null,
+      "createdAt": 1789014891758,
+      "updatedAt": 1789014891758,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "sensitive",
+      "value": "",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "visibility": "secret",
+      "id": "VSr8Q3cnbfMyuJ8o",
+      "key": "BETTER_AUTH_SECRET",
+      "createdAt": 1789128694662,
+      "updatedAt": 1789128694662,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "encrypted",
+      "value": "eyJ2IjoidjIiLCJjIjoiNy9PR0tPdm9hK09vM1ovNm9nbkVKVFdDTzZVdGlFRHJ0d2dYSnR1V253Z3pwTXFoMEhnR2pjR0lwT3BUNEtMRHYwa2lhOVpTbHdFOFNTaVJGUERvN3JQRDFzaGdrOTBSWnRwZ2NmOVhOd1JIeWJXdjR2Vmc5QnpQUnY5YUErekRsOTE5cUxuRUJLd1ZKRGNRIiwiayI6WzE4NCwxLDIsMywwLDEyMCwxMDcsMTE5LDE1MywyMywyMjMsMTE3LDE4MywxMjAsNTcsMTk2LDExLDI4LDI0OSwxMTksMTA0LDIxMywxNjksMTYxLDE0MSwxNDIsOTksNjUsNDksMjEyLDMwLDE5OSw5NywyMDQsMjE4LDc3LDEwNSwxNzksMSwxNzUsMjI1LDEwOCw3NiwxNiwxMzEsMTQ0LDEwNiwyNCwxNTksMTI4LDE5MSwyMDQsMjQ0LDI0NCwyMjMsMCwwLDAsMTI2LDQ4LDEyNCw2LDksNDIsMTM0LDcyLDEzNCwyNDcsMTMsMSw3LDYsMTYwLDExMSw0OCwxMDksMiwxLDAsNDgsMTA0LDYsOSw0MiwxMzQsNzIsMTM0LDI0NywxMywxLDcsMSw0OCwzMCw2LDksOTYsMTM0LDcyLDEsMTAxLDMsNCwxLDQ2LDQ4LDE3LDQsMTIsMTU1LDEzNCwxODgsMzksMjMsODAsOTksMTkyLDE0Myw2NCwyNTEsNjcsMiwxLDE2LDEyOCw1OSwzNSwyNTAsMTUyLDEyMSwyMTEsMTY3LDE4MiwxNjksMTg2LDE3Miw4NCwyMTMsOTAsMTEzLDI1MywyMzQsMjcsMTc0LDUyLDE4MSwxMiw3MSwyNDQsMTQzLDUzLDExNCw0MSw5NiwxMzMsMjExLDUzLDIyOSw1MiwyMjEsMTczLDIyNCwyNDgsMjQyLDk3LDIzNSwyMDIsMTM2LDE5Myw5MywxMjUsMTYsMTcyLDIwMiw0OCwxNzUsMzQsMjE2LDEyMSwxMzcsODksMTA2LDE4OCw0MiwxMzVdfQ==",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "id": "16K3CRAM5l3zzVkD",
+      "key": "BETTER_AUTH_URL",
+      "createdAt": 1789128859410,
+      "updatedAt": 1789128859410,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "encrypted",
+      "value": "eyJ2IjoidjIiLCJjIjoiTTdmYmpNa00rVG1xZ3ArVmJGcmdVOWpCNUM1Szc3UFNxY1hwWXdjandzZmNmRSs3a3JNZjhtd3M1M0lhNXFRbEhXeUtCaEhycFdhMDZGSkVXZDNRZ0NnaEk1THFZcExKOGZlZ09RPT0iLCJrIjpbMTg0LDEsMiwzLDAsMTIwLDEwNywxMTksMTUzLDIzLDIyMywxMTcsMTgzLDEyMCw1NywxOTYsMTEsMjgsMjQ5LDExOSwxMDQsMjEzLDE2OSwxNjEsMTQxLDE0Miw5OSw2NSw0OSwyMTIsMzAsMTk5LDk3LDIwNCwyMTgsNzcsMTA1LDE3OSwxLDE3NSwyMjUsMTA4LDc2LDE2LDEzMSwxNDQsMTA2LDI0LDE1OSwxMjgsMTkxLDIwNCwyNDQsMjQ0LDIyMywwLDAsMCwxMjYsNDgsMTI0LDYsOSw0MiwxMzQsNzIsMTM0LDI0NywxMywxLDcsNiwxNjAsMTExLDQ4LDEwOSwyLDEsMCw0OCwxMDQsNiw5LDQyLDEzNCw3MiwxMzQsMjQ3LDEzLDEsNywxLDQ4LDMwLDYsOSw5NiwxMzQsNzIsMSwxMDEsMyw0LDEsNDYsNDgsMTcsNCwxMiwxNTUsMTM0LDE4OCwzOSwyMyw4MCw5OSwxOTIsMTQzLDY0LDI1MSw2NywyLDEsMTYsMTI4LDU5LDM1LDI1MCwxNTIsMTIxLDIxMSwxNjcsMTgyLDE2OSwxODYsMTcyLDg0LDIxMyw5MCwxMTMsMjUzLDIzNCwyNywxNzQsNTIsMTgxLDEyLDcxLDI0NCwxNDMsNTMsMTE0LDQxLDk2LDEzMywyMTEsNTMsMjI5LDUyLDIyMSwxNzMsMjI0LDI0OCwyNDIsOTcsMjM1LDIwMiwxMzYsMTkzLDkzLDEyNSwxNiwxNzIsMjAyLDQ4LDE3NSwzNCwyMTYsMTIxLDEzNyw4OSwxMDYsMTg4LDQyLDEzNV19",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "id": "texQH0scyFnK8oh6",
+      "key": "PILOT_REGISTRATION_ENABLED",
+      "createdAt": 1789128878447,
+      "updatedAt": 1789128878447,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "encrypted",
+      "value": "eyJ2IjoidjIiLCJjIjoiVmRISGNaWFFycTFBdXRrNFdhUCsvcjFlb1FoVzlQZ2F5SUppTjc3Q0swSkpsRW1sT2ltSzZ5aFdEZFgycjRNN1BiSGUxQWl1YjBuN2FrTGZnM0V5bkZXSzJoTUd4aVhvVEtNbnYrVFl6UXkvdlJCeS85K1lNT2ZmMkxjQmhXYzJ4RU1ZQVc4cXdpMUhEV252b2tvSkthLzlreVl4dGVDa3NPREI2LzRPVUFMa3BNMXRCQi9sN1lpQkdQbnFDZXdoIiwiayI6WzE4NCwxLDIsMywwLDEyMCwxMDcsMTE5LDE1MywyMywyMjMsMTE3LDE4MywxMjAsNTcsMTk2LDExLDI4LDI0OSwxMTksMTA0LDIxMywxNjksMTYxLDE0MSwxNDIsOTksNjUsNDksMjEyLDMwLDE5OSw5NywyMDQsMjE4LDc3LDEwNSwxNzksMSwyMTcsNjcsMjE1LDE1NCwyMTQsMjMyLDE0NSwxNjcsMzIsNTgsMTg1LDIxNCwyNDAsMzAsMjE5LDc1LDAsMCwwLDEyNiw0OCwxMjQsNiw5LDQyLDEzNCw3MiwxMzQsMjQ3LDEzLDEsNyw2LDE2MCwxMTEsNDgsMTA5LDIsMSwwLDQ4LDEwNCw2LDksNDIsMTM0LDcyLDEzNCwyNDcsMTMsMSw3LDEsNDgsMzAsNiw5LDk2LDEzNCw3MiwxLDEwMSwzLDQsMSw0Niw0OCwxNyw0LDEyLDQ3LDEsMTMxLDg4LDUwLDE2OSwzOSw5NSwxMzQsMTY0LDExNyw0MywyLDEsMTYsMTI4LDU5LDc0LDE5OSw4NSw4NSw1OCw2OSw1NywxODAsMzEsOTQsMTE5LDE4MiwxNTgsOTIsMTcxLDE2MSwyMiwyMDAsOTksMjU0LDU4LDIzMywzNiw0MywxMTYsMjA1LDE1NiwyMTksMTk5LDEzOCwxOCwzOSwxMDMsODUsMjEzLDEzNiw4Myw4NywyMjIsODksNDAsMjAyLDEwOCw3OCw3MiwxNTMsNjAsMTM5LDIyNCwxNTUsMjAsMjEyLDIxMiwyNDMsMTIzLDI0NCwxMzMsMjUyLDEwN119",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "id": "HUH7D3pEabdtCIo6",
+      "key": "PILOT_ALLOWED_EMAILS",
+      "createdAt": 1789135715784,
+      "updatedAt": 1789135715784,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "sensitive",
+      "value": "",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "visibility": "secret",
+      "id": "r8SLL7Mbwn7pr5Br",
+      "key": "RESEND_API_KEY",
+      "createdAt": 1789135876497,
+      "updatedAt": 1789135876497,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "encrypted",
+      "value": "eyJ2IjoidjIiLCJjIjoiTHVSS0ZIQ2VWUjR0YjdzVFF2emQ3ZEhRd0ErNktkMXlabWpZYXJYVTBwdWVpVFlpb0V6ZWdBU0Z4RDhjcmVVaVZQRmt4aXZIOVRZSWpWSDlOd1FjWjladnFqRXNDQjM3MGJQZk01OUdVVXBxNHcyc3kxSFVNV011VzlidUFrT0YzeWd0WDIwVDhIcE43QUVsIiwiayI6WzE4NCwxLDIsMywwLDEyMCwxMDcsMTE5LDE1MywyMywyMjMsMTE3LDE4MywxMjAsNTcsMTk2LDExLDI4LDI0OSwxMTksMTA0LDIxMywxNjksMTYxLDE0MSwxNDIsOTksNjUsNDksMjEyLDMwLDE5OSw5NywyMDQsMjE4LDc3LDEwNSwxNzksMSwyMTcsNjcsMjE1LDE1NCwyMTQsMjMyLDE0NSwxNjcsMzIsNTgsMTg1LDIxNCwyNDAsMzAsMjE5LDc1LDAsMCwwLDEyNiw0OCwxMjQsNiw5LDQyLDEzNCw3MiwxMzQsMjQ3LDEzLDEsNyw2LDE2MCwxMTEsNDgsMTA5LDIsMSwwLDQ4LDEwNCw2LDksNDIsMTM0LDcyLDEzNCwyNDcsMTMsMSw3LDEsNDgsMzAsNiw5LDk2LDEzNCw3MiwxLDEwMSwzLDQsMSw0Niw0OCwxNyw0LDEyLDQ3LDEsMTMxLDg4LDUwLDE2OSwzOSw5NSwxMzQsMTY0LDExNyw0MywyLDEsMTYsMTI4LDU5LDc0LDE5OSw4NSw4NSw1OCw2OSw1NywxODAsMzEsOTQsMTE5LDE4MiwxNTgsOTIsMTcxLDE2MSwyMiwyMDAsOTksMjU0LDU4LDIzMywzNiw0MywxMTYsMjA1LDE1NiwyMTksMTk5LDEzOCwxOCwzOSwxMDMsODUsMjEzLDEzNiw4Myw4NywyMjIsODksNDAsMjAyLDEwOCw3OCw3MiwxNTMsNjAsMTM5LDIyNCwxNTUsMjAsMjEyLDIxMiwyNDMsMTIzLDI0NCwxMzMsMjUyLDEwN119",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "id": "tXYMXmPaq5uMAaSl",
+      "key": "EMAIL_FROM",
+      "createdAt": 1789135895099,
+      "updatedAt": 1789135895099,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "encrypted",
+      "value": "eyJ2IjoidjIiLCJjIjoiU05mTnhpaFlzZExRUmFHVUR3R1YxQWtUM3pFZE14MVdDMDJ3RXZaN2E3cHRqdU1XZGpnMlNtbWNEWlJYcnNFaWpkbjNWZ05NbXVLVlBNdXdhNzdoNmtaUGdKeWkxVS9sNXRKSEczRENWNTQ9IiwiayI6WzE4NCwxLDIsMywwLDEyMCwxMDcsMTE5LDE1MywyMywyMjMsMTE3LDE4MywxMjAsNTcsMTk2LDExLDI4LDI0OSwxMTksMTA0LDIxMywxNjksMTYxLDE0MSwxNDIsOTksNjUsNDksMjEyLDMwLDE5OSw5NywyMDQsMjE4LDc3LDEwNSwxNzksMSwxNzQsMTM4LDQsMjI2LDIxLDE5Miw4OCwxNDYsNzYsMTU2LDM2LDkyLDk4LDE2MiwxNTQsMzAsMCwwLDAsMTI2LDQ4LDEyNCw2LDksNDIsMTM0LDcyLDEzNCwyNDcsMTMsMSw3LDYsMTYwLDExMSw0OCwxMDksMiwxLDAsNDgsMTA0LDYsOSw0MiwxMzQsNzIsMTM0LDI0NywxMywxLDcsMSw0OCwzMCw2LDksOTYsMTM0LDcyLDEsMTAxLDMsNCwxLDQ2LDQ4LDE3LDQsMTIsOTQsMjA3LDEyNSwxODUsMjUyLDI4LDU1LDE5NSwxMjgsMjMzLDEwOSw4MCwyLDEsMTYsMTI4LDU5LDIyMCwyMDYsMjM2LDgzLDIzLDUyLDQsMjksMjAwLDE4NSw0NSw0MiwyNTQsMTQ3LDQ3LDEwMCwyNDUsMTA1LDI1MywxNjYsNzAsMzEsMjAzLDI0NSwxMDksNzYsMTQ3LDIzOSwxMzAsMjU1LDIxMCwxODQsNzIsMTEzLDEyMCwyNDEsMTkzLDE5MSwyNDcsMTA4LDE5MCwyNCwxMzYsNzgsMTIxLDI0Nyw3NywxMjQsMjQ1LDY2LDE2NywyMjgsMjAzLDU1LDE2NCwyMywxMjUsMjEsMTkxXX0=",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "id": "FSENDh74zEIJJxi1",
+      "key": "DATABASE_ENV",
+      "createdAt": 1789143364514,
+      "updatedAt": 1789143364514,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    },
+    {
+      "type": "sensitive",
+      "value": "",
+      "target": [
+        "preview",
+        "production"
+      ],
+      "configurationId": null,
+      "comment": "",
+      "customEnvironmentIds": [],
+      "visibility": "secret",
+      "id": "eUlqjBPmk4nCCemO",
+      "key": "RUNTIME_DATABASE_URL",
+      "createdAt": 1789143858289,
+      "updatedAt": 1789143858289,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT",
+      "updatedBy": null
+    }
+  ],
+  "framework": "nextjs",
+  "gitForkProtection": true,
+  "gitLFS": false,
+  "id": "prj_la9ciHlArZ7byFsmPmrNxsY1O0Th",
+  "installCommand": null,
+  "jobs": {
+    "lint": {
+      "targets": [
+        "production",
+        "preview"
+      ]
+    },
+    "typecheck": {
+      "targets": [
+        "production",
+        "preview"
+      ]
+    }
+  },
+  "lastRollbackTarget": null,
+  "lastAliasRequest": null,
+  "name": "evolusg",
+  "nodeVersion": "24.x",
+  "outputDirectory": null,
+  "sandbox": {
+    "failoverRegions": [],
+    "region": "iad1"
+  },
+  "productionDeploymentsFastLane": true,
+  "defaultResourceConfig": {
+    "fluid": true,
+    "functionDefaultRegions": [
+      "iad1"
+    ],
+    "functionDefaultTimeout": 300,
+    "functionDefaultMemoryType": "standard",
+    "functionZeroConfigFailover": false,
+    "elasticConcurrencyEnabled": true
+  },
+  "resourceConfig": {
+    "fluid": true,
+    "functionDefaultRegions": [
+      "iad1"
+    ],
+    "elasticConcurrencyEnabled": true,
+    "buildMachineType": "turbo",
+    "buildMachineSelection": "fixed"
+  },
+  "rootDirectory": null,
+  "serverlessFunctionRegion": "iad1",
+  "skewProtectionMaxAge": 43200,
+  "sourceFilesOutsideRootDirectory": true,
+  "enableAffectedProjectsDeployments": true,
+  "ssoProtection": {
+    "deploymentType": "all_except_custom_domains"
+  },
+  "updatedAt": 1789242574893,
+  "live": false,
+  "enableExternalRewriteCaching": true,
+  "gitComments": {
+    "onCommit": false,
+    "onPullRequest": true
+  },
+  "gitProviderOptions": {
+    "createDeployments": "enabled"
+  },
+  "webAnalytics": {
+    "id": "MMRY4DzpUOEM0wK3KyLQ6JvfZ"
+  },
+  "oidcTokenConfig": {
+    "enabled": true,
+    "issuerMode": "team"
+  },
+  "hasDeployments": true,
+  "link": {
+    "type": "github",
+    "repo": "evolusg",
+    "repoId": 1363508064,
+    "org": "alefeio",
+    "repoOwnerId": 19189508,
+    "gitCredentialId": "cred_3583b97ae4a6524dd5c9167fea8d3717b50283c9",
+    "productionBranch": "main",
+    "sourceless": true,
+    "createdAt": 1789014423361,
+    "updatedAt": 1789014423361,
+    "deployHooks": []
+  },
+  "latestDeployments": [
+    {
+      "alias": [
+        "evolusg.vercel.app",
+        "www.evolusg.com.br",
+        "evolusg.com.br",
+        "evolusg-alefeios-projects.vercel.app",
+        "evolusg-git-main-alefeios-projects.vercel.app"
+      ],
+      "aliasAssigned": 1789242574841,
+      "aliasError": null,
+      "automaticAliases": [
+        "evolusg-alefeios-projects.vercel.app",
+        "evolusg-git-main-alefeios-projects.vercel.app"
+      ],
+      "builds": [],
+      "createdAt": 1789242556143,
+      "createdIn": "sfo1",
+      "creator": {
+        "uid": "oH97OTA59BcP4YFRM3xIGzFT",
+        "email": "alefeio@gmail.com",
+        "username": "alefeio",
+        "githubLogin": "alefeio"
+      },
+      "deploymentHostname": "evolusg-3o6lp9iya-alefeios-projects",
+      "forced": false,
+      "id": "dpl_73Sj1caZtU5Y82UaSWbY9VkPhwTG",
+      "meta": {
+        "githubCommitAuthorName": "alefeio",
+        "githubCommitAuthorEmail": "alefeio@gmail.com",
+        "githubCommitMessage": "docs: update pilot readiness after protection review\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+        "githubCommitOrg": "alefeio",
+        "githubCommitRef": "main",
+        "githubCommitRepo": "evolusg",
+        "githubCommitSha": "838ae25059dd8c11f22ffb2498a6abe27fae7e4f",
+        "githubDeployment": "1",
+        "githubOrg": "alefeio",
+        "githubRepo": "evolusg",
+        "githubRepoOwnerType": "User",
+        "githubCommitRepoId": "1363508064",
+        "githubRepoId": "1363508064",
+        "githubRepoVisibility": "public",
+        "githubHost": "github.com",
+        "githubCommitAuthorLogin": "alefeio",
+        "githubCommitVerification": "unverified",
+        "repoPushedAt": "1789242554000",
+        "branchAlias": "evolusg-git-main-alefeios-projects.vercel.app",
+        "lambdaRuntimeStats": "{\"nodejs\":3}",
+        "bundler": "turbopack"
+      },
+      "name": "evolusg",
+      "plan": "pro",
+      "private": true,
+      "readyState": "READY",
+      "readySubstate": "PROMOTED",
+      "target": "production",
+      "teamId": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+      "type": "LAMBDAS",
+      "url": "evolusg-3o6lp9iya-alefeios-projects.vercel.app",
+      "userId": "oH97OTA59BcP4YFRM3xIGzFT",
+      "withCache": false,
+      "buildingAt": 1789242557491,
+      "readyAt": 1789242574587,
+      "previewCommentsEnabled": true,
+      "oidcTokenClaims": {
+        "sub": "owner:alefeios-projects:project:evolusg:environment:production",
+        "iss": "https://oidc.vercel.com/alefeios-projects",
+        "scope": "owner:alefeios-projects:project:evolusg:environment:production",
+        "aud": "https://vercel.com/alefeios-projects",
+        "owner": "alefeios-projects",
+        "owner_id": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+        "project": "evolusg",
+        "project_id": "prj_la9ciHlArZ7byFsmPmrNxsY1O0Th",
+        "environment": "production",
+        "plan": "pro"
+      }
+    },
+    {
+      "alias": [
+        "evolusg.vercel.app",
+        "www.evolusg.com.br",
+        "evolusg.com.br",
+        "evolusg-alefeios-projects.vercel.app",
+        "evolusg-git-main-alefeios-projects.vercel.app"
+      ],
+      "aliasAssigned": 1789241276763,
+      "aliasError": null,
+      "automaticAliases": [
+        "evolusg-alefeios-projects.vercel.app",
+        "evolusg-git-main-alefeios-projects.vercel.app"
+      ],
+      "builds": [],
+      "createdAt": 1789241259876,
+      "createdIn": "sfo1",
+      "creator": {
+        "uid": "oH97OTA59BcP4YFRM3xIGzFT",
+        "email": "alefeio@gmail.com",
+        "username": "alefeio",
+        "githubLogin": "alefeio"
+      },
+      "deploymentHostname": "evolusg-jcrh7y657-alefeios-projects",
+      "forced": false,
+      "id": "dpl_4Kv8TXAhW4HgAr2BDhe4w81tiQ4q",
+      "meta": {
+        "githubCommitAuthorName": "alefeio",
+        "githubCommitAuthorEmail": "alefeio@gmail.com",
+        "githubCommitMessage": "docs: record pilot readiness validation\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+        "githubCommitOrg": "alefeio",
+        "githubCommitRef": "main",
+        "githubCommitRepo": "evolusg",
+        "githubCommitSha": "1b0d9db9a07a57cb80f7a4bf555cac7015f8d9b9",
+        "githubDeployment": "1",
+        "githubOrg": "alefeio",
+        "githubRepo": "evolusg",
+        "githubRepoOwnerType": "User",
+        "githubCommitRepoId": "1363508064",
+        "githubRepoId": "1363508064",
+        "githubRepoVisibility": "public",
+        "githubHost": "github.com",
+        "githubCommitAuthorLogin": "alefeio",
+        "githubCommitVerification": "unverified",
+        "repoPushedAt": "1789241257000",
+        "branchAlias": "evolusg-git-main-alefeios-projects.vercel.app",
+        "lambdaRuntimeStats": "{\"nodejs\":3}",
+        "bundler": "turbopack"
+      },
+      "name": "evolusg",
+      "plan": "pro",
+      "private": true,
+      "readyState": "READY",
+      "readySubstate": "PROMOTED",
+      "target": "production",
+      "teamId": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+      "type": "LAMBDAS",
+      "url": "evolusg-jcrh7y657-alefeios-projects.vercel.app",
+      "userId": "oH97OTA59BcP4YFRM3xIGzFT",
+      "withCache": false,
+      "buildingAt": 1789241261116,
+      "readyAt": 1789241276508,
+      "previewCommentsEnabled": true,
+      "oidcTokenClaims": {
+        "sub": "owner:alefeios-projects:project:evolusg:environment:production",
+        "iss": "https://oidc.vercel.com/alefeios-projects",
+        "scope": "owner:alefeios-projects:project:evolusg:environment:production",
+        "aud": "https://vercel.com/alefeios-projects",
+        "owner": "alefeios-projects",
+        "owner_id": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+        "project": "evolusg",
+        "project_id": "prj_la9ciHlArZ7byFsmPmrNxsY1O0Th",
+        "environment": "production",
+        "plan": "pro"
+      }
+    }
+  ],
+  "targets": {
+    "production": {
+      "alias": [
+        "evolusg.vercel.app",
+        "www.evolusg.com.br",
+        "evolusg.com.br",
+        "evolusg-alefeios-projects.vercel.app",
+        "evolusg-git-main-alefeios-projects.vercel.app"
+      ],
+      "aliasAssigned": 1789242574841,
+      "aliasError": null,
+      "automaticAliases": [
+        "evolusg-alefeios-projects.vercel.app",
+        "evolusg-git-main-alefeios-projects.vercel.app"
+      ],
+      "builds": [],
+      "createdAt": 1789242556143,
+      "createdIn": "sfo1",
+      "creator": {
+        "uid": "oH97OTA59BcP4YFRM3xIGzFT",
+        "email": "alefeio@gmail.com",
+        "username": "alefeio",
+        "githubLogin": "alefeio"
+      },
+      "deploymentHostname": "evolusg-3o6lp9iya-alefeios-projects",
+      "forced": false,
+      "id": "dpl_73Sj1caZtU5Y82UaSWbY9VkPhwTG",
+      "meta": {
+        "githubCommitAuthorName": "alefeio",
+        "githubCommitAuthorEmail": "alefeio@gmail.com",
+        "githubCommitMessage": "docs: update pilot readiness after protection review\n\nCo-authored-by: Cursor <cursoragent@cursor.com>",
+        "githubCommitOrg": "alefeio",
+        "githubCommitRef": "main",
+        "githubCommitRepo": "evolusg",
+        "githubCommitSha": "838ae25059dd8c11f22ffb2498a6abe27fae7e4f",
+        "githubDeployment": "1",
+        "githubOrg": "alefeio",
+        "githubRepo": "evolusg",
+        "githubRepoOwnerType": "User",
+        "githubCommitRepoId": "1363508064",
+        "githubRepoId": "1363508064",
+        "githubRepoVisibility": "public",
+        "githubHost": "github.com",
+        "githubCommitAuthorLogin": "alefeio",
+        "githubCommitVerification": "unverified",
+        "repoPushedAt": "1789242554000",
+        "branchAlias": "evolusg-git-main-alefeios-projects.vercel.app",
+        "lambdaRuntimeStats": "{\"nodejs\":3}",
+        "bundler": "turbopack"
+      },
+      "name": "evolusg",
+      "plan": "pro",
+      "private": true,
+      "readyState": "READY",
+      "readySubstate": "PROMOTED",
+      "target": "production",
+      "teamId": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+      "type": "LAMBDAS",
+      "url": "evolusg-3o6lp9iya-alefeios-projects.vercel.app",
+      "userId": "oH97OTA59BcP4YFRM3xIGzFT",
+      "withCache": false,
+      "buildingAt": 1789242557491,
+      "readyAt": 1789242574587,
+      "previewCommentsEnabled": true,
+      "oidcTokenClaims": {
+        "sub": "owner:alefeios-projects:project:evolusg:environment:production",
+        "iss": "https://oidc.vercel.com/alefeios-projects",
+        "scope": "owner:alefeios-projects:project:evolusg:environment:production",
+        "aud": "https://vercel.com/alefeios-projects",
+        "owner": "alefeios-projects",
+        "owner_id": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+        "project": "evolusg",
+        "project_id": "prj_la9ciHlArZ7byFsmPmrNxsY1O0Th",
+        "environment": "production",
+        "plan": "pro"
+      }
+    },
+    "preview": {
+      "alias": [],
+      "aliasAssigned": 1789155113775,
+      "aliasError": null,
+      "automaticAliases": [],
+      "builds": [],
+      "createdAt": 1789155092695,
+      "createdIn": "sfo1",
+      "creator": {
+        "uid": "oH97OTA59BcP4YFRM3xIGzFT",
+        "email": "alefeio@gmail.com",
+        "username": "alefeio"
+      },
+      "deploymentHostname": "evolusg-9sacrjjk2-alefeios-projects",
+      "forced": false,
+      "id": "dpl_BPRAL5mMNpySgHtQpnRXCzXr9ynZ",
+      "meta": {
+        "githubCommitAuthorName": "Alexandre Feio",
+        "githubCommitAuthorEmail": "alefeio@gmail.com",
+        "githubCommitMessage": "Merge pull request #2 from alefeio/chore/pilot-operational-readiness",
+        "githubCommitOrg": "alefeio",
+        "githubCommitRef": "main",
+        "githubCommitRepo": "evolusg",
+        "githubCommitSha": "a754053dcd10f9d7bbfbd9f1dba7b892f4c004ae",
+        "githubDeployment": "1",
+        "githubOrg": "alefeio",
+        "githubRepo": "evolusg",
+        "gitRootDirectory": "",
+        "actor": "cursor-cli",
+        "lambdaRuntimeStats": "{\"nodejs\":3}",
+        "bundler": "turbopack"
+      },
+      "name": "evolusg",
+      "plan": "pro",
+      "private": true,
+      "readyState": "READY",
+      "readySubstate": "STAGED",
+      "target": null,
+      "teamId": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+      "type": "LAMBDAS",
+      "url": "evolusg-9sacrjjk2-alefeios-projects.vercel.app",
+      "userId": "oH97OTA59BcP4YFRM3xIGzFT",
+      "withCache": false,
+      "buildingAt": 1789155093626,
+      "readyAt": 1789155113638,
+      "previewCommentsEnabled": true,
+      "oidcTokenClaims": {
+        "sub": "owner:alefeios-projects:project:evolusg:environment:preview",
+        "iss": "https://oidc.vercel.com/alefeios-projects",
+        "scope": "owner:alefeios-projects:project:evolusg:environment:preview",
+        "aud": "https://vercel.com/alefeios-projects",
+        "owner": "alefeios-projects",
+        "owner_id": "team_t5xi92zgHtzTKEMZ3ws6VAvr",
+        "project": "evolusg",
+        "project_id": "prj_la9ciHlArZ7byFsmPmrNxsY1O0Th",
+        "environment": "preview",
+        "plan": "pro"
+      }
+    }
+  },
+  "protectionBypass": {
+    "3h9nzduAgpNjLZu2DJszkaLkGPitEQzK": {
+      "scope": "automation-bypass",
+      "isEnvVar": true,
+      "createdAt": 1789241829997,
+      "createdBy": "oH97OTA59BcP4YFRM3xIGzFT"
+    }
+  },
+  "features": {
+    "webAnalytics": false
+  },
+  "protectedSourcemaps": true,
+  "avatar": null
+}
