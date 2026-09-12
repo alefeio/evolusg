@@ -226,9 +226,9 @@ A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Spri
 
 ### Better Auth / Resend
 
-- `BETTER_AUTH_URL` no Preview (config compartilhada) = host customizado `evolusg.com.br` — **não** alinhado ao host Preview do piloto (`MISALIGNED`).
-- Ação planejada quando o alias `pilot/identity-preview` estiver Ready: `BETTER_AUTH_URL` **somente** `--git-branch pilot/identity-preview` → URL HTTPS do alias estável (sem wildcard `*.vercel.app`; sem tocar Production).
-- `trustedOrigins`: hoje `[baseURL]` (`src/lib/auth/options.ts`). Sem smoke CSRF no host piloto ainda; **sem** wildcard; correção mínima só se CSRF aparecer após alinhar `BETTER_AUTH_URL`.
+- Config compartilhada Preview+Production de `BETTER_AUTH_URL` continua = `evolusg.com.br` (Production intacta).
+- **Branch-scoped** `BETTER_AUTH_URL` para `pilot/identity-preview` = `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` (Config; sem wildcard). Redeploy Preview Ready após o set (`evolusg-7a2qxj7k5-…`).
+- `trustedOrigins`: hoje `[baseURL]` (`src/lib/auth/options.ts`). Sem smoke CSRF no host piloto ainda (SSO); **sem** wildcard; correção mínima só se CSRF aparecer após Exception + smoke.
 - `EMAIL_FROM` classifica domínio `evolusg.com.br`. Secrets Resend presentes no projeto (não puxáveis em cwd limpo). Allowlist Preview: **2** endereços `CONSUMER_OR_PILOT` — **sem** candidato `smoke`/`+tag`/`test` dedicado. **OWNER ACTION REQUIRED — PROVIDE CONTROLLED SMOKE INBOX**.
 - Delivery real de verificação/reset: **não comprovado**.
 
