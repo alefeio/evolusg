@@ -37,9 +37,6 @@ export function AuthShell({
         <div className="relative z-10 space-y-8">
           <BrandLogo href="/" priority size="md" />
           <div className="max-w-sm space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-cyan-300">
-              evolUSG
-            </p>
             <p className="text-2xl font-semibold leading-snug tracking-tight text-text-on-dark">
               Tecnologia para uma prática ultrassonográfica mais eficiente
             </p>
