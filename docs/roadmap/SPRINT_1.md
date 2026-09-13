@@ -181,16 +181,16 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 ## Pilot Operational Readiness
 
-**Status operacional:** `NOT PILOT READY`
+**Status operacional:** `NOT PILOT READY` / `QA FUNCTIONAL BLOCKED`
 
-A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado nesta gate. Brand/UI Foundation está consolidada em `main` (`ca016e1`, PR #3) e **sincronizada** na branch operacional do piloto.
+A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen permanece `BLOCKED FOR PILOT USER` até o QA funcional de Alexandre passar.
 
-### Sincronização com main (Brand/UI)
+### Sincronização com main (produto + Brand/UI)
 
 - Branch: `pilot/identity-preview`
-- Merge: `0e511e6` — `merge: sync pilot preview with latest main` (Brand/UI de `main` prevaleceu; conflito só em `.gitignore`, resolvido preservando ignores locais)
-- Preview Git Ready após push: deployment `evolusg-pe2zxww9z-…` com alias `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
-- Identidade visual final (tokens, AuthShell, AppShell, logo) **presente no código** do Preview; inspeção anônima da UI **bloqueada por SSO** (302 → login Vercel)
+- Merge recente: `658fa50` — `merge: sync pilot preview with latest main product copy` (inclui microcopy de produto PR #4 e remoção do rótulo redundante sob a logo PR #5 / `6fd04cf` em `main`)
+- Gates pós-sync: lint ✅ · typecheck ✅ · unit **41** · integration **2** · build ✅
+- Preview Git Ready: deployment `evolusg-kxmwath8f-…` no alias `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
 
 ### Fato de deploy Production
 
@@ -201,54 +201,52 @@ A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Spri
 ### Host Preview estável do piloto
 
 - Alias Git Preview: `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
-- Production / domínio customizado **não** deve ser usado para smoke do piloto.
+- Production / domínio customizado **não** deve ser usado para QA do piloto.
+
+### Deployment Protection
+
+- Proprietário confirmou Exception no host piloto.
+- Revalidação anônima: host piloto **HTTP 200** (app do evolUSG; sem login Vercel). Preview efêmero comum: **HTTP 302 → SSO Vercel**.
+- Classificação: `PILOT PREVIEW PUBLIC EXCEPTION = PASSED`
+- Deployment Protection global e Production **não** foram alterados nesta rodada.
 
 ### Runtime PostgreSQL
 
 - Runtime: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (código em `main` / piloto sincronizado).
-- `RUNTIME_DATABASE_URL` presente no projeto (secret). Classificação herdada: `PREVIEW RUNTIME POOLED = PASSED`.
+- `RUNTIME_DATABASE_URL` listada no projeto (secret Preview+Production). Classificação herdada de host pooled: `PREVIEW RUNTIME POOLED = PASSED` (reconfirmação de fingerprint bloqueada — pull de secrets não autorizado nesta sessão).
 - Migrations: `DIRECT_URL || POSTGRES_URL || DATABASE_URL` — `RUNTIME_DATABASE_URL` não participa.
-- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview. `LOCAL EMAIL CAPTURE = DISABLED`.
-- Preferir env **branch-scoped** (`pilot/identity-preview`) para valores exclusivos do piloto — **nunca** sobrescrever o valor compartilhado de Production.
+- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview (cwd limpo). `LOCAL EMAIL CAPTURE = DISABLED`.
+- Preferir env **branch-scoped** (`pilot/identity-preview`) para valores exclusivos do piloto — **nunca** sobrescrever Production.
 
 ### Banco Preview
 
-- Classificação: `PREVIEW SHARES DEVELOPMENT DATABASE` — **não aceitável para piloto real**.
-- `PREVIEW DATABASE TOPOLOGY = INVALID FOR PILOT`.
-- **OWNER ACTION REQUIRED — CREATE PREVIEW DATABASE** (Prisma Postgres dedicado → pooled + direct da mesma DB → Vercel Preview/`--git-branch`): `RUNTIME_DATABASE_URL`, `POSTGRES_URL`, `DATABASE_ENV=preview`; deixar `DATABASE_URL` gerenciada intacta; **não** alterar Production.
+- `vercel env ls`: `DATABASE_URL` / `POSTGRES_URL` / `PRISMA_DATABASE_URL` / `RUNTIME_DATABASE_URL` aparecem como **um** secret compartilhado **Preview + Production**; ambiente Development na Vercel sem variáveis.
+- Não há banco Preview exclusivo (branch-scoped ou ambiente Preview-only) configurado.
+- Classificação: `PREVIEW DATABASE NOT DEDICATED` / `PREVIEW DATABASE TOPOLOGY = INVALID FOR PILOT`.
+- **OWNER ACTION REQUIRED — CREATE PREVIEW DATABASE** (sem cobrança automática pelo agente).
 - `prisma migrate deploy` **não** executado nesta rodada (sem dedicated Preview).
-
-### Deployment Protection
-
-- Preview anônimo: **302 → `vercel.com/login` (SSO)**. `PILOT PREVIEW PUBLIC EXCEPTION` **não** atingido.
-- CLI não oferece subcomando `protection` seguro para Exception só no host piloto. Tentativas API anteriores: sem entitlement Advanced Deployment Protection.
-- **OWNER ACTION REQUIRED — PREVIEW PROTECTION EXCEPTION**
-  - Vercel Dashboard → Project `evolusg` → Settings → Deployment Protection
-  - Adicionar **Exception** **somente** para `evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
-  - Resultado esperado: host piloto abre a app sem login Vercel; demais `*.vercel.app` Preview continuam com SSO; Production intacta
-  - Se Exception exigir add-on Pro/Enterprise: ativar Advanced Deployment Protection ou equivalente
-- Alternativa pior para Resend: Shareable Link (query efêmera).
-- `automation-bypass`: **não** para a Dra. Karen; rotacionar/remover se ocioso.
 
 ### Better Auth / Resend
 
-- Branch-scoped `BETTER_AUTH_URL` para `pilot/identity-preview` = host do alias Git piloto (Config).
-- `trustedOrigins`: `[baseURL]` — sem wildcard; CSRF não testável sob SSO.
-- `RESEND_API_KEY` / `EMAIL_FROM` presentes no projeto. Delivery real: **não comprovado**.
-- **OWNER ACTION REQUIRED — PROVIDE CONTROLLED SMOKE INBOX** (não usar a caixa da Dra. Karen no smoke).
+- Branch-scoped `BETTER_AUTH_URL` para `pilot/identity-preview` = host do alias Git piloto (`*.vercel.app` do piloto; não localhost; não Production/`evolusg.com.br`).
+- `trustedOrigins`: `[baseURL]` — sem wildcard amplo.
+- `RESEND_API_KEY` / `EMAIL_FROM` presentes no projeto (listagem Vercel). Delivery real: **pendente do QA**.
+- Allowlist Preview: 2 endereços classificados `CONSUMER_OR_PILOT` (sem marcador smoke/`+test`). Agente **não** confirmou e-mail do QA Alexandre — **OWNER ACTION REQUIRED — ADD QA EMAIL TO PILOT ALLOWLIST** em `PILOT_ALLOWED_EMAILS` (Preview / branch piloto). Não usar a caixa da Dra. Karen para este QA.
 
-### Smoke sintético
+### QA funcional
 
-| Fluxo | Resultado |
+| Item | Estado |
 |---|---|
-| Sync Brand/UI no Preview | código presente; UI anônima `BLOCKED` (SSO) |
-| Preview anônimo | `BLOCKED` (SSO Vercel) |
-| Cadastro permitido / Resend / verify / login / sessão / logout / reset | `BLOCKED` — Exception + DB dedicada + inbox |
+| Host piloto público | `PASSED` |
+| Branch sincronizada com main (copy/UI) | `PASSED` |
+| Banco Preview dedicado | `BLOCKED` |
+| Migration Preview | `BLOCKED` |
+| Allowlist QA Alexandre | `OWNER ACTION` |
+| Cadastro/verify/login/reset pelo QA | **não iniciado** (aguardar `QA FUNCTIONAL READY`) |
 
-### Próximas ações do proprietário (bloqueiam `PILOT READY`)
+### Próximas ações do proprietário (bloqueiam `QA FUNCTIONAL READY`)
 
-1. **CREATE PREVIEW DATABASE** + envs branch-scoped + `prisma migrate deploy` (direct).
-2. **PREVIEW PROTECTION EXCEPTION** só no alias piloto.
-3. **CONTROLLED SMOKE INBOX** na allowlist Preview/branch.
-4. Redeploy + smoke completo.
-5. Dra. Karen: `MANUAL USER ACTION REQUIRED` após `PILOT READY` (própria senha/conta).
+1. **CREATE PREVIEW DATABASE** dedicado (≠ Development ≠ Production) + envs branch-scoped + redeploy.
+2. Após topologia válida: autorizar `prisma migrate deploy` (direct) no Preview.
+3. **ADD QA EMAIL TO PILOT ALLOWLIST** (`PILOT_ALLOWED_EMAILS` no Preview/branch piloto) — caixa controlada por Alexandre.
+4. Só então Alexandre executa o QA funcional manual. Dra. Karen permanece bloqueada até aprovação desse QA.
