@@ -55,7 +55,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           type="password"
         />
       </Field>
-      <Button className="w-full" disabled={pending} type="submit">
+      <Button className="w-full" pending={pending} type="submit">
         {pending ? "Salvando..." : "Redefinir senha"}
       </Button>
     </form>

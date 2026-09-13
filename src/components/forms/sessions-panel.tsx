@@ -68,20 +68,27 @@ export function SessionsPanel({
           const createdAt = new Date(session.createdAt).toLocaleString("pt-BR");
           return (
             <li
-              className="flex flex-col gap-2 rounded-lg border border-brand-line px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2 rounded-[var(--radius-control)] border border-border bg-surface-soft/60 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
               key={session.id}
             >
-              <div>
-                <p className="text-sm font-medium text-brand-ink">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-text-primary">
                   {current ? "Sessão atual" : "Outro dispositivo"}
                 </p>
-                <p className="text-xs text-brand-muted">{createdAt}</p>
+                <p className="text-xs text-text-secondary">{createdAt}</p>
                 {session.userAgent ? (
-                  <p className="mt-1 max-w-md truncate text-xs text-brand-muted">{session.userAgent}</p>
+                  <p className="mt-1 max-w-md truncate text-xs text-text-secondary">
+                    {session.userAgent}
+                  </p>
                 ) : null}
               </div>
               {current ? null : (
-                <Button disabled={pending} onClick={() => void revokeOne(session.token)} type="button" variant="secondary">
+                <Button
+                  onClick={() => void revokeOne(session.token)}
+                  pending={pending}
+                  type="button"
+                  variant="secondary"
+                >
                   Encerrar
                 </Button>
               )}
@@ -90,7 +97,7 @@ export function SessionsPanel({
         })}
       </ul>
       {sessions.length > 1 ? (
-        <Button disabled={pending} onClick={() => void revokeOther()} type="button" variant="secondary">
+        <Button onClick={() => void revokeOther()} pending={pending} type="button" variant="secondary">
           Encerrar outras sessões
         </Button>
       ) : null}

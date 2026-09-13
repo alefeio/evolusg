@@ -26,11 +26,11 @@ export default async function SignInPage({
       footer={
         <p>
           Não tem conta? <AuthLink href="/cadastro">Criar conta</AuthLink>
-          <span className="mx-2 text-brand-line">·</span>
+          <span className="mx-2 text-border">·</span>
           <AuthLink href="/esqueci-senha">Esqueci minha senha</AuthLink>
         </p>
       }
-      title="Entrar"
+      title="Entre na sua conta"
     >
       {params.redefinida ? <Alert tone="success">{AUTH_MESSAGES.resetDone}</Alert> : null}
       <div className={params.redefinida ? "mt-4" : undefined}>
