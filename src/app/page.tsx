@@ -31,10 +31,7 @@ export default async function HomePage() {
 
       <div className="relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-16 text-center">
         <BrandLogo priority size="lg" />
-        <p className="mt-10 text-xs font-semibold uppercase tracking-[0.22em] text-brand-cyan-300">
-          evolUSG
-        </p>
-        <h1 className="mt-4 max-w-2xl text-[1.875rem] font-semibold leading-tight tracking-tight md:text-4xl">
+        <h1 className="mt-10 max-w-2xl text-[1.875rem] font-semibold leading-tight tracking-tight md:text-4xl">
           Tecnologia para uma prática ultrassonográfica mais eficiente
         </h1>
         <p className="mt-5 max-w-xl text-base leading-7 text-white/80">
