@@ -47,7 +47,7 @@ export function ForgotPasswordForm() {
       <Field htmlFor="email" label="E-mail">
         <Input autoComplete="email" id="email" name="email" required type="email" />
       </Field>
-      <Button className="w-full" disabled={pending} type="submit">
+      <Button className="w-full" pending={pending} type="submit">
         {pending ? "Enviando..." : "Enviar instruções"}
       </Button>
     </form>

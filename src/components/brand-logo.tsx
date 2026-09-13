@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "@/components/ui";
 
 const SRC = "/brand/evolusg-logo.png";
 
 const sizes = {
-  sm: 48,
-  md: 88,
-  lg: 168,
+  sm: { width: 140, height: 56 },
+  md: { width: 200, height: 80 },
+  lg: { width: 280, height: 112 },
 } as const;
 
 export function BrandLogo({
@@ -15,29 +16,29 @@ export function BrandLogo({
   priority = false,
   className,
 }: {
-  href?: string;
+  href?: string | null;
   size?: keyof typeof sizes;
   priority?: boolean;
   className?: string;
 }) {
-  const px = sizes[size];
+  const dims = sizes[size];
   const image = (
     <Image
-      alt="EvolUSG"
-      className={["rounded-2xl", className].filter(Boolean).join(" ")}
-      height={px}
+      alt="evolUSG"
+      className={cn("m-0 block h-auto w-auto object-contain p-0", className)}
+      height={dims.height}
       priority={priority}
       src={SRC}
-      width={px}
+      width={dims.width}
     />
   );
 
-  if (!href) {
+  if (href === null) {
     return image;
   }
 
   return (
-    <Link aria-label="EvolUSG" className="inline-flex shrink-0" href={href}>
+    <Link aria-label="evolUSG" className="m-0 inline-flex shrink-0 p-0" href={href}>
       {image}
     </Link>
   );

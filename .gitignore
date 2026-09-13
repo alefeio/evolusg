@@ -13,3 +13,4 @@ src/generated
 *.tsbuildinfo
 .vercel
 npm-debug.log*
+.local-pilot-gate/

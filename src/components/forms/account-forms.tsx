@@ -43,7 +43,7 @@ export function UpdateNameForm({ currentName }: { currentName: string }) {
       <Field htmlFor="name" label="Nome">
         <Input autoComplete="name" defaultValue={currentName} id="name" name="name" required />
       </Field>
-      <Button disabled={pending} type="submit">
+      <Button pending={pending} type="submit">
         {pending ? "Salvando..." : "Salvar nome"}
       </Button>
     </form>
@@ -92,7 +92,7 @@ export function UpdateEmailForm({ currentEmail }: { currentEmail: string }) {
       <Field htmlFor="email" label="Novo e-mail">
         <Input autoComplete="email" defaultValue={currentEmail} id="email" name="email" required type="email" />
       </Field>
-      <Button disabled={pending} type="submit">
+      <Button pending={pending} type="submit">
         {pending ? "Enviando confirmação..." : "Solicitar troca de e-mail"}
       </Button>
     </form>
@@ -156,7 +156,7 @@ export function UpdatePasswordForm() {
           type="password"
         />
       </Field>
-      <Button disabled={pending} type="submit">
+      <Button pending={pending} type="submit">
         {pending ? "Alterando..." : "Alterar senha"}
       </Button>
     </form>

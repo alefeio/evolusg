@@ -50,7 +50,7 @@ export function SignInForm() {
       <Field htmlFor="password" label="Senha">
         <Input autoComplete="current-password" id="password" name="password" required type="password" />
       </Field>
-      <Button className="w-full" disabled={pending} type="submit">
+      <Button className="w-full" pending={pending} type="submit">
         {pending ? "Entrando..." : "Entrar"}
       </Button>
     </form>

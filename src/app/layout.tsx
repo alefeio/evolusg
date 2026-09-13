@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "EvolUSG",
-  description: "Fundação de identidade do EvolUSG.",
+  title: "evolUSG",
+  description: "Fundação de identidade do evolUSG.",
   icons: {
+    // PENDING BRAND ASSET: símbolo oficial isolado para favicon.
+    // Temporariamente usa a logomarca completa aprovada.
     icon: "/brand/evolusg-logo.png",
   },
 };
@@ -13,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body className={`${GeistSans.variable} ${GeistSans.className} antialiased`}>{children}</body>
     </html>
   );
 }

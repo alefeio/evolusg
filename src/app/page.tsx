@@ -14,29 +14,43 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="relative flex min-h-screen overflow-hidden bg-brand-navy text-white">
+    <main className="relative min-h-screen overflow-hidden bg-brand-navy-950 text-text-on-dark">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,_rgba(0,180,255,0.32),_transparent_36%),radial-gradient(circle_at_88%_88%,_rgba(10,42,110,0.7),_transparent_42%)]"
+        className="pointer-events-none absolute inset-0 opacity-95"
+        style={{ background: "var(--brand-gradient)" }}
       />
-      <div className="relative mx-auto flex w-full max-w-5xl flex-col justify-center px-6 py-16">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-20 top-10 size-80 rounded-full bg-brand-cyan-300/25 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-10 size-72 rounded-full bg-brand-navy-800/50 blur-3xl"
+      />
+
+      <div className="relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-16 text-center">
         <BrandLogo priority size="lg" />
-        <p className="mt-8 text-xs font-medium uppercase tracking-[0.28em] text-brand-cyan">
+        <p className="mt-10 text-xs font-semibold uppercase tracking-[0.22em] text-brand-cyan-300">
           Plataforma de laudos
         </p>
-        <h1 className="mt-4 max-w-2xl text-5xl font-semibold leading-tight tracking-tight">
-          Identidade da plataforma
+        <h1 className="mt-4 max-w-2xl text-[1.875rem] font-semibold leading-tight tracking-tight md:text-4xl">
+          Identidade e acesso à plataforma
         </h1>
-        <p className="mt-5 max-w-xl text-base leading-7 text-white/75">
-          Esta sprint constrói apenas o acesso à conta: cadastro controlado, verificação de e-mail,
-          sessão e configurações básicas. Os módulos clínicos serão disponibilizados posteriormente.
+        <p className="mt-5 max-w-xl text-base leading-7 text-white/80">
+          Cadastro controlado, verificação de e-mail, sessão e configurações básicas da conta. Os
+          módulos clínicos serão disponibilizados posteriormente.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/entrar">
             <Button type="button">Entrar</Button>
           </Link>
           <Link href="/cadastro">
-            <Button className="border-white/25 bg-white text-brand-navy hover:bg-brand-ice" type="button" variant="secondary">
+            <Button
+              className="border-white/25 bg-white text-brand-navy-950 hover:bg-surface-soft"
+              type="button"
+              variant="secondary"
+            >
               Criar conta
             </Button>
           </Link>
