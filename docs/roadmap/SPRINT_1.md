@@ -183,74 +183,72 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 **Status operacional:** `NOT PILOT READY`
 
-A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado nesta gate.
+A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado nesta gate. Brand/UI Foundation está consolidada em `main` (`ca016e1`, PR #3) e **sincronizada** na branch operacional do piloto.
+
+### Sincronização com main (Brand/UI)
+
+- Branch: `pilot/identity-preview`
+- Merge: `0e511e6` — `merge: sync pilot preview with latest main` (Brand/UI de `main` prevaleceu; conflito só em `.gitignore`, resolvido preservando ignores locais)
+- Preview Git Ready após push: deployment `evolusg-pe2zxww9z-…` com alias `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
+- Identidade visual final (tokens, AuthShell, AppShell, logo) **presente no código** do Preview; inspeção anônima da UI **bloqueada por SSO** (302 → login Vercel)
 
 ### Fato de deploy Production
 
-- Merge em `main` dispara deploy Git automático de **Production** (confirmado pelos deploys Ready recentes). Isto é um fato do projeto; **nenhum** modelo de branch/deploy foi alterado nesta rodada.
+- Merge em `main` dispara deploy Git automático de **Production**. Isto é um fato do projeto; **nenhum** modelo de branch/deploy foi alterado nesta rodada.
 - Este agente **não** executou `vercel --prod`, **não** promoveu Preview e **não** alterou env/migrate/usuários de Production.
+- A branch `pilot/identity-preview` **não** foi mergeada em `main`.
 
 ### Host Preview estável do piloto
 
-- Branch operacional dedicada: `pilot/identity-preview` (a partir de `main`, só docs/operacional; sem Sprint 2).
-- Alias Git Preview esperado: `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
-- Alias estável pré-existente (fallback): `https://evolusg-git-chore-pilot-operational-readiness-alefeios-projects.vercel.app` (SHA `06fed6b`, Ready).
-- Production / domínio customizado (`evolusg.com.br`, `www.evolusg.com.br`, `evolusg.vercel.app`) **não** deve ser usado para smoke do piloto.
+- Alias Git Preview: `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
+- Production / domínio customizado **não** deve ser usado para smoke do piloto.
 
 ### Runtime PostgreSQL
 
-- Runtime da aplicação: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (`src/lib/db/urls.ts`). Merge: PR #2, commit `06fed6b`, merge commit `a754053`.
-- Preview: `RUNTIME_DATABASE_URL` presente no projeto (secret; não puxável via `vercel env run` sem arquivo local). Classificação herdada: `PREVIEW RUNTIME POOLED = PASSED` (auditorias anteriores).
-- `DATABASE_URL` / `POSTGRES_URL` presentes (secrets); migrations usam direct. `RUNTIME_DATABASE_URL` não participa do migrate.
-- `PRISMA_DATABASE_URL`: `UNUSED BY CURRENT RUNTIME` (não removida).
-- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview (`vercel env run -e preview` em cwd limpo). `LOCAL EMAIL CAPTURE = DISABLED`.
-- Várias variáveis críticas (`RUNTIME_DATABASE_URL`, `DATABASE_URL`, `POSTGRES_URL`, `BETTER_AUTH_URL`, allowlist, Resend) estão hoje ligadas a **Preview + Production** no mesmo registro. Qualquer valor dedicado ao piloto deve ser **branch-scoped** (`--git-branch`) ou registros separados — **nunca** sobrescrever o valor compartilhado de Production.
+- Runtime: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (código em `main` / piloto sincronizado).
+- `RUNTIME_DATABASE_URL` presente no projeto (secret). Classificação herdada: `PREVIEW RUNTIME POOLED = PASSED`.
+- Migrations: `DIRECT_URL || POSTGRES_URL || DATABASE_URL` — `RUNTIME_DATABASE_URL` não participa.
+- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview. `LOCAL EMAIL CAPTURE = DISABLED`.
+- Preferir env **branch-scoped** (`pilot/identity-preview`) para valores exclusivos do piloto — **nunca** sobrescrever o valor compartilhado de Production.
 
 ### Banco Preview
 
 - Classificação: `PREVIEW SHARES DEVELOPMENT DATABASE` — **não aceitável para piloto real**.
-- `PREVIEW DATABASE TOPOLOGY = INVALID FOR PILOT` (ainda compartilha Development; dedicated Preview DB **não** criado nesta rodada).
-- CLI Prisma (`prisma postgres` / `bootstrap`) **não** cria banco novo sem Workspace API key + database id existentes. **OWNER ACTION REQUIRED — CREATE PREVIEW DATABASE**.
-- Migration `20260910200000_auth_foundation`: aplicada no banco compartilhado Development. `prisma migrate deploy` **não** foi executado nesta rodada (sem dedicated Preview).
-- `DATABASE_ENV=preview` e `VERCEL_ENV=preview` confirmados via `vercel env run -e preview` em diretório limpo. `PILOT_REGISTRATION_ENABLED=true`.
+- `PREVIEW DATABASE TOPOLOGY = INVALID FOR PILOT`.
+- **OWNER ACTION REQUIRED — CREATE PREVIEW DATABASE** (Prisma Postgres dedicado → pooled + direct da mesma DB → Vercel Preview/`--git-branch`): `RUNTIME_DATABASE_URL`, `POSTGRES_URL`, `DATABASE_ENV=preview`; deixar `DATABASE_URL` gerenciada intacta; **não** alterar Production.
+- `prisma migrate deploy` **não** executado nesta rodada (sem dedicated Preview).
 
 ### Deployment Protection
 
-- `ssoProtection.deploymentType = all_except_custom_domains` (Standard Protection). Preview `*.vercel.app` exige SSO da Vercel (302 → `vercel.com/sso-api` nos aliases Preview testados).
-- Lista API de exceptions: `exceptions: []`. Tentativa de criar exception via API para o alias operacional: **404** (sem entitlement Advanced Deployment Protection / sem POST suportado no plano atual).
-- Deployment Protection Exceptions exigem **Enterprise** ou **Pro + Advanced Deployment Protection** (add-on). **OWNER ACTION REQUIRED — DEPLOYMENT PROTECTION EXCEPTION** (dashboard) para **somente** o host piloto estável; manter demais Previews protegidos; Production intacta.
-- Alternativa se Exception indisponível: Shareable Link (query efêmera) — **pior** para links Resend; só fallback.
-- CLI `vercel project protection disable --sso` **não** executado (abriria `*.vercel.app` do projeto, risco de Production).
-- Domínio customizado público permanece superfície de Production — **não** usado para smoke.
-- Existe `automation-bypass` de projeto (para agentes/CI). **Não** é para a Dra. Karen. Recomendação: **rotacionar/remover** se não houver uso contínuo de automação. Nunca colocar o valor em código ou relatórios.
+- Preview anônimo: **302 → `vercel.com/login` (SSO)**. `PILOT PREVIEW PUBLIC EXCEPTION` **não** atingido.
+- CLI não oferece subcomando `protection` seguro para Exception só no host piloto. Tentativas API anteriores: sem entitlement Advanced Deployment Protection.
+- **OWNER ACTION REQUIRED — PREVIEW PROTECTION EXCEPTION**
+  - Vercel Dashboard → Project `evolusg` → Settings → Deployment Protection
+  - Adicionar **Exception** **somente** para `evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
+  - Resultado esperado: host piloto abre a app sem login Vercel; demais `*.vercel.app` Preview continuam com SSO; Production intacta
+  - Se Exception exigir add-on Pro/Enterprise: ativar Advanced Deployment Protection ou equivalente
+- Alternativa pior para Resend: Shareable Link (query efêmera).
+- `automation-bypass`: **não** para a Dra. Karen; rotacionar/remover se ocioso.
 
 ### Better Auth / Resend
 
-- Config compartilhada Preview+Production de `BETTER_AUTH_URL` continua = `evolusg.com.br` (Production intacta).
-- **Branch-scoped** `BETTER_AUTH_URL` para `pilot/identity-preview` = `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` (Config; sem wildcard). Redeploy Preview Ready após o set (`evolusg-7a2qxj7k5-…`).
-- `trustedOrigins`: hoje `[baseURL]` (`src/lib/auth/options.ts`). Sem smoke CSRF no host piloto ainda (SSO); **sem** wildcard; correção mínima só se CSRF aparecer após Exception + smoke.
-- `EMAIL_FROM` classifica domínio `evolusg.com.br`. Secrets Resend presentes no projeto (não puxáveis em cwd limpo). Allowlist Preview: **2** endereços `CONSUMER_OR_PILOT` — **sem** candidato `smoke`/`+tag`/`test` dedicado. **OWNER ACTION REQUIRED — PROVIDE CONTROLLED SMOKE INBOX**.
-- Delivery real de verificação/reset: **não comprovado**.
+- Branch-scoped `BETTER_AUTH_URL` para `pilot/identity-preview` = host do alias Git piloto (Config).
+- `trustedOrigins`: `[baseURL]` — sem wildcard; CSRF não testável sob SSO.
+- `RESEND_API_KEY` / `EMAIL_FROM` presentes no projeto. Delivery real: **não comprovado**.
+- **OWNER ACTION REQUIRED — PROVIDE CONTROLLED SMOKE INBOX** (não usar a caixa da Dra. Karen no smoke).
 
 ### Smoke sintético
 
 | Fluxo | Resultado |
 |---|---|
-| Preview anônimo (browser sem SSO) | `BLOCKED` (SSO Vercel) |
-| App HTML via bypass autenticado (`vercel curl`) | alcançável (rodadas anteriores) |
-| Cadastro não autorizado (API Preview + bypass) | `PASSED` (rodada anterior; `403 REGISTRATION_NOT_ALLOWED`) |
-| Cadastro autorizado + Resend + verificação + login + sessão + logout + reset | `BLOCKED` — sem Exception no host piloto; sem inbox smoke controlado; sem dedicated Preview DB; não usar e-mail da Dra. Karen; não operar em Production |
-
-### Trabalho local fora desta gate
-
-- Stash `wip: local UX/logo design pass` (BrandLogo / `public/brand` / home/auth styles) mantido **separado** — **não** misturado nos commits desta gate.
-- `next-env.d.ts` auto-gerado revertido quando lixo de path `.next/dev`.
+| Sync Brand/UI no Preview | código presente; UI anônima `BLOCKED` (SSO) |
+| Preview anônimo | `BLOCKED` (SSO Vercel) |
+| Cadastro permitido / Resend / verify / login / sessão / logout / reset | `BLOCKED` — Exception + DB dedicada + inbox |
 
 ### Próximas ações do proprietário (bloqueiam `PILOT READY`)
 
-1. **CREATE PREVIEW DATABASE** (Prisma Postgres dedicado) → obter URLs pooled + direct da **mesma** DB → setar Preview (preferencialmente `--git-branch pilot/identity-preview`): `RUNTIME_DATABASE_URL` (pooled), `POSTGRES_URL` (direct), `DATABASE_ENV=preview`; **não** alterar Production; deixar `DATABASE_URL` gerenciada intacta se aplicável.
-2. Após (1): `prisma migrate deploy` **somente** via direct na dedicated Preview, com checagens de segurança.
-3. **DEPLOYMENT PROTECTION EXCEPTION** no dashboard para **somente** `evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` (ou confirmar entitlement Advanced Deployment Protection). Não desproteger Production nem todos os Previews.
-4. **PROVIDE CONTROLLED SMOKE INBOX** e incluir em `PILOT_ALLOWED_EMAILS` do Preview/branch piloto (não a caixa pessoal da Dra. Karen para smoke automatizado).
-5. Alinhar `BETTER_AUTH_URL` branch-scoped ao host da exception; redeploy Preview; só então smoke completo.
-6. Conta da Dra. Karen: `MANUAL USER ACTION REQUIRED` (não criar senha/conta por agente; não adicioná-la ao time Vercel só para usar o app).
+1. **CREATE PREVIEW DATABASE** + envs branch-scoped + `prisma migrate deploy` (direct).
+2. **PREVIEW PROTECTION EXCEPTION** só no alias piloto.
+3. **CONTROLLED SMOKE INBOX** na allowlist Preview/branch.
+4. Redeploy + smoke completo.
+5. Dra. Karen: `MANUAL USER ACTION REQUIRED` após `PILOT READY` (própria senha/conta).
