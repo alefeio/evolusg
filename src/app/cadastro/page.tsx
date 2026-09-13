@@ -14,13 +14,13 @@ export default async function SignUpPage() {
 
   return (
     <AuthShell
-      description="O cadastro do piloto é restrito. Informe apenas nome, e-mail e senha."
+      description="Preencha seus dados para acessar o evolUSG."
       footer={
         <p>
           Já tem conta? <AuthLink href="/entrar">Entrar</AuthLink>
         </p>
       }
-      title="Criar conta"
+      title="Crie sua conta"
     >
       <SignUpForm />
     </AuthShell>

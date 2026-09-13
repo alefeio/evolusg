@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "evolUSG",
-  description: "Fundação de identidade do evolUSG.",
+  description: "Plataforma para médicos ultrassonografistas.",
   icons: {
     // PENDING BRAND ASSET: símbolo oficial isolado para favicon.
     // Temporariamente usa a logomarca completa aprovada.

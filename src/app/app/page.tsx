@@ -9,14 +9,13 @@ export default async function AppHomePage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        description="Esta área existe para identidade e acesso. Os módulos clínicos serão disponibilizados posteriormente."
-        eyebrow="Área autenticada"
+        description="Bem-vindo ao evolUSG."
         title={`Olá, ${session.user.name}`}
       />
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <h2 className="text-lg font-semibold text-text-primary">Estado da conta</h2>
+          <h2 className="text-lg font-semibold text-text-primary">Sua conta</h2>
           <dl className="mt-4 space-y-3 text-sm">
             <div>
               <dt className="text-text-secondary">E-mail</dt>
@@ -32,15 +31,14 @@ export default async function AppHomePage() {
         </Card>
 
         <Card>
-          <h2 className="text-lg font-semibold text-text-primary">Ambiente em preparação</h2>
+          <h2 className="text-lg font-semibold text-text-primary">Minha conta</h2>
           <p className="mt-3 text-sm leading-6 text-text-secondary">
-            Pacientes, exames, laudos e protocolos ainda não fazem parte desta fundação. Enquanto
-            isso, você pode revisar os dados de acesso na conta.
+            Atualize seus dados de acesso, senha e sessões quando precisar.
           </p>
           <div className="mt-5">
             <Link href="/app/conta">
               <Button type="button" variant="secondary">
-                Abrir configurações da conta
+                Minha conta
               </Button>
             </Link>
           </div>

@@ -41,16 +41,16 @@ export function AuthShell({
               evolUSG
             </p>
             <p className="text-2xl font-semibold leading-snug tracking-tight text-text-on-dark">
-              Tecnologia para uma prática ultrassonográfica mais inteligente.
+              Tecnologia para uma prática ultrassonográfica mais eficiente
             </p>
             <p className="text-sm leading-6 text-white/75">
-              Acesso seguro à conta. Os módulos clínicos serão disponibilizados em etapas
-              posteriores.
+              O evolUSG é uma plataforma desenvolvida para apoiar médicos ultrassonografistas com
+              mais organização, precisão e agilidade na rotina profissional.
             </p>
           </div>
         </div>
 
-        <p className="relative z-10 text-xs text-white/55">Identidade e acesso · Fundação</p>
+        <p className="relative z-10 text-xs text-white/55">evolUSG</p>
       </aside>
 
       <main className="flex min-h-screen flex-col justify-center px-4 py-10 sm:px-8">

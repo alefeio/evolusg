@@ -20,8 +20,7 @@ export default async function AccountPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        description="Dados de acesso à plataforma. Dados profissionais não fazem parte desta etapa."
-        eyebrow="Identidade"
+        description="Gerencie seus dados de acesso, senha e sessões."
         title="Conta"
       />
 
@@ -32,7 +31,7 @@ export default async function AccountPage() {
         <Card>
           <h3 className="text-base font-semibold text-text-primary">Nome</h3>
           <p className="mb-4 mt-1 text-sm text-text-secondary">
-            Nome básico da conta, não o perfil médico.
+            Nome exibido na sua conta.
           </p>
           <UpdateNameForm currentName={session.user.name} />
         </Card>
@@ -42,8 +41,8 @@ export default async function AccountPage() {
             Atual: <span className="break-all font-medium text-text-primary">{session.user.email}</span>
           </p>
           <p className="mb-4 text-sm text-text-secondary">
-            Status: {verified ? "verificado" : "não verificado"}. A troca exige confirmação e não
-            substitui o endereço sem verificação.
+            Status: {verified ? "verificado" : "não verificado"}. A troca exige confirmação no
+            endereço atual e no novo e-mail.
           </p>
           <UpdateEmailForm currentEmail={session.user.email} />
         </Card>
