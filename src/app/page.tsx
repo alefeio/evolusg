@@ -31,15 +31,12 @@ export default async function HomePage() {
 
       <div className="relative flex min-h-screen w-full flex-col items-center justify-center px-6 py-16 text-center">
         <BrandLogo priority size="lg" />
-        <p className="mt-10 text-xs font-semibold uppercase tracking-[0.22em] text-brand-cyan-300">
-          Plataforma de laudos
-        </p>
-        <h1 className="mt-4 max-w-2xl text-[1.875rem] font-semibold leading-tight tracking-tight md:text-4xl">
-          Identidade e acesso à plataforma
+        <h1 className="mt-10 max-w-2xl text-[1.875rem] font-semibold leading-tight tracking-tight md:text-4xl">
+          Tecnologia para uma prática ultrassonográfica mais eficiente
         </h1>
         <p className="mt-5 max-w-xl text-base leading-7 text-white/80">
-          Cadastro controlado, verificação de e-mail, sessão e configurações básicas da conta. Os
-          módulos clínicos serão disponibilizados posteriormente.
+          O evolUSG é uma plataforma desenvolvida para apoiar médicos ultrassonografistas com mais
+          organização, precisão e agilidade na rotina profissional.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link href="/entrar">

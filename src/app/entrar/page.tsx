@@ -22,7 +22,7 @@ export default async function SignInPage({
 
   return (
     <AuthShell
-      description="Entre com e-mail e senha. O endereço precisa estar verificado."
+      description="Acesse o evolUSG com seu e-mail e senha."
       footer={
         <p>
           Não tem conta? <AuthLink href="/cadastro">Criar conta</AuthLink>

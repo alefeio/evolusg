@@ -110,14 +110,22 @@ Logomarca oficial: `public/brand/evolusg-logo.png` (fundo transparente). Não re
 
 Favicon dedicado (somente símbolo): `PENDING BRAND ASSET` — não bloquear merge; não recortar o símbolo da logomarca automaticamente.
 
-Home pública: conteúdo (logo + texto + CTAs) centralizado na viewport (horizontal e vertical).
+Home pública atual (`/`): entrada simples com marca e CTAs de acesso.  
+`PUBLIC MARKETING LANDING PAGE — FUTURE PRODUCT SCOPE` — não implementada nesta fundação.
+
+Arquitetura de produto futura prevista:
+
+- `/` → Landing Page pública (proposta de valor, público, benefícios, funcionamento, recursos, segurança, planos, FAQ, CTA comercial)
+- `/entrar` → Login
+- `/cadastro` → Cadastro
+- `/app` → Aplicação autenticada
 
 ## App shell
 
 - Sidebar navy `#011B4B` (~240–260px) com logo, Início, Conta e área inferior.
 - Topbar leve: título da página + identificação + sair.
 - Mobile: drawer/menu.
-- `/app`: boas-vindas reais (nome, estado da conta) — sem dashboard clínico fictício.
+- `/app`: boas-vindas profissionais (nome, estado da conta) — sem dashboard clínico fictício e sem microcopy de roadmap/piloto.
 - `/app/conta`: seções Identidade, Segurança, Sessões.
 
 ## Densidade futura
