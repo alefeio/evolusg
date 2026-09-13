@@ -13,7 +13,7 @@ export default async function VerifyEmailPage({
 
   let message: { tone: "success" | "error" | "info"; text: string } = {
     tone: "info",
-    text: "Confirme o endereço pelo link enviado ao seu e-mail antes de entrar.",
+    text: "Enviamos uma mensagem para o endereço informado. Acesse seu e-mail e siga as instruções para confirmar sua conta.",
   };
 
   if (params.enviado) {
@@ -25,18 +25,19 @@ export default async function VerifyEmailPage({
   } else if (!error && params.error === undefined) {
     message = {
       tone: "info",
-      text: "Se o link de verificação for válido, sua conta será confirmada. Depois disso, entre com e-mail e senha.",
+      text: "Enviamos uma mensagem para o endereço informado. Acesse seu e-mail e siga as instruções para confirmar sua conta.",
     };
   }
 
   return (
     <AuthShell
+      description="Confirme seu e-mail para concluir o acesso à sua conta."
       footer={
         <p>
           Já confirmou? <AuthLink href="/entrar">Entrar</AuthLink>
         </p>
       }
-      title="Verificar e-mail"
+      title="Confirme seu e-mail"
     >
       <div className="space-y-4">
         <Alert tone={message.tone}>{message.text}</Alert>

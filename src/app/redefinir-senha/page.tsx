@@ -33,7 +33,7 @@ export default async function ResetPasswordPage({
 
   return (
     <AuthShell
-      description="Escolha uma nova senha. Depois será necessário entrar novamente."
+      description="Escolha uma nova senha para acessar o evolUSG."
       footer={
         <p>
           <AuthLink href="/entrar">Voltar ao login</AuthLink>

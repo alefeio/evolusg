@@ -19,7 +19,7 @@ export const AUTH_MESSAGES = {
   expiredToken: "Este link expirou. Solicite um novo.",
   rateLimited: "Muitas tentativas. Aguarde um pouco e tente novamente.",
   emailNotConfigured:
-    "O envio de e-mail ainda não está configurado neste ambiente.",
+    "Não foi possível enviar o e-mail neste momento. Tente novamente mais tarde.",
   sessionsRevoked: "As demais sessões foram encerradas.",
   sessionRevoked: "Sessão encerrada.",
   loggedOut: "Sessão encerrada.",
