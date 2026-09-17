@@ -21,7 +21,10 @@ export function createResendSender(input: {
       });
 
       if (result.error) {
-        throw new Error("EMAIL_SEND_FAILED");
+        const { name, message } = result.error;
+        throw new Error(
+          `EMAIL_SEND_FAILED: ${[name, message].filter(Boolean).join(" — ")}`,
+        );
       }
     },
   };

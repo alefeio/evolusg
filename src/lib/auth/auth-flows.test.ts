@@ -130,6 +130,50 @@ describe("authentication flows", () => {
     ).rejects.toThrow();
   });
 
+  it("consumes the verification token so reuse cannot re-verify or sign anyone in", async () => {
+    const { auth, inbox, store } = createMemoryAuth();
+    await signUpAllowed(auth);
+    const token = extractTokenFromEmail(inbox.find((item) => item.subject.includes("Confirme"))!);
+    expect(token).toBeTruthy();
+
+    await auth.api.verifyEmail({ query: { token: token! } });
+    expect(store.user[0]).toMatchObject({ emailVerified: true });
+    expect(store.verification).toHaveLength(0);
+
+    await auth.api.verifyEmail({ query: { token: token! } });
+    expect(store.verification).toHaveLength(0);
+    expect(store.session).toHaveLength(0);
+  });
+
+  it("rejects a reset token reused after the password was changed", async () => {
+    const { auth, inbox } = createMemoryAuth();
+    await signUpAllowed(auth);
+    await verifyLatest(inbox, auth);
+
+    await auth.api.requestPasswordReset({
+      body: { email: allowed, redirectTo: "/redefinir-senha" },
+    });
+    const resetToken = extractTokenFromEmail(
+      inbox.find((item) => item.subject.includes("Redefinir"))!,
+    );
+    expect(resetToken).toBeTruthy();
+
+    await auth.api.resetPassword({
+      body: { newPassword: "password-ok-4", token: resetToken! },
+    });
+
+    await expect(
+      auth.api.resetPassword({
+        body: { newPassword: "password-ok-5", token: resetToken! },
+      }),
+    ).rejects.toThrow();
+
+    const stillWorks = await auth.api.signInEmail({
+      body: { email: allowed, password: "password-ok-4" },
+    });
+    expect(stillWorks.token).toBeTruthy();
+  });
+
   it("rejects the wrong password without a session", async () => {
     const { auth, inbox } = createMemoryAuth();
     await signUpAllowed(auth);
