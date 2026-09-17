@@ -14,3 +14,6 @@ src/generated
 .vercel
 npm-debug.log*
 .local-pilot-gate/
+
+# Local operational gate scratch (never commit)
+.local-*.png

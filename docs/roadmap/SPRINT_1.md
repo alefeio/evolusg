@@ -1,11 +1,11 @@
 # Sprint 1 — Fundação e autenticação
 
-**Status:** `ACCEPTED WITH OPERATIONAL PENDENCIES`  
+**Status:** `ACCEPTED WITH OPERATIONAL PENDENCIES` · `SPRINT 1 = COMPLETED FOR PILOT` · `PILOT IDENTITY/ACCESS GATE = PASSED`  
 **Descoberta clínica (Sprint 0):** continua **em paralelo** e **não está encerrada**.
 
-A Sprint 1 foi **aceita tecnicamente**. Pendências restantes são de configuração externa (Vercel, pooler, Resend/domínio, e-mail real do piloto) e **não** de código da fundação. A Sprint 2 **não** foi iniciada.
+A Sprint 1 foi **aceita tecnicamente** e, após o QA funcional humano, está **fechada para o piloto**: fundação, autenticação, UI, e-mail transacional e QA manual foram validados. A Sprint 2 **não** foi iniciada.
 
-> Estas pendências não bloqueiam o merge técnico da Sprint 1, mas bloqueiam o início do piloto com a Dra. Karen.
+> As pendências operacionais originais foram resolvidas ou reclassificadas como hardening. Pendências de hardening **não** reabrem a Sprint 1.
 
 ## Objetivo
 
@@ -181,59 +181,251 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 ## Pilot Operational Readiness
 
-**Status operacional:** `NOT PILOT READY`
+**Status operacional:** `QA FUNCTIONAL APPROVED` (ambiente liberado em `QA FUNCTIONAL READY`; QA manual concluído pelo proprietário)
 
-A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico foi implementado.
+A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES` e está `COMPLETED FOR PILOT`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen: `PILOT USER READY — FICTIONAL DATA ONLY`.
 
-Revalidação (HEAD `1b0d9db` = `origin/main`): o fix pooled e o merge do PR #2 já estão em `main`. Não foi recriada branch/PR. Working tree local só com `next-env.d.ts` auto-gerado (não commitado).
+### Temporary Shared Database Strategy
 
-### Runtime PostgreSQL
+Decisão consciente do proprietário para a fase de desenvolvimento e piloto fictício:
 
-- Runtime da aplicação: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (`src/lib/db/urls.ts`). Merge: PR #2, commit `06fed6b`, merge commit `a754053`.
-- Preview: `RUNTIME_DATABASE_URL` presente (secret) e classificada pooled nas auditorias anteriores. Classificação: `PREVIEW RUNTIME POOLED = PASSED`.
-- `DATABASE_URL` / `POSTGRES_URL` presentes (secrets); migrations usam direct. `RUNTIME_DATABASE_URL` não participa do migrate.
-- `PRISMA_DATABASE_URL`: `UNUSED BY CURRENT RUNTIME` (não removida).
-- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview (cwd limpo, sem overlay de `.env` local). `LOCAL EMAIL CAPTURE = DISABLED`.
+- Preview e o deploy Production existente **compartilham temporariamente** o banco atual (o único recurso Prisma Postgres vinculado ao projeto).
+- Vale **somente** enquanto: não houver pacientes reais, exames reais, laudos reais nem operação comercial; todo teste clínico é fictício.
+- A ausência de banco Preview dedicado **não** é mais blocker para o QA funcional nem para o piloto inicial com dados fictícios.
+- Proibido nesta fase: dados de pacientes reais, exames reais, laudos reais, dados clínicos identificáveis de terceiros.
+- Proibido operacionalmente: `reset`, `drop`, `truncate`, limpeza global, `db push` destrutivo. Usuários de QA/piloto podem existir no banco.
+- Esta decisão é interna e **não** aparece na interface do usuário.
 
-### Banco Preview
+### FUTURE GATE
 
-- Classificação: `PREVIEW SHARES DEVELOPMENT DATABASE` (auditoria anterior). Não destruir nem recriar.
-- Migration `20260910200000_auth_foundation`: `MIGRATION ALREADY APPLIED`. `prisma migrate deploy` não foi reexecutado nesta rodada.
-- `DATABASE_ENV=preview` e `VERCEL_ENV=preview` confirmados via `vercel env run -e preview` em diretório limpo (sem `.env` local). `PILOT_REGISTRATION_ENABLED=true`.
+`PRODUCTION DATABASE ISOLATION — REQUIRED BEFORE REAL CLINICAL USE`
+
+Antes de qualquer uso clínico real ou lançamento comercial, Production deve ser separado do banco de testes (banco próprio, conexões pooled/direct próprias, `DATABASE_ENV` distinto). **Não** implementado agora, por decisão de fase.
+
+### Sincronização com main (produto + Brand/UI)
+
+- Branch: `pilot/identity-preview`
+- Merge recente: `658fa50` — `merge: sync pilot preview with latest main product copy` (inclui microcopy de produto PR #4 e remoção do rótulo redundante sob a logo PR #5 / `6fd04cf` em `main`)
+- Gates pós-sync: lint ✅ · typecheck ✅ · unit **41** · integration **2** · build ✅
+- Preview Git Ready no alias estável da branch piloto (deployments individuais são efêmeros e não são registrados aqui)
+
+### Fato de deploy Production
+
+- Merge em `main` dispara deploy Git automático de **Production**. Isto é um fato do projeto; **nenhum** modelo de branch/deploy foi alterado nesta rodada.
+- Este agente **não** executou `vercel --prod`, **não** promoveu Preview e **não** alterou env/migrate/usuários de Production.
+- A branch `pilot/identity-preview` **não** foi mergeada em `main`.
+
+### Host Preview estável do piloto
+
+- Alias Git Preview: `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
+- Production / domínio customizado **não** deve ser usado para QA do piloto.
 
 ### Deployment Protection
 
-- `ssoProtection.deploymentType = all_except_custom_domains` (Standard Protection). Preview `*.vercel.app` exige SSO da Vercel.
-- CLI `vercel project protection disable --sso` desativaria SSO do **projeto inteiro**, incluindo URLs `*.vercel.app` de Production. **Não executado** (não abrir Production).
-- Não há ação CLI segura para “só Preview”. Ajuste granular exige dashboard do proprietário.
-- Domínio customizado público responde 200 (exceção do modo `all_except_custom_domains`). Tratado como superfície de Production — **não** usado para smoke/cadastro nesta rodada.
-- `vercel curl` gerou `automation-bypass` (secret de projeto, `isEnvVar=true`) para o agente alcançar páginas do Preview. SSO de browser **permanece**. Rotacionar/revisar o bypass no dashboard se desejado.
+- Proprietário confirmou Exception no host piloto.
+- Revalidação anônima: host piloto **HTTP 200** (app do evolUSG; sem login Vercel). Preview efêmero comum: **HTTP 302 → SSO Vercel**.
+- Classificação: `PILOT PREVIEW PUBLIC EXCEPTION = PASSED`
+- Deployment Protection global e Production **não** foram alterados nesta rodada.
 
-### Preview deployments
+### Runtime PostgreSQL
 
-- Git Preview SHA `06fed6b` (branch operacional): Ready; SSO no acesso anônimo.
-- Preview com merge `a754053`: Ready; SSO no acesso anônimo.
-- Production: deploys Git automáticos após merge em `main` (incl. docs). Este agente **não** executou `vercel --prod`, **não** promoveu Preview e **não** alterou env/migrate/usuários de Production.
+- Runtime: `RUNTIME_DATABASE_URL ?? DATABASE_URL` (código em `main` / piloto sincronizado).
+- `RUNTIME_DATABASE_URL` listada no projeto (secret Preview+Production). Classificação herdada de host pooled: `PREVIEW RUNTIME POOLED = PASSED` (reconfirmação de fingerprint bloqueada — pull de secrets não autorizado nesta sessão).
+- Migrations: `DIRECT_URL || POSTGRES_URL || DATABASE_URL` — `RUNTIME_DATABASE_URL` não participa.
+- Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview (cwd limpo). `LOCAL EMAIL CAPTURE = DISABLED`.
+- Preferir env **branch-scoped** (`pilot/identity-preview`) para valores exclusivos do piloto — **nunca** sobrescrever Production.
+
+### Inventário do banco (auditoria por metadados)
+
+- Recursos Prisma Postgres ligados ao projeto: **1** (status `available`). Os demais recursos da conta pertencem a outros projetos.
+- `vercel env ls --json`: `DATABASE_URL`, `POSTGRES_URL`, `PRISMA_DATABASE_URL`, `RUNTIME_DATABASE_URL` e `DATABASE_ENV` são **registros únicos** com alvo `preview + production` → mesmo valor, mesmo banco. Nenhuma variável de banco é branch-scoped.
+- Ambiente Development na Vercel: sem variáveis. Desenvolvimento local usa `.env` com `DATABASE_ENV=development`.
+- Connection strings são do tipo `sensitive`; a CLI não as expõe e nenhum valor foi lido/registrado.
+- Classificação aceita nesta fase: `SHARED DATABASE — TEMPORARILY ACCEPTED BY OWNER`.
+- Região/data de criação do recurso: não expostas pela CLI (verificar no Prisma Console se necessário).
+
+### Estrutura do banco (sem migrar)
+
+- `prisma migrate status`: **1 migration** encontrada, `Database schema is up to date!` — nada pendente.
+- Migration da Sprint 1/auth: `20260910200000_auth_foundation` (`user`, `session`, `account`, `verification` + índices e FKs).
+- **Nenhuma** migration foi executada nesta tarefa. Sem `db push`, reset, drop ou truncate.
 
 ### Better Auth / Resend
 
-- `BETTER_AUTH_URL` no Preview classifica como domínio customizado do produto (não `localhost`, não `*.vercel.app`).
-- `RESEND_API_KEY` e `EMAIL_FROM` presentes. Allowlist Preview: 2 endereços (caixas consumer); um marcador compatível com identidade do piloto — **não** usado para escolher senha. Sem candidato dedicado `smoke`/`+tag`/`test`.
-- Delivery real de verificação/reset: **não comprovado** nesta rodada.
+- Branch-scoped `BETTER_AUTH_URL` para `pilot/identity-preview` = host do alias Git piloto (`*.vercel.app` do piloto; não localhost; não Production/`evolusg.com.br`).
+- `trustedOrigins`: `[baseURL]` — sem wildcard amplo.
+- `/app` anônimo no Preview: **307 → `/entrar?next=%2Fapp`** (proteção de rota operante).
+- Cadastro fora da allowlist no Preview: **HTTP 403 `REGISTRATION_NOT_ALLOWED`** com endereço sintético `.test` (sem envio a terceiros).
+- `RESEND_API_KEY` / `EMAIL_FROM` presentes (listagem Vercel).
+- Incidente corrigido: `EMAIL_FROM` apontava para o domínio raiz, **não verificado** no Resend, e todo envio falhava com `403 validation_error` → `EMAIL_SEND_FAILED`. O domínio verificado é o subdomínio de envio; `EMAIL_FROM` foi atualizado para um remetente nesse subdomínio, no registro compartilhado (Preview + Production, registro único preservado) e no `.env` local. Envio de teste pela API do Resend: **HTTP 200 aceito**.
+- `resend-sender.ts` agora propaga nome e mensagem do erro do Resend (commit `ae0c2d1`), em vez de mascarar como código genérico.
+- Preview do piloto redeployado para carregar o novo remetente; alias Git migrado para o deployment novo. Production **não** foi redeployada nem promovida.
+- Delivery real ponta a ponta (verificação/reset pela aplicação): **pendente da validação do QA**.
+- Captura local de e-mail: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview → `LOCAL EMAIL CAPTURE = DISABLED`.
+- `PILOT_REGISTRATION_ENABLED=true`, `DATABASE_ENV=preview`, `VERCEL_ENV=preview` no Preview do piloto.
+- Allowlist do piloto: 2 caixas reais no mesmo domínio; a caixa de QA do proprietário **está presente** (verificação por hash; endereço não registrado aqui).
 
-### Smoke sintético
+### QA funcional
+
+| Item | Estado |
+|---|---|
+| Host piloto público (HTTP 200, sem SSO) | `PASSED` |
+| Branch sincronizada com main (copy/UI final) | `PASSED` |
+| Banco operacional + estrutura auth aplicada | `PASSED` |
+| Topologia compartilhada | `TEMPORARILY ACCEPTED` |
+| Better Auth (proteção de rota + allowlist server-side) | `PASSED` |
+| Resend configurado | `PASSED` (delivery confirmado no QA humano) |
+| Allowlist contém a caixa de QA | `PASSED` |
+| Cadastro/verify/login/reset pelo QA | `PASSED` (execução manual do proprietário) |
+
+**Classificação:** `QA FUNCTIONAL READY` → `QA FUNCTIONAL APPROVED`
+
+- O agente **não** executou cadastro, verificação, login, logout ou reset em nome do QA.
+- Dra. Karen: liberada como `PILOT USER READY — FICTIONAL DATA ONLY` após a aprovação do QA humano (ver seção "Human Functional QA").
+- Todo QA ocorre no host Preview piloto. O domínio Production **não** é usado para testes; sem redeploy, promote ou alteração de env de Production nesta tarefa.
+
+## Functional QA Closure — auditoria técnica
+
+Auditoria somente de leitura, sem tocar a conta de QA (nenhuma senha, token, sessão, verificação manual ou exclusão de usuário).
+
+### Timezone
+
+**Classificação:** `TIMEZONE ISSUE = DISPLAY ONLY`
+
+Evidências:
+
+- Todas as colunas de data do schema são `timestamp without time zone` — padrão do Prisma para `DateTime` em PostgreSQL (`user`, `session`, `account`, `verification`; inclui `expiresAt`).
+- Round-trip medido no driver `pg` a partir de um processo em UTC−3: enviar um `Date`, gravar como `timestamp(3)` e ler de volta devolve **exatamente o mesmo instante** (delta `0 h`). Escrita e leitura usam o mesmo fuso do processo, então a comparação em JavaScript permanece correta.
+- O registro criado pelo Preview corresponde ao horário UTC do log do Better Auth do mesmo instante (`03:57:51Z` no log ↔ `03:57:51` no banco), provando que o runtime da Vercel grava em UTC.
+- A diferença de 3 h observada apareceu somente quando o mesmo registro foi lido por um script local em UTC−3: o texto gravado em UTC é reinterpretado como horário local, deslocando a leitura.
+
+Conclusão em linguagem simples: o banco guarda a hora "sem fuso"; quem escreve e quem lê no mesmo ambiente concorda. O Preview e a Production rodam em UTC, então expiração de token e de sessão é comparada corretamente. Os 3 h eram artefato da leitura feita no computador local.
+
+Consequências registradas (nenhuma bloqueia o piloto):
+
+- `DISPLAY TIMEZONE NORMALIZATION — FUTURE UI CONCERN`: `SessionsPanel` formata `createdAt` com `toLocaleString("pt-BR")`. O primeiro render acontece no servidor (UTC) e o render do cliente usa o fuso do navegador, então a data de sessão pode aparecer em UTC até a hidratação.
+- `TIMESTAMPTZ MIGRATION — HARDENING BACKLOG`: como o banco é compartilhado, um processo local em UTC−3 e o runtime da Vercel em UTC interpretam o mesmo texto de forma diferente. Enquanto o QA e o piloto rodarem apenas no host Preview, não há impacto; misturar dev local e Preview sobre os mesmos tokens produziria janelas de expiração deslocadas em 3 h. Migrar as colunas para `timestamptz` resolve na raiz e fica para depois da Sprint 1.
+
+### URLs dos e-mails
+
+- `BETTER_AUTH_URL` **branch-scoped** para `pilot/identity-preview` = `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` (confirmado por leitura do override da branch). Não é localhost, não é `evolusg.com.br`.
+- Verificação: URL montada pelo Better Auth a partir do `baseURL` → host piloto, com `callbackURL=/verificar-email`.
+- Reset: `${baseURL}/redefinir-senha?token=…` em `createAuthOptions` → host piloto.
+- Observação de higiene, sem efeito no piloto: o registro **Preview + Production** de `BETTER_AUTH_URL` aponta para `evolusg.com.br`. O override da branch tem precedência no host piloto, mas qualquer outra branch de Preview geraria links para o domínio de Production. Backlog: `PREVIEW-WIDE BASE URL — HYGIENE BACKLOG`.
+- Nenhum token foi gerado, lido ou revelado nesta auditoria; a conferência final do link é do QA humano.
+
+### Reenvio de verificação
+
+- `/verificar-email` expõe `ResendVerificationButton`, que chama `authClient.sendVerificationEmail({ email, callbackURL: "/verificar-email" })`.
+- `emailVerification.sendOnSignIn = true`: tentar entrar com a conta ainda não verificada também dispara novo e-mail, com a mensagem "Confirme seu e-mail para entrar…".
+- Um usuário com `emailVerified=false` consegue solicitar novo e-mail sem nenhum bypass. Nada foi marcado como verificado pelo agente.
+
+### Comportamento de tokens (better-auth 1.7.4)
+
+Coberto por testes automatizados em `src/lib/auth/auth-flows.test.ts` (43 unit no total):
+
+- Verificação: token consumido no primeiro uso — o registro sai da tabela `verification` e o reuso **não** re-verifica nem cria sessão (`autoSignInAfterVerification=false`, zero sessões após reuso). O reuso responde de forma idempotente em vez de erro; sem efeito colateral de segurança.
+- Reset: token de uso único — a segunda tentativa com o mesmo token é rejeitada e a senha definida no primeiro uso continua válida.
+- Expiração: 1 h para verificação e 1 h para reset (defaults da biblioteca; o código só sobrescreve nos testes). Token expirado e token inválido são rejeitados, com mensagens "Este link expirou. Solicite um novo." e "Este link é inválido. Solicite um novo.".
+
+### Sessões
+
+- `/app` e `/app/*` passam pelo proxy: sem cookie de sessão → `307` para `/entrar?next=…`.
+- Páginas internas usam `requireSession()`; logout via `authClient.signOut()` invalida a sessão (teste: `getSession` volta `null` com os mesmos cookies).
+- Reset de senha: `revokeSessionsOnPasswordReset: true` — sessões antigas caem, senha antiga é rejeitada, nova senha é aceita.
+- Troca de senha autenticada com `revokeOtherSessions: true` encerra os outros dispositivos e mantém o atual.
+
+### Enumeração de contas
+
+- "Esqueci minha senha" responde sempre "Se o e-mail estiver cadastrado, enviaremos instruções…", independentemente de existir conta.
+- Reenvio de verificação responde "Se o cadastro for possível, enviaremos um e-mail com as próximas instruções.".
+- Login falho é mapeado para "E-mail ou senha inválidos.", sem distinguir usuário inexistente de senha errada.
+- Único sinal intencional: e-mail fora da allowlist recebe "Este e-mail não está autorizado para cadastro neste momento." — inevitável e desejável num piloto por convite.
+
+### Submit / proteção contra reenvio
+
+- `Button` aplica `disabled` e `aria-busy` enquanto `pending`, com rótulo de progresso ("Entrando…", "Enviando…", "Reenviando…", "Salvando…"). Todos os formulários de auth usam esse estado, o que impede duplo clique pela UI.
+- Erros do Resend chegam ao usuário como "Não foi possível enviar o e-mail neste momento. Tente novamente mais tarde." ou mensagem genérica; `mapAuthError` nunca exibe stack ou erro interno.
+- Rate limiting server-side: ativo no Preview (`rateLimit.enabled` segue `NODE_ENV === "production"`), com as regras padrão da biblioteca — 3 requisições/10 s em `/sign-in`, `/sign-up`, `/change-password`, `/change-email` e 3/60 s em `/request-password-reset` e `/send-verification-email`.
+- `AUTH RATE LIMITING — HARDENING BACKLOG`: o armazenamento padrão é em memória, por instância serverless, então a contagem não é compartilhada entre invocações. Não é blocker para um piloto restrito por allowlist; endurecer com armazenamento persistente fica para depois.
+
+### EMAIL_FROM
+
+- Registro **compartilhado Preview + Production** já corrigido para um remetente no subdomínio verificado do Resend, confirmado na leitura do escopo do Preview.
+- O Preview do piloto já foi redeployado e usa o novo remetente.
+- Production **não** foi redeployada nesta tarefa: o deployment atual continua com o remetente antigo até o próximo deploy, que herdará automaticamente o valor corrigido. Comportamento conhecido e esperado, não surpresa futura.
+
+### Status
+
+| Item | Estado |
+|---|---|
+| Timezone | `DISPLAY ONLY` |
+| Verification URL | host piloto |
+| Reset URL | host piloto |
+| Token verificação/reset | consumido no uso, expiração 1 h |
+| Sessões (logout, rota protegida, reset) | comportamento verificado |
+| Enumeração | mensagens neutras |
+| Submit/spam | UI protegida + rate limit default da lib |
+| QA | `QA FUNCTIONAL APPROVED` |
+| Dra. Karen | `PILOT USER READY — FICTIONAL DATA ONLY` |
+
+Blockers de piloto identificados nesta auditoria: **nenhum**. O gate de banco segue `TEMPORARY SHARED DATABASE ACCEPTED FOR FICTIONAL PILOT`, com `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` como pendência futura.
+
+## Human Functional QA
+
+**Status:** `QA FUNCTIONAL APPROVED`
+
+Validado manualmente pelo proprietário/QA no host Preview do piloto, sem participação do agente na execução dos fluxos:
 
 | Fluxo | Resultado |
 |---|---|
-| Preview anônimo (browser sem SSO) | `BLOCKED` (SSO Vercel) |
-| App HTML via bypass autenticado (`vercel curl`) | alcançável |
-| Cadastro não autorizado (API Preview + bypass) | `PASSED` (`403 REGISTRATION_NOT_ALLOWED`; sem persistência esperada) |
-| Cadastro autorizado + Resend + verificação + login + sessão + logout + reset | `BLOCKED` — sem inbox sintético dedicado na allowlist; não usar e-mail do piloto; sem acesso à caixa consumer nesta sessão; não operar no domínio customizado público |
+| Cadastro | `PASSED` |
+| Reenvio de e-mail de verificação | `PASSED` |
+| Confirmação de e-mail | `PASSED` |
+| Login | `PASSED` |
+| Recuperação de senha | `PASSED` |
+| Alteração de dados em `/app/conta` | `PASSED` |
 
-### Próximas ações (bloqueiam `PILOT READY`)
+Nenhum blocker funcional foi identificado. Nenhum e-mail, senha, token ou link privado foi registrado nesta documentação.
 
-1. No dashboard Vercel: liberar Preview sem SSO **sem** desproteger Production (ou equivalente aceito pelo proprietário para a Dra. Karen abrir a URL do Preview).
-2. Incluir na allowlist de Preview uma caixa real **controlada e dedicada ao smoke** (não a senha pessoal da Dra. Karen).
-3. Alinhar `BETTER_AUTH_URL` / trusted origins ao host do Preview usado no piloto (mínimo necessário; sem `*.vercel.app` indiscriminado).
-4. Repetir smoke sintético completo (cadastro, recusa, Resend, verificação, login, sessão, proteção, logout, reset).
-5. Só então `PILOT READY`. Conta da Dra. Karen: `MANUAL USER ACTION REQUIRED`.
+Ambiente do QA e do fechamento: alias estável do Preview da branch piloto — home `200`, `/cadastro` `200`, `/app` anônimo `307 → /entrar?next=%2Fapp`, sem SSO da Vercel, copy e Brand/UI finais.
+
+## Piloto de identidade/acesso — Dra. Karen
+
+**Status:** `PILOT USER READY` · condição `FICTIONAL DATA ONLY`
+
+Fluxo que a piloto executa pessoalmente, no host Preview do piloto:
+
+1. abrir o Preview piloto;
+2. clicar em "Criar conta";
+3. informar nome e e-mail;
+4. escolher a própria senha;
+5. receber o e-mail de confirmação;
+6. confirmar o e-mail;
+7. fazer login;
+8. acessar `/app`;
+9. testar "Conta" e logout.
+
+Regras desta etapa:
+
+- **Somente dados fictícios.** Proibido cadastrar pacientes reais, exames reais, laudos reais ou dados clínicos identificáveis de terceiros.
+- Nenhum dado clínico é solicitado nesta etapa — o escopo é identidade e acesso.
+- O agente **não** cria conta, senha, token ou sessão em nome dela.
+- Cadastro depende da presença do endereço dela em `PILOT_ALLOWED_EMAILS` (allowlist com 2 posições no escopo da branch piloto; uma é a caixa de QA do proprietário, comprovada por hash). A confirmação de que a segunda posição é a caixa da Dra. Karen é do proprietário; se não estiver, o cadastro é recusado com mensagem clara e basta adicioná-la.
+
+## Hardening backlog (não bloqueia o piloto)
+
+- `AUTH RATE LIMITING — HARDENING BACKLOG`
+- `DISPLAY TIMEZONE NORMALIZATION — FUTURE UI CONCERN`
+- `TIMESTAMPTZ MIGRATION — HARDENING BACKLOG`
+- `PREVIEW-WIDE BASE URL — HYGIENE BACKLOG`
+- Favicon oficial: `PENDING BRAND ASSET`
+- `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` (future gate)
+
+Nenhum destes itens reabre a Sprint 1.
+
+## Próximo bloco de trabalho
+
+`Clinical Discovery v0.1 Reconciliation — NOT STARTED`
+
+Reconciliação documental do handoff clínico da conversa de descoberta, em branch documental própria a partir de `main`, somente após autorização explícita. A Sprint 2 permanece **não autorizada**.
