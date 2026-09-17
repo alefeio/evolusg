@@ -181,7 +181,7 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 ## Pilot Operational Readiness
 
-**Status operacional:** `QA FUNCTIONAL READY`
+**Status operacional:** `QA MANUAL TEST IN PROGRESS` (ambiente liberado em `QA FUNCTIONAL READY`; execução manual a cargo do QA)
 
 A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen permanece `WAITING FOR QA FUNCTIONAL APPROVAL`.
 
@@ -283,3 +283,90 @@ Antes de qualquer uso clínico real ou lançamento comercial, Production deve se
 - O agente **não** executou cadastro, verificação, login, logout ou reset em nome do QA.
 - Dra. Karen: `WAITING FOR QA FUNCTIONAL APPROVAL` — liberação só após o QA de Alexandre concluir sem blocker, e apenas com dados fictícios.
 - Todo QA ocorre no host Preview piloto. O domínio Production **não** é usado para testes; sem redeploy, promote ou alteração de env de Production nesta tarefa.
+
+## Functional QA Closure — auditoria técnica
+
+Auditoria somente de leitura, sem tocar a conta de QA (nenhuma senha, token, sessão, verificação manual ou exclusão de usuário).
+
+### Timezone
+
+**Classificação:** `TIMEZONE ISSUE = DISPLAY ONLY`
+
+Evidências:
+
+- Todas as colunas de data do schema são `timestamp without time zone` — padrão do Prisma para `DateTime` em PostgreSQL (`user`, `session`, `account`, `verification`; inclui `expiresAt`).
+- Round-trip medido no driver `pg` a partir de um processo em UTC−3: enviar um `Date`, gravar como `timestamp(3)` e ler de volta devolve **exatamente o mesmo instante** (delta `0 h`). Escrita e leitura usam o mesmo fuso do processo, então a comparação em JavaScript permanece correta.
+- O registro criado pelo Preview corresponde ao horário UTC do log do Better Auth do mesmo instante (`03:57:51Z` no log ↔ `03:57:51` no banco), provando que o runtime da Vercel grava em UTC.
+- A diferença de 3 h observada apareceu somente quando o mesmo registro foi lido por um script local em UTC−3: o texto gravado em UTC é reinterpretado como horário local, deslocando a leitura.
+
+Conclusão em linguagem simples: o banco guarda a hora "sem fuso"; quem escreve e quem lê no mesmo ambiente concorda. O Preview e a Production rodam em UTC, então expiração de token e de sessão é comparada corretamente. Os 3 h eram artefato da leitura feita no computador local.
+
+Consequências registradas (nenhuma bloqueia o piloto):
+
+- `DISPLAY TIMEZONE NORMALIZATION — FUTURE UI CONCERN`: `SessionsPanel` formata `createdAt` com `toLocaleString("pt-BR")`. O primeiro render acontece no servidor (UTC) e o render do cliente usa o fuso do navegador, então a data de sessão pode aparecer em UTC até a hidratação.
+- `TIMESTAMPTZ MIGRATION — HARDENING BACKLOG`: como o banco é compartilhado, um processo local em UTC−3 e o runtime da Vercel em UTC interpretam o mesmo texto de forma diferente. Enquanto o QA e o piloto rodarem apenas no host Preview, não há impacto; misturar dev local e Preview sobre os mesmos tokens produziria janelas de expiração deslocadas em 3 h. Migrar as colunas para `timestamptz` resolve na raiz e fica para depois da Sprint 1.
+
+### URLs dos e-mails
+
+- `BETTER_AUTH_URL` **branch-scoped** para `pilot/identity-preview` = `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` (confirmado por leitura do override da branch). Não é localhost, não é `evolusg.com.br`.
+- Verificação: URL montada pelo Better Auth a partir do `baseURL` → host piloto, com `callbackURL=/verificar-email`.
+- Reset: `${baseURL}/redefinir-senha?token=…` em `createAuthOptions` → host piloto.
+- Observação de higiene, sem efeito no piloto: o registro **Preview + Production** de `BETTER_AUTH_URL` aponta para `evolusg.com.br`. O override da branch tem precedência no host piloto, mas qualquer outra branch de Preview geraria links para o domínio de Production. Backlog: `PREVIEW-WIDE BASE URL — HYGIENE BACKLOG`.
+- Nenhum token foi gerado, lido ou revelado nesta auditoria; a conferência final do link é do QA humano.
+
+### Reenvio de verificação
+
+- `/verificar-email` expõe `ResendVerificationButton`, que chama `authClient.sendVerificationEmail({ email, callbackURL: "/verificar-email" })`.
+- `emailVerification.sendOnSignIn = true`: tentar entrar com a conta ainda não verificada também dispara novo e-mail, com a mensagem "Confirme seu e-mail para entrar…".
+- Um usuário com `emailVerified=false` consegue solicitar novo e-mail sem nenhum bypass. Nada foi marcado como verificado pelo agente.
+
+### Comportamento de tokens (better-auth 1.7.4)
+
+Coberto por testes automatizados em `src/lib/auth/auth-flows.test.ts` (43 unit no total):
+
+- Verificação: token consumido no primeiro uso — o registro sai da tabela `verification` e o reuso **não** re-verifica nem cria sessão (`autoSignInAfterVerification=false`, zero sessões após reuso). O reuso responde de forma idempotente em vez de erro; sem efeito colateral de segurança.
+- Reset: token de uso único — a segunda tentativa com o mesmo token é rejeitada e a senha definida no primeiro uso continua válida.
+- Expiração: 1 h para verificação e 1 h para reset (defaults da biblioteca; o código só sobrescreve nos testes). Token expirado e token inválido são rejeitados, com mensagens "Este link expirou. Solicite um novo." e "Este link é inválido. Solicite um novo.".
+
+### Sessões
+
+- `/app` e `/app/*` passam pelo proxy: sem cookie de sessão → `307` para `/entrar?next=…`.
+- Páginas internas usam `requireSession()`; logout via `authClient.signOut()` invalida a sessão (teste: `getSession` volta `null` com os mesmos cookies).
+- Reset de senha: `revokeSessionsOnPasswordReset: true` — sessões antigas caem, senha antiga é rejeitada, nova senha é aceita.
+- Troca de senha autenticada com `revokeOtherSessions: true` encerra os outros dispositivos e mantém o atual.
+
+### Enumeração de contas
+
+- "Esqueci minha senha" responde sempre "Se o e-mail estiver cadastrado, enviaremos instruções…", independentemente de existir conta.
+- Reenvio de verificação responde "Se o cadastro for possível, enviaremos um e-mail com as próximas instruções.".
+- Login falho é mapeado para "E-mail ou senha inválidos.", sem distinguir usuário inexistente de senha errada.
+- Único sinal intencional: e-mail fora da allowlist recebe "Este e-mail não está autorizado para cadastro neste momento." — inevitável e desejável num piloto por convite.
+
+### Submit / proteção contra reenvio
+
+- `Button` aplica `disabled` e `aria-busy` enquanto `pending`, com rótulo de progresso ("Entrando…", "Enviando…", "Reenviando…", "Salvando…"). Todos os formulários de auth usam esse estado, o que impede duplo clique pela UI.
+- Erros do Resend chegam ao usuário como "Não foi possível enviar o e-mail neste momento. Tente novamente mais tarde." ou mensagem genérica; `mapAuthError` nunca exibe stack ou erro interno.
+- Rate limiting server-side: ativo no Preview (`rateLimit.enabled` segue `NODE_ENV === "production"`), com as regras padrão da biblioteca — 3 requisições/10 s em `/sign-in`, `/sign-up`, `/change-password`, `/change-email` e 3/60 s em `/request-password-reset` e `/send-verification-email`.
+- `AUTH RATE LIMITING — HARDENING BACKLOG`: o armazenamento padrão é em memória, por instância serverless, então a contagem não é compartilhada entre invocações. Não é blocker para um piloto restrito por allowlist; endurecer com armazenamento persistente fica para depois.
+
+### EMAIL_FROM
+
+- Registro **compartilhado Preview + Production** já corrigido para o subdomínio verificado (`no-reply@email.evolusg.com.br`), confirmado na leitura do escopo do Preview.
+- O Preview do piloto já foi redeployado e usa o novo remetente.
+- Production **não** foi redeployada nesta tarefa: o deployment atual continua com o remetente antigo até o próximo deploy, que herdará automaticamente o valor corrigido. Comportamento conhecido e esperado, não surpresa futura.
+
+### Status
+
+| Item | Estado |
+|---|---|
+| Timezone | `DISPLAY ONLY` |
+| Verification URL | host piloto |
+| Reset URL | host piloto |
+| Token verificação/reset | consumido no uso, expiração 1 h |
+| Sessões (logout, rota protegida, reset) | comportamento verificado |
+| Enumeração | mensagens neutras |
+| Submit/spam | UI protegida + rate limit default da lib |
+| QA | `QA MANUAL TEST IN PROGRESS` |
+| Dra. Karen | `WAITING FOR QA FUNCTIONAL APPROVAL` |
+
+Blockers de piloto identificados nesta auditoria: **nenhum**. O gate de banco segue `TEMPORARY SHARED DATABASE ACCEPTED FOR FICTIONAL PILOT`, com `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` como pendência futura.
