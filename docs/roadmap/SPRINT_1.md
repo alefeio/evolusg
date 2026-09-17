@@ -256,7 +256,11 @@ Antes de qualquer uso clínico real ou lançamento comercial, Production deve se
 - `trustedOrigins`: `[baseURL]` — sem wildcard amplo.
 - `/app` anônimo no Preview: **307 → `/entrar?next=%2Fapp`** (proteção de rota operante).
 - Cadastro fora da allowlist no Preview: **HTTP 403 `REGISTRATION_NOT_ALLOWED`** com endereço sintético `.test` (sem envio a terceiros).
-- `RESEND_API_KEY` / `EMAIL_FROM` presentes (listagem Vercel); `EMAIL_FROM` no domínio do produto. DNS público do domínio de envio traz DKIM `resend._domainkey`, MX do subdomínio de envio e DMARC. Delivery real: **pendente da validação do QA**.
+- `RESEND_API_KEY` / `EMAIL_FROM` presentes (listagem Vercel).
+- Incidente corrigido: `EMAIL_FROM` apontava para o domínio raiz, **não verificado** no Resend, e todo envio falhava com `403 validation_error` → `EMAIL_SEND_FAILED`. O domínio verificado é o subdomínio de envio; `EMAIL_FROM` foi atualizado para `no-reply@email.evolusg.com.br` no registro compartilhado (Preview + Production, registro único preservado) e no `.env` local. Envio de teste pela API do Resend: **HTTP 200 aceito**.
+- `resend-sender.ts` agora propaga nome e mensagem do erro do Resend (commit `ae0c2d1`), em vez de mascarar como código genérico.
+- Preview do piloto redeployado para carregar o novo remetente; alias Git migrado para o deployment novo. Production **não** foi redeployada nem promovida.
+- Delivery real ponta a ponta (verificação/reset pela aplicação): **pendente da validação do QA**.
 - Captura local de e-mail: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview → `LOCAL EMAIL CAPTURE = DISABLED`.
 - `PILOT_REGISTRATION_ENABLED=true`, `DATABASE_ENV=preview`, `VERCEL_ENV=preview` no Preview do piloto.
 - Allowlist do piloto: 2 caixas reais no mesmo domínio; a caixa de QA do proprietário **está presente** (verificação por hash; endereço não registrado aqui).
