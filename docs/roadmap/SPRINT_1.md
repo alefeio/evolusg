@@ -1,11 +1,11 @@
 # Sprint 1 — Fundação e autenticação
 
-**Status:** `ACCEPTED WITH OPERATIONAL PENDENCIES`  
+**Status:** `ACCEPTED WITH OPERATIONAL PENDENCIES` · `SPRINT 1 = COMPLETED FOR PILOT` · `PILOT IDENTITY/ACCESS GATE = PASSED`  
 **Descoberta clínica (Sprint 0):** continua **em paralelo** e **não está encerrada**.
 
-A Sprint 1 foi **aceita tecnicamente**. Pendências restantes são de configuração externa (Vercel, pooler, Resend/domínio, e-mail real do piloto) e **não** de código da fundação. A Sprint 2 **não** foi iniciada.
+A Sprint 1 foi **aceita tecnicamente** e, após o QA funcional humano, está **fechada para o piloto**: fundação, autenticação, UI, e-mail transacional e QA manual foram validados. A Sprint 2 **não** foi iniciada.
 
-> Estas pendências não bloqueiam o merge técnico da Sprint 1, mas bloqueiam o início do piloto com a Dra. Karen.
+> As pendências operacionais originais foram resolvidas ou reclassificadas como hardening. Pendências de hardening **não** reabrem a Sprint 1.
 
 ## Objetivo
 
@@ -181,9 +181,9 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 ## Pilot Operational Readiness
 
-**Status operacional:** `QA MANUAL TEST IN PROGRESS` (ambiente liberado em `QA FUNCTIONAL READY`; execução manual a cargo do QA)
+**Status operacional:** `QA FUNCTIONAL APPROVED` (ambiente liberado em `QA FUNCTIONAL READY`; QA manual concluído pelo proprietário)
 
-A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen permanece `WAITING FOR QA FUNCTIONAL APPROVAL`.
+A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES` e está `COMPLETED FOR PILOT`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen: `PILOT USER READY — FICTIONAL DATA ONLY`.
 
 ### Temporary Shared Database Strategy
 
@@ -274,14 +274,14 @@ Antes de qualquer uso clínico real ou lançamento comercial, Production deve se
 | Banco operacional + estrutura auth aplicada | `PASSED` |
 | Topologia compartilhada | `TEMPORARILY ACCEPTED` |
 | Better Auth (proteção de rota + allowlist server-side) | `PASSED` |
-| Resend configurado | `PASSED` (delivery pendente do QA) |
+| Resend configurado | `PASSED` (delivery confirmado no QA humano) |
 | Allowlist contém a caixa de QA | `PASSED` |
-| Cadastro/verify/login/reset pelo QA | **manual, a cargo de Alexandre** |
+| Cadastro/verify/login/reset pelo QA | `PASSED` (execução manual do proprietário) |
 
-**Classificação:** `QA FUNCTIONAL READY`
+**Classificação:** `QA FUNCTIONAL READY` → `QA FUNCTIONAL APPROVED`
 
 - O agente **não** executou cadastro, verificação, login, logout ou reset em nome do QA.
-- Dra. Karen: `WAITING FOR QA FUNCTIONAL APPROVAL` — liberação só após o QA de Alexandre concluir sem blocker, e apenas com dados fictícios.
+- Dra. Karen: liberada como `PILOT USER READY — FICTIONAL DATA ONLY` após a aprovação do QA humano (ver seção "Human Functional QA").
 - Todo QA ocorre no host Preview piloto. O domínio Production **não** é usado para testes; sem redeploy, promote ou alteração de env de Production nesta tarefa.
 
 ## Functional QA Closure — auditoria técnica
@@ -366,7 +366,66 @@ Coberto por testes automatizados em `src/lib/auth/auth-flows.test.ts` (43 unit n
 | Sessões (logout, rota protegida, reset) | comportamento verificado |
 | Enumeração | mensagens neutras |
 | Submit/spam | UI protegida + rate limit default da lib |
-| QA | `QA MANUAL TEST IN PROGRESS` |
-| Dra. Karen | `WAITING FOR QA FUNCTIONAL APPROVAL` |
+| QA | `QA FUNCTIONAL APPROVED` |
+| Dra. Karen | `PILOT USER READY — FICTIONAL DATA ONLY` |
 
 Blockers de piloto identificados nesta auditoria: **nenhum**. O gate de banco segue `TEMPORARY SHARED DATABASE ACCEPTED FOR FICTIONAL PILOT`, com `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` como pendência futura.
+
+## Human Functional QA
+
+**Status:** `QA FUNCTIONAL APPROVED`
+
+Validado manualmente pelo proprietário/QA no host Preview do piloto, sem participação do agente na execução dos fluxos:
+
+| Fluxo | Resultado |
+|---|---|
+| Cadastro | `PASSED` |
+| Reenvio de e-mail de verificação | `PASSED` |
+| Confirmação de e-mail | `PASSED` |
+| Login | `PASSED` |
+| Recuperação de senha | `PASSED` |
+| Alteração de dados em `/app/conta` | `PASSED` |
+
+Nenhum blocker funcional foi identificado. Nenhum e-mail, senha, token ou link privado foi registrado nesta documentação.
+
+Deployment que atendeu o QA e o fechamento: Preview `evolusg-fi32ypsir-…`, alias estável `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` — home `200`, `/cadastro` `200`, `/app` anônimo `307 → /entrar?next=%2Fapp`, sem SSO da Vercel, copy e Brand/UI finais.
+
+## Piloto de identidade/acesso — Dra. Karen
+
+**Status:** `PILOT USER READY` · condição `FICTIONAL DATA ONLY`
+
+Fluxo que a piloto executa pessoalmente, no host Preview do piloto:
+
+1. abrir o Preview piloto;
+2. clicar em "Criar conta";
+3. informar nome e e-mail;
+4. escolher a própria senha;
+5. receber o e-mail de confirmação;
+6. confirmar o e-mail;
+7. fazer login;
+8. acessar `/app`;
+9. testar "Conta" e logout.
+
+Regras desta etapa:
+
+- **Somente dados fictícios.** Proibido cadastrar pacientes reais, exames reais, laudos reais ou dados clínicos identificáveis de terceiros.
+- Nenhum dado clínico é solicitado nesta etapa — o escopo é identidade e acesso.
+- O agente **não** cria conta, senha, token ou sessão em nome dela.
+- Cadastro depende da presença do endereço dela em `PILOT_ALLOWED_EMAILS` (allowlist com 2 posições no escopo da branch piloto; uma é a caixa de QA do proprietário, comprovada por hash). A confirmação de que a segunda posição é a caixa da Dra. Karen é do proprietário; se não estiver, o cadastro é recusado com mensagem clara e basta adicioná-la.
+
+## Hardening backlog (não bloqueia o piloto)
+
+- `AUTH RATE LIMITING — HARDENING BACKLOG`
+- `DISPLAY TIMEZONE NORMALIZATION — FUTURE UI CONCERN`
+- `TIMESTAMPTZ MIGRATION — HARDENING BACKLOG`
+- `PREVIEW-WIDE BASE URL — HYGIENE BACKLOG`
+- Favicon oficial: `PENDING BRAND ASSET`
+- `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` (future gate)
+
+Nenhum destes itens reabre a Sprint 1.
+
+## Próximo bloco de trabalho
+
+`Clinical Discovery v0.1 Reconciliation — NOT STARTED`
+
+Reconciliação documental do handoff clínico da conversa de descoberta, em branch documental própria a partir de `main`, somente após autorização explícita. A Sprint 2 permanece **não autorizada**.
