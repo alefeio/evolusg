@@ -33,6 +33,61 @@ Poucas séries. Não criar categoria nova sem necessidade.
 
 Testes automatizados não têm série própria nesta fase. Quando existirem, o teste referencia `FIX` + artefato + `ProtocolVersion`. Não inventar `TEST-nnn` agora.
 
+## Três eixos de status (reconciliação v0.1)
+
+A primeira rodada intensiva de discovery mostrou uma situação que um único status não representa: **"a Dra. Karen aprovou o conceito, mas a fonte científica ainda está pendente."**
+
+A solução **não** é uma taxonomia nova e concorrente. Os vocabulários já existentes no repositório continuam válidos e passam a ser lidos em três eixos independentes. Um item pode — e normalmente vai — ter um valor em cada eixo ao mesmo tempo.
+
+### Eixo 1 — Decisão clínica
+
+Vocabulário já usado em [`CLINICAL_FIELD_CATALOG.md`](CLINICAL_FIELD_CATALOG.md) e [`PHRASE_CATALOG.md`](PHRASE_CATALOG.md).
+
+| Valor | Significa |
+|---|---|
+| `DISCOVERED` | registrado como evidência (`CD`); não é requisito |
+| `CLINICALLY_APPROVED` | validado explicitamente pela médica responsável (habilita `CR`) |
+| `REJECTED` | descartado clinicamente |
+| `PENDING CLINICAL DISCOVERY` | ainda não perguntado / não respondido |
+
+### Eixo 2 — Evidência / fonte
+
+Eixo **novo**, porque não existia forma de dizer que falta referência científica sem sugerir que falta aprovação clínica.
+
+| Valor | Significa |
+|---|---|
+| `SOURCE_NOT_REQUIRED` | não depende de referência externa (definição, organização documental, aritmética simples) |
+| `SOURCE_VALIDATION_PENDING` | depende de tabela/fórmula/versão ainda não formalmente estabelecida |
+| `SOURCE_VALIDATED` | referência identificada, versionada e aceita |
+
+Complemento operacional: `PENDING HANDOFF IMPORT` marca conteúdo que **já existe** no pacote clínico (frase literal, faixa numérica informada) mas ainda não foi transcrito para os catálogos. É lacuna de transcrição, não de decisão.
+
+`sourceType` (abaixo) continua descrevendo a **natureza** da evidência de descoberta. Este eixo descreve a **suficiência** da referência para produzir comportamento clínico.
+
+### Eixo 3 — Prontidão técnica
+
+Reaproveita e detalha `PENDING TECHNICAL VALIDATION`.
+
+| Valor | Significa |
+|---|---|
+| `NOT_ANALYZED` | sem análise técnica ainda |
+| `READY_FOR_IMPLEMENTATION` | decisão clínica aprovada, fonte suficiente e desenho compreendido |
+| `IMPLEMENTED` | existe em código com teste |
+
+### O que uma fonte pendente pode e não pode liberar
+
+| Permitido com `SOURCE_VALIDATION_PENDING` | **Não** permitido |
+|---|---|
+| documentação | classificação clínica definitiva |
+| definição de campo | alerta clínico automático |
+| schema conceitual | frase de conclusão baseada em threshold |
+| estrutura de interface futura | expected output clínico definitivo |
+| placeholders | cálculo de produção |
+| fixture estrutural | — |
+| arquitetura extensível | — |
+
+Consequência prática: `CLINICALLY_APPROVED` + `SOURCE_VALIDATION_PENDING` **não** é `READY_FOR_IMPLEMENTATION` para regra, cálculo ou conclusão — é `READY_FOR_IMPLEMENTATION` no máximo para estrutura.
+
 ## Descoberta ≠ validação
 
 `Clinical Discovery` (`CD`) é evidência registrada. Não é, por si, requisito clínico.
@@ -132,4 +187,15 @@ Não é obrigatório preencher a cadeia inteira na Sprint 0. É obrigatório **n
 
 ## Estado atual
 
-Cadeia vazia de propósito. Catálogos e fixtures estão sem conteúdo clínico validado. `PENDING CLINICAL DISCOVERY`.
+Primeira rodada intensiva de discovery concluída. O protocolo inicial existe como baseline documental em [`../protocols/OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md).
+
+| Elo da cadeia | Estado |
+|---|---|
+| `CD` (evidência) | registrada na rodada 1; transcrição de frases e faixas `PENDING HANDOFF IMPORT` |
+| `CR` (requisito validado) | existe conteúdo `CLINICALLY_APPROVED` para estrutura, ordem do laudo, dependências de posição fetal e princípio "não marcado ≠ ausente" |
+| `TR` | não aberto — depende de autorização da próxima sprint |
+| `FIELD` / `RULE` / `CALC` / `TEXT` | catalogados com os três eixos; parte bloqueada por fonte |
+| `FIX` | fixtures **estruturais** catalogadas; expected output clínico pendente de referência |
+| `ProtocolVersion` | não existe artefato executável |
+
+Nada aqui promove `CD` a `CR` automaticamente, e nada aqui autoriza implementação.

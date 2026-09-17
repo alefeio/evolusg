@@ -1,8 +1,27 @@
 # Escopo do MVP
 
-Status do recorte MVP 1: **PENDING CLINICAL DISCOVERY**
+Status do recorte MVP 1: **DEFINIDO na rodada 1 de Clinical Discovery**
 
-Nenhum tipo de exame obstétrico está escolhido. A Sprint 0 existe para decidir isso com a Dra. Karen.
+| | Antes | Depois da reconciliação v0.1 |
+|---|---|---|
+| Recorte | `PENDING CLINICAL DISCOVERY` | Ultrassonografia obstétrica com Doppler |
+| Amplitude | indefinida | `SINGLETON ONLY` — gestação única |
+| Doppler no MVP | explicitamente fora, "salvo se a discovery provar que é a rotina" | **dentro** — é o exame de alta frequência dela |
+| Múltiplos | indefinido | fora; `DOCUMENTED FOR FUTURE IMPLEMENTATION` |
+| Campos mínimos | `PENDING CLINICAL DISCOVERY` | catalogados em [`../clinical-discovery/CLINICAL_FIELD_CATALOG.md`](../clinical-discovery/CLINICAL_FIELD_CATALOG.md) |
+| Classificações automáticas | não discutido | bloqueadas por [`referências pendentes`](../clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md) |
+
+Protocolo: [`../protocols/OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md).
+
+Fluxo do MVP 1:
+
+```text
+Paciente → contexto gestacional mínimo → novo exame → Obstétrica com Doppler
+  → gestação única → preenchimento estruturado → cálculos/regras permitidos
+    → geração textual → revisão → documento/laudo
+```
+
+"Cálculos/regras permitidos" significa: só o que estiver `CLINICALLY_APPROVED` **e** com fonte suficiente. Estrutura pode ser construída antes da fonte; classificação clínica automática não.
 
 ## Definição de MVP 1 (critério de verdade)
 
@@ -23,7 +42,8 @@ MVP **não** é protótipo visual.
 | Autenticação de `User` | Conta web, sessão |
 | `ProfessionalProfile` mínimo | Nome profissional, CRM/UF o suficiente para o documento |
 | Paciente Core | Cadastro mínimo + busca simples + `Exam → Patient` |
-| Protocolo versionado do fluxo escolhido | Definido na Sprint 0 |
+| Protocolo versionado do fluxo escolhido | Obstétrica com Doppler v0.1, gestação única |
+| `PregnancyEpisode` mínimo | contexto gestacional para não misturar gestações; granularidade `PENDING PRODUCT DECISION` |
 | Formulário dinâmico desse fluxo | Condicionais do recorte |
 | Texto gerado + revisão | Catálogo padrão; override pessoal persistente pode ficar para depois do MVP 1 |
 | Ciclo do laudo | Máquina candidata ADR-012 (`PENDING CLINICAL DISCOVERY` no fluxo real) |
@@ -32,14 +52,15 @@ MVP **não** é protótipo visual.
 
 ## O que o MVP 1 não inclui
 
-- todos os tipos obstétricos
+- outros tipos obstétricos (morfológico, 1º trimestre, colo, etc.) — permanecem `PENDING CLINICAL DISCOVERY`
+- gemelares, trigemelares, corionicidade, discordância, sFGR — `DOCUMENTED FOR FUTURE IMPLEMENTATION`
 - Patient Advanced (merge, anti-duplicidade sofisticada, filtros ricos)
-- linha do tempo
+- linha do tempo e matching longitudinal automático
+- compartilhamento entre profissionais/organizações
 - construtor visual de protocolos
-- IA / ditado
-- Doppler, gemelares, biometria avançada — **salvo se a Sprint 0 provar que isso é o fluxo mais frequente** (não presumir)
-
-Hipóteses frequentes (morfológico, obstétrico de rotina, 1º trimestre, etc.) permanecem **PENDING CLINICAL DISCOVERY**. Não selecionar candidato a MVP 1 neste documento.
+- IA / ditado / LLM em qualquer ponto do motor clínico
+- DICOM, PACS, portal do paciente, QR Code
+- classificação clínica automática que dependa de referência ainda não validada
 
 ## Paciente Core vs Patient Advanced
 
@@ -78,7 +99,12 @@ O evolUSG será um produto **pago** para médicos.
 
 ## Gate para congelar este documento
 
-- resposta da Dra. Karen: qual exame primeiro
-- campos mínimos desse exame
--  exemplos anonimizados suficientes para fixtures
-- ADRs 008, 009 e 012 revisados com o recorte (ainda `PROPOSED` até aprovação)
+| Item | Estado |
+|---|---|
+| Resposta da Dra. Karen: qual exame primeiro | **atendido** — Obstétrica com Doppler |
+| Campos mínimos desse exame | **atendido em estrutura**; detalhes de placenta e dados clínicos em aberto |
+| Exemplos anonimizados suficientes para fixtures | parcial — fixtures estruturais catalogadas; expected output clínico pendente de referência |
+| ADRs 008, 009 e 012 revisados com o recorte | **atendido** — ver [`impacto da reconciliação`](../adr/README.md#impacto-da-reconciliação-clinical-discovery-v01); seguem `PROPOSED` |
+| Referências clínicas validadas | **não atendido** — [`backlog`](../clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md) |
+
+O recorte está congelado. O **conteúdo interpretativo** (classificações, thresholds, conclusão automática) não pode ser congelado antes das referências.

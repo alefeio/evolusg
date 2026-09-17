@@ -1,9 +1,39 @@
 # Sprint 0 — Descoberta clínica obstétrica
 
-**Status:** em andamento (descoberta clínica **não encerrada**).  
-**Duração prevista:** 2 semanas, em ondas.  
-**Implementação clínica:** continua proibida.  
-**Paralelo:** a Sprint 1 (fundação e autenticação) está autorizada porque não depende de regras clínicas. Ver [`../roadmap/SPRINT_1.md`](../roadmap/SPRINT_1.md).
+**`INTENSIVE DISCOVERY ROUND 1 = COMPLETE`**  
+**`CLINICAL DISCOVERY = CONTINUOUS`**
+
+A primeira rodada intensiva produziu o pacote clínico v0.1 e o recorte de MVP 1. Isso **não** encerra a descoberta clínica: ela passa a ser contínua, com pendências específicas abertas (referências científicas, detalhes de placenta, múltiplos).
+
+**Implementação clínica:** continua proibida até autorização explícita da próxima sprint.  
+**Sprint 1** (fundação e autenticação): concluída para piloto — ver [`../roadmap/SPRINT_1.md`](../roadmap/SPRINT_1.md).
+
+## Resultado da rodada 1
+
+| Saída | Onde está |
+|---|---|
+| Primeiro protocolo escolhido | [`EXAM_INVENTORY.md`](EXAM_INVENTORY.md) |
+| Baseline do protocolo (ordem, regras, dependências) | [`../protocols/OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md) |
+| Campos + ownership conceitual | [`CLINICAL_FIELD_CATALOG.md`](CLINICAL_FIELD_CATALOG.md) |
+| Chaves de frase (textos a transcrever) | [`PHRASE_CATALOG.md`](PHRASE_CATALOG.md) |
+| Cálculos nomeados | [`CALCULATION_CATALOG.md`](CALCULATION_CATALOG.md) |
+| Referências pendentes | [`REFERENCE_VALIDATION_BACKLOG.md`](REFERENCE_VALIDATION_BACKLOG.md) |
+| Fixtures estruturais e stress tests futuros | [`../testing/CLINICAL_FIXTURES.md`](../testing/CLINICAL_FIXTURES.md) |
+| Três eixos de status | [`TRACEABILITY.md`](TRACEABILITY.md#três-eixos-de-status-reconciliação-v01) |
+
+## Perguntas bloqueantes (lote 2)
+
+Metodologia atual: **não** voltar com dezenas de perguntas triviais. Só entra aqui `CLINICAL DECISION THAT CANNOT BE SAFELY INFERRED OR SOURCED`.
+
+| # | Pergunta | O que ela desbloqueia |
+|---|---|---|
+| 1 | Quais referências/tabelas ela usa hoje (Doppler, crescimento, Hadlock) e de onde vêm? | todo o [`backlog de referências`](REFERENCE_VALIDATION_BACKLOG.md); qualquer classificação automática |
+| 2 | Como ela corrige um laudo já entregue hoje (novo registro, adendo, reimpressão)? | ADR-009 / ADR-012; fluxo de emissão |
+| 3 | O que é "contexto gestacional mínimo" que ela precisa ver antes de começar o exame? | granularidade de `PregnancyEpisode` na primeira slice |
+| 4 | Medicações: lista atual da paciente ou uso no momento do exame? | ownership de `patient.medications` |
+| 5 | Quais campos de placenta entram no laudo com Doppler? | seção 6 do protocolo |
+
+Perguntas de fraseologia e faixas numéricas **não** entram aqui: o conteúdo já foi informado na rodada 1 e depende de transcrição (`PENDING HANDOFF IMPORT`), não de nova pergunta.
 
 ## Objetivo
 
@@ -142,7 +172,22 @@ A Sprint 0 poderá ser considerada concluída **somente depois**, quando **todos
 - [ ] Escopo inicial e não-escopo do MVP 1 compreendidos e escritos em [`../product/MVP_SCOPE.md`](../product/MVP_SCOPE.md)
 - [ ] Nenhum requisito clínico crítico inventado pela engenharia (rastreio: [`TRACEABILITY.md`](TRACEABILITY.md) — sem `CR` fictício)
 
-Enquanto isso não ocorrer, a Sprint 0 permanece em andamento.
+### Estado dos critérios após a rodada 1
+
+| Critério | Estado |
+|---|---|
+| Recorte clínico identificado pela Dra. Karen | **atendido** |
+| Fluxo atual do recorte compreendido | **atendido** no essencial; correção de laudo segue pendente (pergunta 2) |
+| Entradas e saídas principais conhecidas | **atendido** para gestação única |
+| Requisitos classificados | **atendido**, agora em três eixos |
+| Desconhecidos explícitos | **atendido** — referências e transcrições marcadas |
+| Exemplos anonimizados suficientes | parcial — fixtures estruturais; expected output clínico pendente |
+| ADRs essenciais revisados | **atendido** — nenhum promovido |
+| Riscos registrados | **atendido** — ver [`../roadmap/RISK_REGISTER.md`](../roadmap/RISK_REGISTER.md) |
+| Escopo e não-escopo do MVP 1 escritos | **atendido** — [`../product/MVP_SCOPE.md`](../product/MVP_SCOPE.md) |
+| Nenhum requisito crítico inventado pela engenharia | **atendido** — frases e faixas não transcritas ficaram vazias, não preenchidas |
+
+A rodada 1 está completa. A descoberta clínica continua **contínua**: pendências específicas (referências, placenta, múltiplos) seguem abertas sem bloquear o recorte já definido.
 
 ## Reuniões depois da primeira
 
