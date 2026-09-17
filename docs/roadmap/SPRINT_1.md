@@ -181,9 +181,26 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 ## Pilot Operational Readiness
 
-**Status operacional:** `NOT PILOT READY` / `QA FUNCTIONAL BLOCKED`
+**Status operacional:** `QA FUNCTIONAL READY`
 
-A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen permanece `BLOCKED FOR PILOT USER` até o QA funcional de Alexandre passar.
+A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen permanece `WAITING FOR QA FUNCTIONAL APPROVAL`.
+
+### Temporary Shared Database Strategy
+
+Decisão consciente do proprietário para a fase de desenvolvimento e piloto fictício:
+
+- Preview e o deploy Production existente **compartilham temporariamente** o banco atual (recurso Prisma Postgres `evolUSG`, `store_qI44qsXKg2Gz3E0v` — único vinculado ao projeto `evolusg`).
+- Vale **somente** enquanto: não houver pacientes reais, exames reais, laudos reais nem operação comercial; todo teste clínico é fictício.
+- A ausência de banco Preview dedicado **não** é mais blocker para o QA funcional nem para o piloto inicial com dados fictícios.
+- Proibido nesta fase: dados de pacientes reais, exames reais, laudos reais, dados clínicos identificáveis de terceiros.
+- Proibido operacionalmente: `reset`, `drop`, `truncate`, limpeza global, `db push` destrutivo. Usuários de QA/piloto podem existir no banco.
+- Esta decisão é interna e **não** aparece na interface do usuário.
+
+### FUTURE GATE
+
+`PRODUCTION DATABASE ISOLATION — REQUIRED BEFORE REAL CLINICAL USE`
+
+Antes de qualquer uso clínico real ou lançamento comercial, Production deve ser separado do banco de testes (banco próprio, conexões pooled/direct próprias, `DATABASE_ENV` distinto). **Não** implementado agora, por decisão de fase.
 
 ### Sincronização com main (produto + Brand/UI)
 
@@ -218,35 +235,47 @@ A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES`. A Spri
 - Captura local: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview (cwd limpo). `LOCAL EMAIL CAPTURE = DISABLED`.
 - Preferir env **branch-scoped** (`pilot/identity-preview`) para valores exclusivos do piloto — **nunca** sobrescrever Production.
 
-### Banco Preview
+### Inventário do banco (auditoria por metadados)
 
-- `vercel env ls`: `DATABASE_URL` / `POSTGRES_URL` / `PRISMA_DATABASE_URL` / `RUNTIME_DATABASE_URL` aparecem como **um** secret compartilhado **Preview + Production**; ambiente Development na Vercel sem variáveis.
-- Não há banco Preview exclusivo (branch-scoped ou ambiente Preview-only) configurado.
-- Classificação: `PREVIEW DATABASE NOT DEDICATED` / `PREVIEW DATABASE TOPOLOGY = INVALID FOR PILOT`.
-- **OWNER ACTION REQUIRED — CREATE PREVIEW DATABASE** (sem cobrança automática pelo agente).
-- `prisma migrate deploy` **não** executado nesta rodada (sem dedicated Preview).
+- Recursos Prisma Postgres ligados ao projeto `evolusg`: **1** (`evolUSG`, `store_qI44qsXKg2Gz3E0v`, status `available`). Os demais recursos do escopo pertencem a outros projetos.
+- `vercel env ls --json`: `DATABASE_URL`, `POSTGRES_URL`, `PRISMA_DATABASE_URL`, `RUNTIME_DATABASE_URL` e `DATABASE_ENV` são **registros únicos** com alvo `preview + production` → mesmo valor, mesmo banco. Nenhuma variável de banco é branch-scoped.
+- Ambiente Development na Vercel: sem variáveis. Desenvolvimento local usa `.env` com `DATABASE_ENV=development`.
+- Connection strings são do tipo `sensitive`; a CLI não as expõe e nenhum valor foi lido/registrado.
+- Classificação aceita nesta fase: `SHARED DATABASE — TEMPORARILY ACCEPTED BY OWNER`.
+- Região/data de criação do recurso: não expostas pela CLI (verificar no Prisma Console se necessário).
+
+### Estrutura do banco (sem migrar)
+
+- `prisma migrate status`: **1 migration** encontrada, `Database schema is up to date!` — nada pendente.
+- Migration da Sprint 1/auth: `20260910200000_auth_foundation` (`user`, `session`, `account`, `verification` + índices e FKs).
+- **Nenhuma** migration foi executada nesta tarefa. Sem `db push`, reset, drop ou truncate.
 
 ### Better Auth / Resend
 
 - Branch-scoped `BETTER_AUTH_URL` para `pilot/identity-preview` = host do alias Git piloto (`*.vercel.app` do piloto; não localhost; não Production/`evolusg.com.br`).
 - `trustedOrigins`: `[baseURL]` — sem wildcard amplo.
-- `RESEND_API_KEY` / `EMAIL_FROM` presentes no projeto (listagem Vercel). Delivery real: **pendente do QA**.
-- Allowlist Preview: 2 endereços classificados `CONSUMER_OR_PILOT` (sem marcador smoke/`+test`). Agente **não** confirmou e-mail do QA Alexandre — **OWNER ACTION REQUIRED — ADD QA EMAIL TO PILOT ALLOWLIST** em `PILOT_ALLOWED_EMAILS` (Preview / branch piloto). Não usar a caixa da Dra. Karen para este QA.
+- `/app` anônimo no Preview: **307 → `/entrar?next=%2Fapp`** (proteção de rota operante).
+- Cadastro fora da allowlist no Preview: **HTTP 403 `REGISTRATION_NOT_ALLOWED`** com endereço sintético `.test` (sem envio a terceiros).
+- `RESEND_API_KEY` / `EMAIL_FROM` presentes (listagem Vercel); `EMAIL_FROM` no domínio do produto. DNS público do domínio de envio traz DKIM `resend._domainkey`, MX do subdomínio de envio e DMARC. Delivery real: **pendente da validação do QA**.
+- Captura local de e-mail: `AUTH_EMAIL_CAPTURE_FILE` **ausente** no Preview → `LOCAL EMAIL CAPTURE = DISABLED`.
+- `PILOT_REGISTRATION_ENABLED=true`, `DATABASE_ENV=preview`, `VERCEL_ENV=preview` no Preview do piloto.
+- Allowlist do piloto: 2 caixas reais no mesmo domínio; a caixa de QA do proprietário **está presente** (verificação por hash; endereço não registrado aqui).
 
 ### QA funcional
 
 | Item | Estado |
 |---|---|
-| Host piloto público | `PASSED` |
-| Branch sincronizada com main (copy/UI) | `PASSED` |
-| Banco Preview dedicado | `BLOCKED` |
-| Migration Preview | `BLOCKED` |
-| Allowlist QA Alexandre | `OWNER ACTION` |
-| Cadastro/verify/login/reset pelo QA | **não iniciado** (aguardar `QA FUNCTIONAL READY`) |
+| Host piloto público (HTTP 200, sem SSO) | `PASSED` |
+| Branch sincronizada com main (copy/UI final) | `PASSED` |
+| Banco operacional + estrutura auth aplicada | `PASSED` |
+| Topologia compartilhada | `TEMPORARILY ACCEPTED` |
+| Better Auth (proteção de rota + allowlist server-side) | `PASSED` |
+| Resend configurado | `PASSED` (delivery pendente do QA) |
+| Allowlist contém a caixa de QA | `PASSED` |
+| Cadastro/verify/login/reset pelo QA | **manual, a cargo de Alexandre** |
 
-### Próximas ações do proprietário (bloqueiam `QA FUNCTIONAL READY`)
+**Classificação:** `QA FUNCTIONAL READY`
 
-1. **CREATE PREVIEW DATABASE** dedicado (≠ Development ≠ Production) + envs branch-scoped + redeploy.
-2. Após topologia válida: autorizar `prisma migrate deploy` (direct) no Preview.
-3. **ADD QA EMAIL TO PILOT ALLOWLIST** (`PILOT_ALLOWED_EMAILS` no Preview/branch piloto) — caixa controlada por Alexandre.
-4. Só então Alexandre executa o QA funcional manual. Dra. Karen permanece bloqueada até aprovação desse QA.
+- O agente **não** executou cadastro, verificação, login, logout ou reset em nome do QA.
+- Dra. Karen: `WAITING FOR QA FUNCTIONAL APPROVAL` — liberação só após o QA de Alexandre concluir sem blocker, e apenas com dados fictícios.
+- Todo QA ocorre no host Preview piloto. O domínio Production **não** é usado para testes; sem redeploy, promote ou alteração de env de Production nesta tarefa.
