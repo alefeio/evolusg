@@ -1,9 +1,43 @@
 # Sprint 0 — Descoberta clínica obstétrica
 
-**Status:** em andamento (descoberta clínica **não encerrada**).  
-**Duração prevista:** 2 semanas, em ondas.  
-**Implementação clínica:** continua proibida.  
-**Paralelo:** a Sprint 1 (fundação e autenticação) está autorizada porque não depende de regras clínicas. Ver [`../roadmap/SPRINT_1.md`](../roadmap/SPRINT_1.md).
+**`INTENSIVE DISCOVERY ROUND 1 = COMPLETE`**  
+**`CLINICAL DISCOVERY = CONTINUOUS`**
+
+A primeira rodada intensiva produziu o pacote clínico v0.1 e o recorte de MVP 1. Isso **não** encerra a descoberta clínica: ela passa a ser contínua, com pendências específicas abertas (referências científicas, múltiplos).
+
+**Implementação clínica:** continua proibida até autorização explícita da próxima sprint.  
+**Sprint 1** (fundação e autenticação): concluída para piloto — ver [`../roadmap/SPRINT_1.md`](../roadmap/SPRINT_1.md).
+
+## Resultado da rodada 1
+
+| Saída | Onde está |
+|---|---|
+| Primeiro protocolo escolhido | [`EXAM_INVENTORY.md`](EXAM_INVENTORY.md) |
+| Baseline do protocolo (ordem, regras, dependências) | [`../protocols/OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md) |
+| Campos + ownership V1 | [`CLINICAL_FIELD_CATALOG.md`](CLINICAL_FIELD_CATALOG.md) |
+| Frases singleton importadas | [`PHRASE_CATALOG.md`](PHRASE_CATALOG.md) |
+| Cálculos nomeados | [`CALCULATION_CATALOG.md`](CALCULATION_CATALOG.md) |
+| Referências pendentes | [`REFERENCE_VALIDATION_BACKLOG.md`](REFERENCE_VALIDATION_BACKLOG.md) |
+| Fixtures estruturais e stress tests futuros | [`../testing/CLINICAL_FIXTURES.md`](../testing/CLINICAL_FIXTURES.md) |
+| Proposta Sprint 2 | [`../roadmap/SPRINT_2_PROPOSAL.md`](../roadmap/SPRINT_2_PROPOSAL.md) |
+| Três eixos de status | [`TRACEABILITY.md`](TRACEABILITY.md#três-eixos-de-status-reconciliação-v01) |
+
+## Perguntas clínicas
+
+### `BLOCKING CLINICAL QUESTIONS FOR SPRINT 2 = NONE`
+
+Decisões resolvidas na complementação do handoff (não são mais perguntas):
+
+- contexto gestacional mínimo → `PREGNANCY_EPISODE_MINIMUM_V1`
+- medicações → `CONTINUOUS_MEDICATIONS_V1 = EXAM_CONTEXT_SNAPSHOT`
+- placenta → localização + grau importados
+
+### Não bloqueantes da Sprint 2 (bloqueiam etapas futuras)
+
+| # | Pergunta | Bloqueia |
+|---|---|---|
+| 1 | Quais referências/tabelas ela usa hoje (Doppler, crescimento, Hadlock)? | classificação / interpretação automática |
+| 2 | Como ela corrige um laudo já entregue hoje? | emissão / versionamento final (ADR-009/012) |
 
 ## Objetivo
 
@@ -142,7 +176,22 @@ A Sprint 0 poderá ser considerada concluída **somente depois**, quando **todos
 - [ ] Escopo inicial e não-escopo do MVP 1 compreendidos e escritos em [`../product/MVP_SCOPE.md`](../product/MVP_SCOPE.md)
 - [ ] Nenhum requisito clínico crítico inventado pela engenharia (rastreio: [`TRACEABILITY.md`](TRACEABILITY.md) — sem `CR` fictício)
 
-Enquanto isso não ocorrer, a Sprint 0 permanece em andamento.
+### Estado dos critérios após a rodada 1
+
+| Critério | Estado |
+|---|---|
+| Recorte clínico identificado pela Dra. Karen | **atendido** |
+| Fluxo atual do recorte compreendido | **atendido** no essencial; correção de laudo segue pendente (pergunta 2) |
+| Entradas e saídas principais conhecidas | **atendido** para gestação única |
+| Requisitos classificados | **atendido**, agora em três eixos |
+| Desconhecidos explícitos | **atendido** — referências e transcrições marcadas |
+| Exemplos anonimizados suficientes | parcial — fixtures estruturais; expected output clínico pendente |
+| ADRs essenciais revisados | **atendido** — nenhum promovido |
+| Riscos registrados | **atendido** — ver [`../roadmap/RISK_REGISTER.md`](../roadmap/RISK_REGISTER.md) |
+| Escopo e não-escopo do MVP 1 escritos | **atendido** — [`../product/MVP_SCOPE.md`](../product/MVP_SCOPE.md) |
+| Nenhum requisito crítico inventado pela engenharia | **atendido** — frases e faixas não transcritas ficaram vazias, não preenchidas |
+
+A rodada 1 está completa. A descoberta clínica continua **contínua**: pendências específicas (referências, placenta, múltiplos) seguem abertas sem bloquear o recorte já definido.
 
 ## Reuniões depois da primeira
 
