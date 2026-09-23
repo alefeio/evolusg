@@ -3,7 +3,7 @@
 **`INTENSIVE DISCOVERY ROUND 1 = COMPLETE`**  
 **`CLINICAL DISCOVERY = CONTINUOUS`**
 
-A primeira rodada intensiva produziu o pacote clínico v0.1 e o recorte de MVP 1. Isso **não** encerra a descoberta clínica: ela passa a ser contínua, com pendências específicas abertas (referências científicas, detalhes de placenta, múltiplos).
+A primeira rodada intensiva produziu o pacote clínico v0.1 e o recorte de MVP 1. Isso **não** encerra a descoberta clínica: ela passa a ser contínua, com pendências específicas abertas (referências científicas, múltiplos).
 
 **Implementação clínica:** continua proibida até autorização explícita da próxima sprint.  
 **Sprint 1** (fundação e autenticação): concluída para piloto — ver [`../roadmap/SPRINT_1.md`](../roadmap/SPRINT_1.md).
@@ -14,26 +14,30 @@ A primeira rodada intensiva produziu o pacote clínico v0.1 e o recorte de MVP 1
 |---|---|
 | Primeiro protocolo escolhido | [`EXAM_INVENTORY.md`](EXAM_INVENTORY.md) |
 | Baseline do protocolo (ordem, regras, dependências) | [`../protocols/OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md) |
-| Campos + ownership conceitual | [`CLINICAL_FIELD_CATALOG.md`](CLINICAL_FIELD_CATALOG.md) |
-| Chaves de frase (textos a transcrever) | [`PHRASE_CATALOG.md`](PHRASE_CATALOG.md) |
+| Campos + ownership V1 | [`CLINICAL_FIELD_CATALOG.md`](CLINICAL_FIELD_CATALOG.md) |
+| Frases singleton importadas | [`PHRASE_CATALOG.md`](PHRASE_CATALOG.md) |
 | Cálculos nomeados | [`CALCULATION_CATALOG.md`](CALCULATION_CATALOG.md) |
 | Referências pendentes | [`REFERENCE_VALIDATION_BACKLOG.md`](REFERENCE_VALIDATION_BACKLOG.md) |
 | Fixtures estruturais e stress tests futuros | [`../testing/CLINICAL_FIXTURES.md`](../testing/CLINICAL_FIXTURES.md) |
+| Proposta Sprint 2 | [`../roadmap/SPRINT_2_PROPOSAL.md`](../roadmap/SPRINT_2_PROPOSAL.md) |
 | Três eixos de status | [`TRACEABILITY.md`](TRACEABILITY.md#três-eixos-de-status-reconciliação-v01) |
 
-## Perguntas bloqueantes (lote 2)
+## Perguntas clínicas
 
-Metodologia atual: **não** voltar com dezenas de perguntas triviais. Só entra aqui `CLINICAL DECISION THAT CANNOT BE SAFELY INFERRED OR SOURCED`.
+### `BLOCKING CLINICAL QUESTIONS FOR SPRINT 2 = NONE`
 
-| # | Pergunta | O que ela desbloqueia |
+Decisões resolvidas na complementação do handoff (não são mais perguntas):
+
+- contexto gestacional mínimo → `PREGNANCY_EPISODE_MINIMUM_V1`
+- medicações → `CONTINUOUS_MEDICATIONS_V1 = EXAM_CONTEXT_SNAPSHOT`
+- placenta → localização + grau importados
+
+### Não bloqueantes da Sprint 2 (bloqueiam etapas futuras)
+
+| # | Pergunta | Bloqueia |
 |---|---|---|
-| 1 | Quais referências/tabelas ela usa hoje (Doppler, crescimento, Hadlock) e de onde vêm? | todo o [`backlog de referências`](REFERENCE_VALIDATION_BACKLOG.md); qualquer classificação automática |
-| 2 | Como ela corrige um laudo já entregue hoje (novo registro, adendo, reimpressão)? | ADR-009 / ADR-012; fluxo de emissão |
-| 3 | O que é "contexto gestacional mínimo" que ela precisa ver antes de começar o exame? | granularidade de `PregnancyEpisode` na primeira slice |
-| 4 | Medicações: lista atual da paciente ou uso no momento do exame? | ownership de `patient.medications` |
-| 5 | Quais campos de placenta entram no laudo com Doppler? | seção 6 do protocolo |
-
-Perguntas de fraseologia e faixas numéricas **não** entram aqui: o conteúdo já foi informado na rodada 1 e depende de transcrição (`PENDING HANDOFF IMPORT`), não de nova pergunta.
+| 1 | Quais referências/tabelas ela usa hoje (Doppler, crescimento, Hadlock)? | classificação / interpretação automática |
+| 2 | Como ela corrige um laudo já entregue hoje? | emissão / versionamento final (ADR-009/012) |
 
 ## Objetivo
 

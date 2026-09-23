@@ -102,14 +102,14 @@ Dependências validadas:
 - Evidência/fonte: `SOURCE_NOT_REQUIRED`
 - Prontidão técnica: `READY_FOR_IMPLEMENTATION`
 
-Textos aprovados desta seção: ver [`../clinical-discovery/PHRASE_CATALOG.md`](../clinical-discovery/PHRASE_CATALOG.md). O texto literal ainda está `PENDING HANDOFF IMPORT` — as chaves e as condições já estão registradas.
+Textos aprovados desta seção: ver [`../clinical-discovery/PHRASE_CATALOG.md`](../clinical-discovery/PHRASE_CATALOG.md) (templates longitudinais e transversos importados).
 
 ## 7. Princípio "não marcado ≠ ausente"
 
 Regra de modelagem e de interface, válida para todo o protocolo:
 
 - campo não marcado **não** significa achado ausente;
-- movimentos corporais e deglutição presentes → gerar frase;
+- movimentos corporais e deglutição presentes → gerar frase "Movimentos fetais e deglutição presentes.";
 - não marcados → **não** gerar frase;
 - nunca gerar automaticamente "ausente" a partir de campo vazio.
 
@@ -123,165 +123,132 @@ Impacto direto no ADR-006: a "política de omissão" deixa de ser hipótese solt
 
 ## 8. Biometria fetal
 
-Campos: DBP, CC, CA, CF, PFE, percentil.
+Campos: DBP, CC, CA, CF (mostrar medidas); PFE; percentil.
 
 | Decisão | Eixo clínico | Eixo de fonte |
 |---|---|---|
-| Não exibir idade gestacional individual por medida biométrica | `CLINICALLY_APPROVED` | `SOURCE_NOT_REQUIRED` |
-| Exibir idade gestacional estimada **geral** pela biometria | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` (qual composição/fórmula produz a IG geral) |
-| PFE por Hadlock (conceito e dependência) | `CLINICALLY_APPROVED` como conceito | `SOURCE_VALIDATION_PENDING` (fórmula, tabela e versão exatas) |
-| Percentil de peso | `CLINICALLY_APPROVED` como conceito | `SOURCE_VALIDATION_PENDING` (tabela e versão) |
+| Não exibir IG individual por medida | `CLINICALLY_APPROVED` | `SOURCE_NOT_REQUIRED` |
+| Exibir IG estimada **geral** pela biometria (contexto do exame atual) | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
+| PFE por Hadlock; frase com ±10% (margem versionável) | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
+| Percentil de peso | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
 
-Nenhum cálculo definitivo pode ser implementado enquanto a fonte não estiver validada. Ver [`../clinical-discovery/CALCULATION_CATALOG.md`](../clinical-discovery/CALCULATION_CATALOG.md) e [`../clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md`](../clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md).
+Diferença entre IG corrigida e IG pela biometria: **não** gera alerta automático.
+
+Nenhum cálculo definitivo de produção enquanto a fonte não estiver validada.
 
 ## 9. Crescimento fetal
 
-Conceito clínico aprovado: classificação em **abaixo**, **adequado** e **acima**.
+Thresholds informados (`CLINICALLY_APPROVED`):
+
+| Classificação | Faixa informada |
+|---|---|
+| abaixo | &lt;P5 |
+| adequado | P5–P90 |
+| acima | &gt;P90 |
 
 | Eixo | Estado |
 |---|---|
-| Decisão clínica (existência das três classes) | `CLINICALLY_APPROVED` |
-| Thresholds numéricos informados na discovery | `PENDING HANDOFF IMPORT` |
-| Referência científica e versionamento dos thresholds | `SOURCE_VALIDATION_PENDING` |
-| Prontidão técnica | `NOT_ANALYZED` até a fonte |
+| Decisão clínica + thresholds informados | `CLINICALLY_APPROVED` |
+| Referência científica / versionamento | `SOURCE_VALIDATION_PENDING` |
+| Prontidão técnica (classificação automática) | `NOT_ANALYZED` |
 
-A classificação pode existir como **estrutura** (campo, opções, lugar no texto) antes da fonte; não pode gerar classificação automática, alerta ou frase de conclusão antes dela.
+Frases: ver catálogo. Estrutura pode existir antes da fonte; classificação automática e frase de conclusão por threshold **não**.
 
 ## 10. Arquitetura conceitual de um componente Doppler
 
-Modelo conceitual mínimo que cada componente Doppler precisa suportar. **Não** é classe, não é engine, não é schema.
+Modelo conceitual mínimo (não é classe/engine/schema):
 
-| Elemento conceitual | Papel |
+| Elemento | Papel |
 |---|---|
-| `MeasuredValue` | valor informado pela profissional, com unidade |
-| `Reference` | tabela/fonte aplicável, versionada |
-| `PercentileOrRange` | posição do valor na referência |
-| `Classification` | interpretação clínica derivada |
-| `Text` | frase correspondente, por chave semântica |
-| `ConclusionContribution` | o que este componente entrega à conclusão |
-| `SourceVersion` | qual versão de referência produziu a interpretação |
+| `MeasuredValue` | valor informado |
+| `Reference` | tabela/fonte versionada |
+| `PercentileOrRange` | posição na referência |
+| `Classification` | interpretação derivada |
+| `Text` | frase por chave |
+| `ConclusionContribution` | contribuição à conclusão |
+| `SourceVersion` | versão da referência |
 
-Serve para responder uma pergunta arquitetural: a modelagem prevista suporta dado → referência → interpretação → frase → contribuição à conclusão → rastreabilidade? Enquanto `Reference` e `SourceVersion` não existirem de fato, `Classification` e `ConclusionContribution` não podem ser produzidos em produção.
+Enquanto `Reference`/`SourceVersion` não existirem, `Classification` e contribuições de conclusão **não** podem ser produzidas em produção.
 
 ## 11. Artérias uterinas
 
-Campos: PI direita, PI esquerda, PI médio, incisura direita, incisura esquerda.
-
-Cálculo aprovado:
+Campos: IP direita, IP esquerda, IP médio, incisura direita, incisura esquerda.
 
 ```text
-PI médio = (PI direita + PI esquerda) / 2
+IP médio = (IP direita + IP esquerda) / 2
 ```
 
-Média aritmética simples: `SOURCE_NOT_REQUIRED` (é definição, não referência científica).
-
-Conceitos clínicos aprovados:
+Média aritmética: `SOURCE_NOT_REQUIRED` — candidata à Sprint 2 **sem** classificação P95.
 
 | Conceito | Estado clínico |
 |---|---|
-| Avaliar lado direito, lado esquerdo e a média | `CLINICALLY_APPROVED` |
-| `> P95` é alteração relevante | `CLINICALLY_APPROVED` |
-| `< P5` **não** é regra patológica neste protocolo | `CLINICALLY_APPROVED` |
-| Lado individual `> P95` deve ser sinalizado mesmo com média normal | `CLINICALLY_APPROVED` |
-| Incisura: direita, esquerda, bilateral | `CLINICALLY_APPROVED` |
-| Contribuição consolidada para a conclusão | `CLINICALLY_APPROVED` como conceito |
+| Avaliar direita, esquerda e média | `CLINICALLY_APPROVED` |
+| `> P95` = alteração; `< P5` **não** | `CLINICALLY_APPROVED` |
+| Lado individual `> P95` mesmo com média normal | `CLINICALLY_APPROVED` |
+| Incisura direita / esquerda / bilateral | `CLINICALLY_APPROVED` |
+| Conclusão sem incisura: "Alteração hemodinâmica na Dopplerfluxometria." | `CLINICALLY_APPROVED` + emissão `SOURCE_VALIDATION_PENDING` (P95) |
+| Conclusão com incisura: "... Aumento do risco para pré-eclâmpsia." | `CLINICALLY_APPROVED` |
 
-Bloqueio de fonte: a **tabela de percentis** das artérias uterinas por idade gestacional é `SOURCE_VALIDATION_PENDING`. Portanto a avaliação automática de P95 **não** está pronta para produção, mesmo com o conceito aprovado.
-
-Frases aprovadas (lado alterado, incisura unilateral, incisura bilateral, contribuição de conclusão): chaves registradas no catálogo de frases, texto literal `PENDING HANDOFF IMPORT`.
+Tabela P95: `SOURCE_VALIDATION_PENDING`. Frases literais: [`PHRASE_CATALOG.md`](../clinical-discovery/PHRASE_CATALOG.md).
 
 ## 12. Umbilical, ACM, ducto venoso e RCP
 
-| Componente | Conceito clínico | Referência |
-|---|---|---|
-| Artéria umbilical | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-| ACM | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-| Ducto venoso | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-| RCP | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-
-Fórmula aprovada:
+| Componente | Alteração informada | Conclusão (conceito) | Fonte |
+|---|---|---|---|
+| Umbilical | IP &gt; P95; IP &lt; P5 não altera | "Aumento da resistência hemodinâmica materno-fetal." | `SOURCE_VALIDATION_PENDING` |
+| ACM | IP &lt; P5; IP &gt; P95 não altera | "Dopplerfluxometria indicando centralização da hemodinâmica fetal." (só conclusão) | `SOURCE_VALIDATION_PENDING` |
+| Ducto venoso | IP &lt; P5; IP &gt; P95 fora | corpo + conclusão de hipóxia (ver catálogo) | `SOURCE_VALIDATION_PENDING` |
+| RCP | abaixo do estimado por IG (semanas+dias) | ver catálogo | `SOURCE_VALIDATION_PENDING` |
 
 ```text
-RCP = PI da ACM / PI da artéria umbilical
+RCP = IP ACM / IP artéria umbilical
 ```
 
-Restrições registradas:
+Não usar umbilical/ACM. Não usar corte fixo `&lt;1`. Não inventar interpolação.
 
-- **não** usar corte fixo `< 1`;
-- a classificação depende de idade gestacional precisa;
-- **não** inventar interpolação entre semanas/dias.
+Quando **normais**, o corpo deve ter texto específico para uterinas, umbilical, ACM, DV e RCP — não só números. Conclusão global normal: "Dopplervelocimetria dentro da normalidade."
 
-Frases aprovadas de cada componente: chaves no catálogo, texto `PENDING HANDOFF IMPORT`.
+## 13. BCF, placenta, líquido amniótico
 
-## 13. BCF, líquido amniótico e outras faixas
+| Item | Fato importado | Fonte |
+|---|---|---|
+| BCF | faixa 120–160 bpm; bradi &lt;120; taqui &gt;160 | `CLINICALLY_APPROVED` + `SOURCE_VALIDATION_PENDING` |
+| Placenta | localização: anterior, posterior, fúndica, lateral; grau I/II/III; frase no corpo, não na conclusão | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` |
+| Líquido | escolha manual MBV **ou** ILA; MBV 3,0–8,0 / &lt;3 / &gt;8; ILA 3,0–24,0 / &lt;3 / &gt;24 | `CLINICALLY_APPROVED` + `SOURCE_VALIDATION_PENDING` |
 
-| Item | Estado |
-|---|---|
-| BCF (faixa informada na discovery) | `PENDING HANDOFF IMPORT` + `SOURCE_VALIDATION_PENDING` |
-| MBV | `PENDING HANDOFF IMPORT` + `SOURCE_VALIDATION_PENDING` |
-| ILA | `PENDING HANDOFF IMPORT` + `SOURCE_VALIDATION_PENDING` |
-| Placenta (localização, aspecto) | `CLINICALLY_APPROVED` como seção; campos a detalhar no catálogo |
-
-Nenhum desses números vira comportamento de produção nesta fase. Estrutura sim; classificação automática não.
+Nenhum desses números vira classificação automática de produção nesta fase.
 
 ## 14. Conclusão
 
-A discovery mostrou que a conclusão **não** é concatenação simples de frases. Requisitos conceituais mínimos:
+Requisitos conceituais: priority, deduplication, consolidation, maternal/fetal/global scope, suppression, merging. Sem LLM; determinístico; sem engine genérico agora.
 
-| Requisito | Significado |
-|---|---|
-| `priority` | ordem clínica de importância entre contribuições |
-| `deduplication` | não repetir a mesma informação vinda de dois componentes |
-| `consolidation` | agrupar contribuições relacionadas numa única afirmação |
-| maternal scope | achados do contexto materno |
-| fetal scope | achados por feto |
-| global scope | afirmações do exame como um todo |
-| `suppression` | contribuição que deixa de aparecer diante de outra mais forte |
-| merging compatible findings | fundir contribuições compatíveis sem perder significado |
+Conclusão normal singleton (fraseologia documentada — **não** autoriza geração automática ainda):
 
-Restrições: sem LLM; determinístico; **não** construir engine genérico agora. A proposta é a **menor estrutura determinística suficiente** para este protocolo — lista ordenada de contribuições com escopo e chave de consolidação, avaliada em ordem fixa.
-
-- Decisão clínica (a conclusão precisa desses comportamentos): `CLINICALLY_APPROVED`
-- Desenho da estrutura: `PROPOSED`
-- Prontidão técnica: `NOT_ANALYZED` (depende das referências que alimentam as contribuições)
+1. "Gestação tópica, única, com feto vivo."
+2. "Crescimento fetal adequado para a idade gestacional corrigida."
+3. "Dopplervelocimetria dentro da normalidade."
+4. "Normodrâmnio."
 
 ## 15. Fraseologia
 
-`DADO CLÍNICO ≠ FRASE` permanece princípio (ADR-005, ADR-006, ADR-007).
-
-Hierarquia conceitual futura, apenas registrada:
-
-```text
-Protocol Phrase → Organization Phrase → Professional Phrase → Manual Edit
-```
-
-Override pessoal continua `PENDING PRODUCT DECISION` (ADR-007, estratégias A/B/C em aberto). Não implementar override neste ciclo.
+`DADO CLÍNICO ≠ FRASE`. Hierarquia futura: Protocol → Organization → Professional → Manual Edit. Override: `PENDING PRODUCT DECISION`. Catálogo atualizado com literais singleton.
 
 ## 16. Múltiplos — documentado para o futuro
 
 `DOCUMENTED FOR FUTURE IMPLEMENTATION`
 
-Conhecimento preservado da discovery: gemelares, trigemelares, corionicidade, amnionicidade, discordância, sFGR e identificação fetal.
-
-Função **agora**: teste arquitetural. A modelagem inicial não deve impedir:
-
-- `repeating groups` (N fetos no mesmo exame);
-- escopo fetal em campos, frases e contribuições de conclusão;
-- identificação estável de cada feto ao longo do episódio gestacional.
-
-Isso **não** significa implementar suporte a múltiplos na próxima Sprint. Significa que caminhos de modelagem que travem esses três pontos devem ser rejeitados.
+Não expandir Sprint 2. Frases literais de múltiplos **não** foram completadas nesta complementação (não necessárias para autorizar Sprint 2 singleton). Modelagem inicial não deve impedir repeating groups, escopo fetal e identificação estável de fetos.
 
 ## 17. Rastreabilidade
 
-Cada item deste documento deve, quando entrar em trabalho técnico, existir como `CR` validado e `TR` derivado, com artefatos `FIELD` / `RULE` / `CALC` / `TEXT` nos catálogos, `FIX` em [`../testing/CLINICAL_FIXTURES.md`](../testing/CLINICAL_FIXTURES.md) e vínculo com a `ProtocolVersion` que o publicar. Ver [`../clinical-discovery/TRACEABILITY.md`](../clinical-discovery/TRACEABILITY.md).
+Ver [`../clinical-discovery/TRACEABILITY.md`](../clinical-discovery/TRACEABILITY.md).
 
 ## 18. Pendências deste protocolo
 
 | Pendência | Tipo |
 |---|---|
-| Importar textos literais das frases aprovadas do pacote clínico v0.1 | `PENDING HANDOFF IMPORT` |
-| Importar faixas numéricas informadas (crescimento, BCF, MBV, ILA) | `PENDING HANDOFF IMPORT` |
 | Validar formalmente todas as referências do backlog | `SOURCE_VALIDATION_PENDING` |
-| Campos de dados clínicos, placenta e líquido detalhados no catálogo | `PENDING CLINICAL DISCOVERY` (detalhe) |
+| Frases/textos de múltiplos (gemelar/trigemelar) | `DOCUMENTED FOR FUTURE IMPLEMENTATION` — não inventar |
 | Ordem de preenchimento na interface | `PENDING PRODUCT DECISION` |
-| Estrutura final da conclusão | `PROPOSED` |
+| Estrutura final da conclusão (engine) | `PROPOSED` |
+| Workflow de retificação de laudo entregue | `PENDING CLINICAL DISCOVERY` (não bloqueia Sprint 2 de captura) |

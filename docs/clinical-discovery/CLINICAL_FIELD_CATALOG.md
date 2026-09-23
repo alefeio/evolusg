@@ -20,26 +20,28 @@ Objetivo: evitar que tudo caia dentro de `Exam`. Categorias conceituais (sem tab
 | `Report-level` | o que é do documento (narrativa, conclusão consolidada) |
 | `ProfessionalPreference-level` | preferência da profissional (fraseologia, defaults de exibição) |
 
-### Decisões de ownership da rodada 1
+### Ownership V1 — decisões fechadas (primeira vertical slice)
 
-| Dado | Nível proposto | Justificativa | Estado |
+`PREGNANCY_EPISODE_MINIMUM_V1 = APPROVED FOR SPRINT_2 MODELING`
+
+Não criar schema físico. Ver detalhe em [`../architecture/DOMAIN_MODEL.md`](../architecture/DOMAIN_MODEL.md).
+
+| Dado | Nível V1 | Justificativa | Estado |
 |---|---|---|---|
-| DUM | `PregnancyEpisode-level` | é âncora de datação da gestação, não atributo permanente da paciente nem medida do exame | `PROPOSED` |
-| Primeira ultrassonografia (usada para datar) | `PregnancyEpisode-level` | âncora de datação do episódio | `PROPOSED` |
-| IG corrigida | derivada: política de datação no `PregnancyEpisode-level`, valor calculado na data do `Exam` | evita gravar IG solta e inconsistente entre exames | `PROPOSED` |
-| G / P / A | `PregnancyEpisode-level` (como informado no episódio) | muda ao longo da vida; congelar por episódio preserva a verdade do laudo | `PROPOSED` + ambiguidade registrada |
-| Comorbidades | `Patient-level`, com relevância anotada no episódio | acompanham a pessoa | `PROPOSED` + ambiguidade registrada |
-| Medicações | ambíguo: lista atual da paciente vs uso no momento do exame | os dois significados existem e não são o mesmo dado | `PENDING PRODUCT DECISION` |
-| Biometria (DBP, CC, CA, CF, PFE, percentil) | `Fetus-level` dentro do `Exam` | é por feto, mesmo com um único feto | `PROPOSED` |
-| Doppler fetal (umbilical, ACM, DV, RCP) | `Fetus-level` | é por feto | `PROPOSED` |
-| Doppler materno (artérias uterinas, incisuras) | `Exam-level`, escopo materno | não é atributo de um feto | `PROPOSED` |
-| Placenta | `Exam-level` no protocolo singleton | em múltiplos passa a depender de corionicidade → escopo revisto no futuro | `PROPOSED` |
-| Líquido amniótico (MBV, ILA) | `Exam-level` no protocolo singleton | em múltiplos passa a ser por saco gestacional → escopo revisto no futuro | `PROPOSED` |
-| Vitalidade e posição fetal | `Fetus-level` | por feto | `PROPOSED` |
-| Frases | **não** é dado clínico: artefato `TEXT` do protocolo; override em `ProfessionalPreference-level` | `DADO ≠ FRASE` | `KNOWN` (princípio) |
-| Conclusão | `Report-level`, montada a partir de contribuições com escopo materno/fetal/global | conclusão é do documento, não de um campo | `PROPOSED` |
+| DUM (informativa) | `PregnancyEpisode` | âncora de datação da gestação | `APPROVED FOR SPRINT_2 MODELING` |
+| G / P / A | `PregnancyEpisode` (snapshot obstétrico) | snapshot do episódio; **não** significa imutável na vida da paciente; histórico obstétrico longitudinal = futuro | `APPROVED FOR SPRINT_2 MODELING` |
+| Data da 1ª USG de datação | `PregnancyEpisode` | âncora de datação | `APPROVED FOR SPRINT_2 MODELING` |
+| IG na 1ª USG (semanas + dias) | `PregnancyEpisode` | âncora de datação | `APPROVED FOR SPRINT_2 MODELING` |
+| IG corrigida atual | **derivada** (episódio + data do exame) | não duplicar como fonte independente | `APPROVED FOR SPRINT_2 MODELING` (conceito); cálculo de produção `NOT_ANALYZED` |
+| IG estimada pela biometria atual | `Exam` / Fetus (contexto do exame atual) | **não** pertence ao PregnancyEpisode | `APPROVED FOR SPRINT_2 MODELING` (conceito) |
+| Comorbidades | `Exam` / ExamClinicalContext (**snapshot**) | `COMORBIDITIES_V1 = EXAM_CONTEXT_SNAPSHOT`; longitudinal Patient = futuro | `APPROVED FOR SPRINT_2 MODELING` |
+| Medicações de uso contínuo | `Exam` / ExamClinicalContext (**snapshot**) | `CONTINUOUS_MEDICATIONS_V1 = EXAM_CONTEXT_SNAPSHOT`; longitudinal Patient = futuro | `APPROVED FOR SPRINT_2 MODELING` |
+| Biometria, Doppler fetal, vitalidade, posição | `Fetus` | por feto | `APPROVED FOR SPRINT_2 MODELING` |
+| Doppler materno (uterinas), placenta, líquido | `Exam` (materno) | escopo materno do exame | `APPROVED FOR SPRINT_2 MODELING` |
+| Frases | artefato `TEXT` do protocolo | `DADO ≠ FRASE` | `KNOWN` |
+| Conclusão / revisão textual | `Report` | documento, não campo | `APPROVED FOR SPRINT_2 MODELING` (conceito) |
 
-Ambiguidades acima são **decisões pendentes explícitas**, não lacunas silenciosas.
+Futuro (não V1): `PATIENT LONGITUDINAL COMORBIDITY MODEL — FUTURE` · `PATIENT LONGITUDINAL MEDICATION MODEL — FUTURE` · histórico obstétrico G/P/A.
 
 ## Estrutura de cada campo
 
@@ -98,40 +100,43 @@ Field Keys são **conceituais** (não são colunas). `[n]` indica escopo fetal p
 
 Legenda de status: decisão clínica / fonte / prontidão técnica.
 
-| Field Key (conceitual) | Nome clínico | Seção | Ownership | Status |
+| Field Key (conceitual) | Nome clínico | Seção | Ownership V1 | Status |
 |---|---|---|---|---|
-| `pregnancy.lmp` | DUM | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `pregnancy.datingUltrasound` | Primeira ultrassonografia | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `pregnancy.correctedGestationalAge` | IG corrigida | Dados clínicos | derivado | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (política de datação e interpolação) / `NOT_ANALYZED` |
-| `pregnancy.gravidity` `pregnancy.parity` `pregnancy.abortions` | G / P / A | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `patient.comorbidities` | Comorbidades | Dados clínicos | Patient | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `NOT_ANALYZED` |
-| `patient.medications` | Medicações | Dados clínicos | ambíguo | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `NOT_ANALYZED` (ownership `PENDING PRODUCT DECISION`) |
-| `fetuses[n].vitality.heartRate` | BCF | Vitalidade | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` + `PENDING HANDOFF IMPORT` (faixa) / `NOT_ANALYZED` |
+| `pregnancy.lmp` | DUM (informativa) | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `pregnancy.gravidity` `pregnancy.parity` `pregnancy.abortions` | G / P / A (snapshot) | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `pregnancy.datingUltrasound.date` | Data da 1ª USG de datação | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `pregnancy.datingUltrasound.gestationalAge` | IG na 1ª USG (semanas + dias) | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `exam.correctedGestationalAge` | IG corrigida atual | Dados clínicos | derivado (episódio + data do exame) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (política) / `NOT_ANALYZED` |
+| `exam.comorbidities` | Comorbidades (snapshot) | Dados clínicos | ExamClinicalContext | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `exam.continuousMedications` | Medicações de uso contínuo (snapshot) | Dados clínicos | ExamClinicalContext | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `fetuses[n].vitality.heartRate` | BCF | Vitalidade | Fetus | `CLINICALLY_APPROVED` / faixa 120–160 informada; `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].vitality.bodyMovements` | Movimentos corporais | Vitalidade | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].vitality.swallowing` | Deglutição | Vitalidade | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].lie` | Situação (longitudinal, transversa) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].presentation` | Apresentação (cefálica, pélvica, córmica) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].spinePosition` | Dorso (direita, esquerda) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].cephalicPolePosition` | Polo cefálico (direita, esquerda) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `maternal.uterineArtery.right.pi` | PI artéria uterina direita | Doppler | Exam (materno) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (percentis) / `NOT_ANALYZED` |
-| `maternal.uterineArtery.left.pi` | PI artéria uterina esquerda | Doppler | Exam (materno) | idem |
-| `maternal.uterineArtery.mean.pi` | PI médio | Doppler | derivado | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` (média aritmética) / `READY_FOR_IMPLEMENTATION` (cálculo) |
+| `maternal.uterineArtery.right.pi` | IP artéria uterina direita | Doppler | Exam (materno) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (percentis) / `NOT_ANALYZED` |
+| `maternal.uterineArtery.left.pi` | IP artéria uterina esquerda | Doppler | Exam (materno) | idem |
+| `maternal.uterineArtery.mean.pi` | IP médio | Doppler | derivado | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` (média aritmética) / `READY_FOR_IMPLEMENTATION` (cálculo) |
 | `maternal.uterineArtery.right.notch` | Incisura direita | Doppler | Exam (materno) | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `maternal.uterineArtery.left.notch` | Incisura esquerda | Doppler | Exam (materno) | idem |
-| `fetuses[n].doppler.umbilicalArtery.pi` | PI artéria umbilical | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
-| `fetuses[n].doppler.mca.pi` | PI ACM | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].doppler.umbilicalArtery.pi` | IP artéria umbilical | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].doppler.mca.pi` | IP ACM | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].doppler.ductusVenosus` | Ducto venoso | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].doppler.cpr` | RCP | Doppler | derivado (Fetus) | `CLINICALLY_APPROVED` (fórmula) / `SOURCE_VALIDATION_PENDING` (classificação por IG) / `NOT_ANALYZED` |
 | `fetuses[n].biometry.bpd` | DBP | Biometria | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` (medida) / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].biometry.hc` | CC | Biometria | Fetus | idem |
 | `fetuses[n].biometry.ac` | CA | Biometria | Fetus | idem |
 | `fetuses[n].biometry.fl` | CF | Biometria | Fetus | idem |
-| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (conceito Hadlock) / `SOURCE_VALIDATION_PENDING` (fórmula/versão) / `NOT_ANALYZED` |
-| `fetuses[n].biometry.efwPercentile` | Percentil de peso | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (tabela) / `NOT_ANALYZED` |
-| `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
-| `fetuses[n].growth.classification` | Crescimento (abaixo, adequado, acima) | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (as três classes) / `SOURCE_VALIDATION_PENDING` + `PENDING HANDOFF IMPORT` (thresholds) / `NOT_ANALYZED` |
-| `placenta.*` | Placenta (localização, aspecto) | Placenta | Exam | `CLINICALLY_APPROVED` (seção) / `SOURCE_NOT_REQUIRED` / `PENDING CLINICAL DISCOVERY` (campos) |
-| `amnioticFluid.mbv` | MBV | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` + `PENDING HANDOFF IMPORT` / `NOT_ANALYZED` |
+| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (conceito Hadlock; margem ±10% versionável) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].biometry.efwPercentile` | Percentil de peso | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | Exam/Fetus (exame atual) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].growth.classification` | Crescimento (&lt;P5 / P5–P90 / &gt;P90) | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (thresholds informados) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `placenta.location` | Localização (anterior, posterior, fúndica, lateral) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `placenta.maturityGrade` | Grau de maturidade (I, II, III) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `amnioticFluid.method` | Método escolhido (MBV \| ILA) — escolha manual | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `amnioticFluid.mbv` | MBV | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / faixas informadas; `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `amnioticFluid.afi` | ILA | Líquido amniótico | Exam | idem |
 
 Campos não listados: `PENDING CLINICAL DISCOVERY`. Não preencher por dedução de engenharia.

@@ -91,7 +91,7 @@ Protocol Phrase → Organization Phrase → Professional Phrase → Manual Edit
 
 Isso **não** escolhe A/B/C e **não** autoriza override. Efeito neste ADR: a identidade candidata (`phraseKey` + contrato de placeholders + `textRuleId`) continua compatível com a hierarquia, e o nível "Organization" passa a existir como camada prevista (ligada ao ADR-010, sem coluna).
 
-Também fica registrado que há frase **do protocolo sem dado de entrada** (técnica do exame), e que as frases aprovadas do protocolo v0.1 ainda estão `PENDING HANDOFF IMPORT` em [`../clinical-discovery/PHRASE_CATALOG.md`](../clinical-discovery/PHRASE_CATALOG.md).
+Também fica registrado que há frase **do protocolo sem dado de entrada** (técnica do exame). Frases singleton do protocolo v0.1 estão importadas em [`../clinical-discovery/PHRASE_CATALOG.md`](../clinical-discovery/PHRASE_CATALOG.md); emissão automática por threshold continua sujeita a `SOURCE_VALIDATION_PENDING`.
 
 ## Decisão proposta (restrita)
 

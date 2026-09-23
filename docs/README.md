@@ -51,7 +51,7 @@ Convenções acrescentadas pela reconciliação clínica v0.1 (detalhe em [`clin
 | `CLINICALLY_APPROVED` | Validado pela médica responsável. **Não** implica fonte científica validada. |
 | `SOURCE_VALIDATION_PENDING` | Falta referência formal (tabela, fórmula, versão). Bloqueia classificação, alerta e cálculo de produção. |
 | `SOURCE_VALIDATED` | Referência identificada, versionada e aceita. |
-| `PENDING HANDOFF IMPORT` | Conteúdo já informado na discovery, ainda não transcrito nos catálogos. |
+| `PENDING HANDOFF IMPORT` | Conteúdo já informado na discovery, ainda não transcrito. Singleton Doppler: importação concluída; múltiplos podem permanecer. ≠ `SOURCE_VALIDATION_PENDING`. |
 | `DOCUMENTED FOR FUTURE IMPLEMENTATION` | Conhecimento preservado (ex. múltiplos) que **não** entra na primeira vertical slice. |
 | `READY_FOR_IMPLEMENTATION` | Decisão clínica aprovada, fonte suficiente e desenho compreendido. |
 

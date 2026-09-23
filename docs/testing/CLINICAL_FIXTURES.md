@@ -55,9 +55,16 @@ Padrão: `{AREA}-{PROTOCOLO}-{RECORTE}-{CENÁRIO}-{NNN}`
 
 Todos abaixo são catalogáveis agora como `STRUCTURAL`; a camada de saída clínica permanece `PENDING_REFERENCE`.
 
+Estrutura mínima que todo fixture singleton deve poder carregar:
+
+- `PregnancyEpisode` mínimo (DUM, G/P/A, data 1ª USG, IG 1ª USG);
+- `ExamClinicalContext` com comorbidades snapshot e medicações contínuas snapshot;
+- placenta (localização + grau);
+- escopo fetal único.
+
 | ID | Cenário | Estrutural | Saída clínica |
 |---|---|---|---|
-| `OB-DOPPLER-SINGLE-NORMAL-001` | exame sem alterações | catalogável | `PENDING_REFERENCE` |
+| `OB-DOPPLER-SINGLE-NORMAL-001` | exame sem alterações (inclui episódio + snapshots + placenta) | catalogável | `PENDING_REFERENCE` |
 | `OB-DOPPLER-SINGLE-GROWTH-LOW-001` | crescimento abaixo | catalogável | `PENDING_REFERENCE` (percentis) |
 | `OB-DOPPLER-SINGLE-UMBILICAL-HIGH-001` | umbilical elevada | catalogável | `PENDING_REFERENCE` |
 | `OB-DOPPLER-SINGLE-MCA-LOW-001` | ACM reduzida | catalogável | `PENDING_REFERENCE` |
@@ -65,13 +72,14 @@ Todos abaixo são catalogáveis agora como `STRUCTURAL`; a camada de saída clí
 | `OB-DOPPLER-SINGLE-RCP-LOW-001` | RCP reduzida | catalogável (fórmula) | `PENDING_REFERENCE` (classificação por IG) |
 | `OB-DOPPLER-UTERINE-NOTCH-001` | incisura uterina (uni e bilateral) | catalogável | `PENDING_REFERENCE` (P95) |
 
-Cenários estruturais adicionais recomendados, derivados de regras já aprovadas e **sem** dependência de fonte:
+Cenários estruturais adicionais (sem dependência de fonte para a forma):
 
 | ID | O que exercita |
 |---|---|
 | `OB-DOPPLER-SINGLE-POSITION-TRANSVERSE-001` | situação transversa → apresentação córmica, dorso oculto, polo cefálico exibido |
 | `OB-DOPPLER-SINGLE-ABSENCE-SEMANTICS-001` | movimentos/deglutição não marcados → nenhuma frase, nenhuma negativa automática |
-| `OB-DOPPLER-SINGLE-UTERINE-SIDE-ONLY-001` | lado individual alterado com média normal → sinalização do lado (estrutura da contribuição) |
+| `OB-DOPPLER-SINGLE-UTERINE-SIDE-ONLY-001` | lado individual alterado com média normal → estrutura da contribuição (sem P95 de produção) |
+| `OB-DOPPLER-SINGLE-EPISODE-CONTEXT-001` | PregnancyEpisode mínimo + comorbidades/medicações snapshot + placenta conhecida |
 
 ## Índice — stress tests arquiteturais (fora da primeira slice)
 

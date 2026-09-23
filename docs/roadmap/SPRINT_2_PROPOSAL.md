@@ -2,78 +2,118 @@
 
 **Status: PROPOSTA. NÃO AUTORIZADA.** Nada aqui autoriza implementação. Requer autorização explícita do proprietário.
 
-Base: reconciliação [`Clinical Discovery v0.1`](../protocols/OBSTETRIC_DOPPLER_V0_1.md) sobre a Sprint 1 consolidada.
+Base: reconciliação Clinical Discovery v0.1 + complementação do handoff singleton.
 
 ## Objetivo
 
-O menor incremento **realmente utilizável**: a profissional autenticada consegue registrar, salvar e retomar um exame obstétrico com Doppler de gestação única, com dados estruturados.
+O menor incremento **realmente utilizável**: captura estruturada + draft persistente de Obstétrica com Doppler (gestação única).
 
 ```text
 Professional autenticado
   → Patient
-    → contexto gestacional mínimo (PregnancyEpisode)
+    → PregnancyEpisode mínimo
       → Exam
         → protocolo Obstetric Doppler v0.1
-          → gestação única
+          → singleton
             → formulário estruturado
-              → persistência e reabertura do draft
+              → regras estruturais seguras
+                → salvar draft
+                  → reabrir draft
+                    → editar draft
 ```
 
-## Por que o corte para antes da geração textual
+## Critério de sucesso (experiência da Dra. Karen)
 
-Avaliação explícita da pergunta "regras/geração textual entram nesta sprint?":
+Ao final da Sprint 2, com **dados fictícios**, ela deve conseguir:
 
-| Camada | Entra na Sprint 2? | Motivo |
-|---|---|---|
-| Captura estruturada | **sim** | campos `CLINICALLY_APPROVED` com `SOURCE_NOT_REQUIRED` |
-| Regras de visibilidade e dependência (situação/apresentação/dorso/polo) | **sim** | validadas, sem dependência de fonte |
-| Semântica "não marcado ≠ ausente" | **sim** | é regra de modelagem/UI, não de interpretação |
-| Cálculo puramente aritmético (PI médio das uterinas) | **sim**, exibindo valor sem classificação | definição, não referência |
-| Geração textual do laudo | **não** | os textos aprovados ainda estão `PENDING HANDOFF IMPORT`; gerar frase inventada pela engenharia é inaceitável |
-| Classificação clínica, percentis, alertas | **não** | [`referências pendentes`](../clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md) |
-| Conclusão | **não** | depende de contribuições que dependem de classificação |
-| Emissão de PDF/DOCX | **não** | exige `ProfessionalProfile` e a decisão de retificação (ADR-009), nenhuma das duas necessária para capturar |
+1. entrar no evolUSG;
+2. localizar/criar uma paciente fictícia;
+3. iniciar uma gestação/contexto fictício (`PregnancyEpisode` mínimo);
+4. criar um novo exame;
+5. escolher Obstétrica com Doppler;
+6. preencher o formulário singleton;
+7. sair;
+8. voltar depois;
+9. localizar o draft;
+10. continuar preenchendo/editando.
 
-Consequência: a Sprint 2 entrega **valor verificável** (a rotina de preenchimento existe e sobrevive a um refresh) sem consumir nenhuma decisão que ainda não pode ser tomada.
+**Sem** geração final do laudo.
 
-## Escopo proposto
+## O que entra na Sprint 2
 
 | # | Entrega | Nota |
 |---|---|---|
-| 1 | `Patient` core: cadastro mínimo, busca simples, associação obrigatória do exame | campos mínimos conforme catálogo; sem merge/anti-duplicidade |
-| 2 | `PregnancyEpisode` mínimo: DUM, ultrassonografia de datação, G/P/A | os três já `CLINICALLY_APPROVED`; refinamento depende da pergunta 3 do lote 2 |
-| 3 | `Exam` vinculado a paciente + episódio, com protocolo e versão registrados | sem estados documentais além de rascunho |
-| 4 | Protocolo Obstetric Doppler v0.1 como artefato versionado mínimo | forma do artefato é decisão da sprint (ADR-002 restrito) |
-| 5 | Formulário estruturado das oito seções, escopo fetal único | ordem de saída conforme protocolo |
-| 6 | Regras de dependência de posição fetal + bloqueio de combinações incompatíveis | `RULE-OBD-001` a `RULE-OBD-005` |
-| 7 | Persistência de findings estruturados e reabertura do rascunho | `path` com escopo repetível desde já |
-| 8 | Fixtures estruturais executáveis dos cenários sem dependência de fonte | ver [`fixtures`](../testing/CLINICAL_FIXTURES.md) |
+| 1 | `Patient` core | cadastro mínimo, busca simples, associação obrigatória |
+| 2 | `PregnancyEpisode` mínimo | DUM; G/P/A; data 1ª USG; IG 1ª USG (semanas + dias) — aprovado para modelagem |
+| 3 | `Exam` + contexto clínico do exame | comorbidades snapshot; medicações contínuas snapshot |
+| 4 | Protocolo Obstetric Doppler v0.1 (artefato mínimo) | singleton; forma do artefato = decisão da sprint (ADR-002) |
+| 5 | Formulário estruturado | seções do protocolo; escopo fetal único; placenta (localização + grau); método MBV/ILA |
+| 6 | Regras estruturais | situação/apresentação; transversa ↔ córmica; longitudinal → dorso; transversa → polo; não marcado ≠ ausente |
+| 7 | IP médio das uterinas | `(direita + esquerda) / 2` — aritmético; **sem** classificação P95 |
+| 8 | Persistência e reabertura do draft | findings com `path` repetível desde já |
+| 9 | Fixtures estruturais | sem expected-output clínico de threshold |
 
-## Fora da Sprint 2 (exclusão explícita)
+## O que a Sprint 2 **não** implementa
 
-múltiplos (gemelar/trigemelar) · sFGR · timeline longitudinal · matching automático · compartilhamento entre profissionais · DICOM · PACS · portal do paciente · QR Code · billing/assinaturas · administração/RBAC · programa de indicação · LLM em qualquer ponto do motor clínico · toda referência ainda não validada · geração textual do laudo · conclusão automática · emissão de PDF/DOCX · override de fraseologia.
+| Camada | Motivo |
+|---|---|
+| Geração textual do laudo | incremento posterior; no máximo labels/valores estruturados na UX |
+| PFE Hadlock de produção | `SOURCE_VALIDATION_PENDING` |
+| Percentil / classificação de crescimento | `SOURCE_VALIDATION_PENDING` |
+| Interpretação P5/P95 (qualquer Doppler) | `SOURCE_VALIDATION_PENDING` |
+| Interpretação automática Doppler | fonte pendente |
+| BCF normal/bradi/taqui automática | faixa informada, fonte pendente |
+| Classificação automática de líquido | faixas informadas, fonte pendente |
+| Frases automáticas baseadas em threshold | fonte pendente |
+| Conclusão automática | depende de classificação |
+| Emissão / PDF / DOCX / Report final | exige ProfessionalProfile + workflow de retificação |
+| Múltiplos / sFGR | `DOCUMENTED FOR FUTURE IMPLEMENTATION` |
+| Timeline / sharing / DICOM / PACS / portal | fora do ciclo |
+| Billing / admin / referral | fora |
+| LLM clínico | proibido no motor |
+
+## Por que o corte antes da geração textual
+
+| Camada | Entra? | Motivo |
+|---|---|---|
+| Captura estruturada | **sim** | campos e ownership V1 fechados |
+| Regras de posição + ausência | **sim** | validadas, sem fonte |
+| IP médio aritmético | **sim** | definição, sem P95 |
+| Geração textual completa | **não** | foco = captura + draft; texto = incremento seguinte |
+| Classificação / conclusão / emissão | **não** | fonte e/ou produto ainda abertos |
+
+Frases e thresholds do handoff estão **documentados** (`CLINICALLY_APPROVED`). Isso **não** autoriza emissão automática enquanto `SOURCE_VALIDATION_PENDING`.
 
 ## Pré-condições
 
 | Pré-condição | Estado |
 |---|---|
 | Sprint 1 consolidada em `main` | atendido |
+| `BLOCKING CLINICAL QUESTIONS FOR SPRINT 2` | `NONE` |
 | Autorização explícita do proprietário | **pendente** |
-| Somente dados fictícios | obrigatório enquanto o banco for compartilhado |
-| `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` | continua valendo; a Sprint 2 cria tabelas clínicas no banco compartilhado e **não** libera uso clínico real |
+| Somente dados fictícios | obrigatório (banco compartilhado) |
+| Isolamento Production antes de uso clínico real | continua obrigatório |
 
-## Riscos específicos desta sprint
+## Perguntas **não** bloqueantes da Sprint 2
+
+| Pergunta | Bloqueia |
+|---|---|
+| Quais referências/tabelas ela usa? | classificação / interpretação futura |
+| Como ela corrige laudo já entregue? | emissão / versionamento final |
+
+## Riscos específicos
 
 | Risco | Mitigação |
 |---|---|
-| Formulário virar form-builder genérico | runtime só do recorte; sem construtor visual |
-| Findings modelados sem escopo fetal | `path` repetível desde o primeiro commit (R-13, R-15) |
-| Pressão para "já gerar o texto" | frases pendentes de transcrição; gerar texto inventado é proibido |
-| Tabelas clínicas em banco compartilhado | dados fictícios; gate de isolamento antes de uso real |
+| Formulário virar form-builder genérico | runtime só do recorte |
+| Findings sem escopo fetal | `path` repetível desde o primeiro commit |
+| Pressão para "já gerar o texto" | critério de sucesso = draft, não laudo |
+| Thresholds importados virarem produção | `SOURCE_VALIDATION_PENDING` explícito |
+| Tabelas clínicas em banco compartilhado | dados fictícios; gate de isolamento |
 
 ## Incrementos seguintes (indicativos)
 
-1. **Geração textual** — depois de transcrever as frases aprovadas do pacote clínico v0.1.
-2. **Classificações e conclusão** — depois de validar as referências do backlog (ADR-014).
-3. **Emissão documental** — depois de responder como ela corrige um laudo hoje (ADR-009/012) e de `ProfessionalProfile` mínimo.
-4. **Múltiplos** — somente após a primeira slice estar em uso real.
+1. **Geração textual** — frases do catálogo, ainda sem classificação automática por fonte pendente quando aplicável.
+2. **Classificações e conclusão** — após validar referências (ADR-014).
+3. **Emissão documental** — após workflow de retificação + `ProfessionalProfile` mínimo.
+4. **Múltiplos** — somente após a slice singleton em uso.

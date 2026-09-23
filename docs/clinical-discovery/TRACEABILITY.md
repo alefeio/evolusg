@@ -60,7 +60,9 @@ Eixo **novo**, porque não existia forma de dizer que falta referência científ
 | `SOURCE_VALIDATION_PENDING` | depende de tabela/fórmula/versão ainda não formalmente estabelecida |
 | `SOURCE_VALIDATED` | referência identificada, versionada e aceita |
 
-Complemento operacional: `PENDING HANDOFF IMPORT` marca conteúdo que **já existe** no pacote clínico (frase literal, faixa numérica informada) mas ainda não foi transcrito para os catálogos. É lacuna de transcrição, não de decisão.
+Complemento operacional: `PENDING HANDOFF IMPORT` marca conteúdo que **já existe** no pacote clínico mas ainda não foi transcrito. É lacuna de transcrição, não de decisão — e **não** é o mesmo que `SOURCE_VALIDATION_PENDING`.
+
+Singleton da Obstétrica com Doppler: frases e faixas do handoff foram importadas (deixaram de ser `PENDING HANDOFF IMPORT`). Múltiplos e outros protocolos podem ainda usar o marcador.
 
 `sourceType` (abaixo) continua descrevendo a **natureza** da evidência de descoberta. Este eixo descreve a **suficiência** da referência para produzir comportamento clínico.
 
@@ -191,11 +193,11 @@ Primeira rodada intensiva de discovery concluída. O protocolo inicial existe co
 
 | Elo da cadeia | Estado |
 |---|---|
-| `CD` (evidência) | registrada na rodada 1; transcrição de frases e faixas `PENDING HANDOFF IMPORT` |
-| `CR` (requisito validado) | existe conteúdo `CLINICALLY_APPROVED` para estrutura, ordem do laudo, dependências de posição fetal e princípio "não marcado ≠ ausente" |
+| `CD` (evidência) | registrada na rodada 1; frases e faixas singleton importadas do handoff |
+| `CR` (requisito validado) | estrutura, ordem, posição, placenta, ownership V1, fraseologia singleton |
 | `TR` | não aberto — depende de autorização da próxima sprint |
-| `FIELD` / `RULE` / `CALC` / `TEXT` | catalogados com os três eixos; parte bloqueada por fonte |
-| `FIX` | fixtures **estruturais** catalogadas; expected output clínico pendente de referência |
+| `FIELD` / `RULE` / `CALC` / `TEXT` | catalogados; classificação por threshold bloqueada por fonte |
+| `FIX` | fixtures estruturais (incl. episódio + snapshots); expected output clínico pendente |
 | `ProtocolVersion` | não existe artefato executável |
 
 Nada aqui promove `CD` a `CR` automaticamente, e nada aqui autoriza implementação.

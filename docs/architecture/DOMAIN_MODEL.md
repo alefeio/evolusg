@@ -24,9 +24,27 @@ Dado clínico ≠ frase ≠ texto revisado ≠ documento emitido.
 
 ## Ownership do dado
 
-A rodada 1 de discovery mostrou que colocar tudo em `Exam` seria errado: datação pertence à gestação, comorbidade pertence à pessoa, biometria pertence ao feto, conclusão pertence ao documento. A classificação campo a campo está em [`../clinical-discovery/CLINICAL_FIELD_CATALOG.md`](../clinical-discovery/CLINICAL_FIELD_CATALOG.md#ownership-do-dado-a-que-entidade-conceitual-pertence).
+A classificação campo a campo está em [`../clinical-discovery/CLINICAL_FIELD_CATALOG.md`](../clinical-discovery/CLINICAL_FIELD_CATALOG.md#ownership-v1--decisões-fechadas-primeira-vertical-slice).
 
-Níveis conceituais: `Patient` · `PregnancyEpisode` · `Exam` · `Fetus` · `Finding` · `Report` · `ProfessionalPreference`.
+Níveis conceituais: `Patient` · `PregnancyEpisode` · `Exam` / `ExamClinicalContext` · `Fetus` · `Finding` · `Report` · `ProfessionalPreference`.
+
+### Ownership consolidado V1 (sem schema físico)
+
+| Entidade | Conteúdo V1 |
+|---|---|
+| **Patient** | identidade mínima da paciente; entidade longitudinal futura. Sem identificadores clínicos extras inventados nesta fase. |
+| **PregnancyEpisode** | DUM informativa; G/P/A snapshot; data da 1ª USG; IG da 1ª USG (semanas + dias). `PREGNANCY_EPISODE_MINIMUM_V1 = APPROVED FOR SPRINT_2 MODELING` |
+| **Exam / ExamClinicalContext** | comorbidades snapshot; medicações de uso contínuo snapshot; IG atual **derivada**; IG estimada pela biometria atual; uterinas; placenta; líquido amniótico; demais findings maternos do exame |
+| **Fetus** | situação; apresentação; dorso / polo cefálico; BCF; movimentos; deglutição; biometria; PFE; percentil; Doppler fetal |
+| **Report** | representação textual; conclusão; revisão documental |
+
+**G/P/A:** snapshot obstétrico no `PregnancyEpisode`. Isso **não** significa imutabilidade ao longo da vida da paciente. Histórico obstétrico longitudinal = futuro. Não criar entidade de histórico obstétrico na Sprint 2.
+
+**Comorbidades:** conceitualmente podem pertencer ao Patient a longo prazo; na V1 = `COMORBIDITIES_V1 = EXAM_CONTEXT_SNAPSHOT`. Sem tabela longitudinal, active/inactive, onset, resolução. Futuro: `PATIENT LONGITUDINAL COMORBIDITY MODEL — FUTURE`.
+
+**Medicações:** `CONTINUOUS_MEDICATIONS_V1 = EXAM_CONTEXT_SNAPSHOT` (uso contínuo informado no exame). Sem medication history, prescription model, start/end. Futuro: `PATIENT LONGITUDINAL MEDICATION MODEL — FUTURE`.
+
+**IG corrigida atual:** valor **derivado** do contexto do episódio + data do exame/atual. Não duplicar como fonte independente. **IG pela biometria** pertence ao exame atual, não ao episódio.
 
 ## Escopo fetal e múltiplos
 
@@ -72,16 +90,15 @@ Como ela corrige laudo hoje: `PENDING CLINICAL DISCOVERY`. Não assumir retifica
 
 ```text
 Patient ──< PregnancyEpisode ──< Exam ──< Fetus
+                 └── ExamClinicalContext (snapshots do exame)
 ```
 
 MVP 1 exige **Paciente Core**: cadastro mínimo, busca simples, associação obrigatória.  
 Patient Advanced (merge, anti-duplicidade, filtros) é posterior.
 
-Campos do cadastro: **PENDING CLINICAL DISCOVERY**.
+Campos do cadastro: **PENDING CLINICAL DISCOVERY** (identidade mínima já requerida pelo produto; sem inventar identificadores extras aqui).
 
-`PregnancyEpisode` deixa de ser pendência aberta e passa a ser **necessidade identificada**: a rodada 1 mostrou dados que valem para a gestação e não para a pessoa nem para o exame (DUM, ultrassonografia de datação, G/P/A no episódio). Sem esse nível, exames de gestações distintas se misturariam e a datação viraria cópia repetida em cada exame.
-
-Status: `PROPOSED` como entidade conceitual; **sem tabela**. Granularidade mínima do episódio na primeira slice ("contexto gestacional mínimo"): `PENDING PRODUCT DECISION`.
+`PregnancyEpisode` mínimo V1: **aprovado para modelagem da Sprint 2** (`PREGNANCY_EPISODE_MINIMUM_V1`). Campos: DUM informativa; G/P/A snapshot; data da 1ª USG; IG na 1ª USG (semanas + dias). **Sem tabela nesta tarefa.**
 
 ## Histórico longitudinal (direção estratégica)
 
