@@ -10,6 +10,8 @@ import { SignOutButton } from "@/components/sign-out-button";
 
 const navItems = [
   { href: "/app", label: "Início" },
+  { href: "/app/pacientes", label: "Pacientes" },
+  { href: "/app/exames", label: "Exames" },
   { href: "/app/conta", label: "Conta" },
 ] as const;
 
@@ -60,7 +62,13 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   const titleId = useId();
   const pathname = usePathname();
-  const pageTitle = pathname.startsWith("/app/conta") ? "Conta" : "Início";
+  const pageTitle = pathname.startsWith("/app/conta")
+    ? "Conta"
+    : pathname.startsWith("/app/pacientes")
+      ? "Pacientes"
+      : pathname.startsWith("/app/exames")
+        ? "Exames"
+        : "Início";
 
   useEffect(() => {
     if (!open) {

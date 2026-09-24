@@ -8,18 +8,184 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id                String             @id
+  name              String
+  email             String
+  emailVerified     Boolean
+  image             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  sessions          Session[]
+  accounts          Account[]
+  patients          Patient[]
+  pregnancyEpisodes PregnancyEpisode[]
+  exams             Exam[]
 
   @@unique([email])
   @@map("user")
+}
+
+/// Sprint 2 — clinical draft foundation (additive). Fictional data only.
+
+enum ExamProtocol {
+  OBSTETRIC_DOPPLER
+
+  @@map("exam_protocol")
+}
+
+enum ExamStatus {
+  DRAFT
+
+  @@map("exam_status")
+}
+
+enum FetalLie {
+  LONGITUDINAL
+  TRANSVERSE
+
+  @@map("fetal_lie")
+}
+
+enum FetalPresentation {
+  CEPHALIC
+  PELVIC
+  CORMIC
+
+  @@map("fetal_presentation")
+}
+
+enum Laterality {
+  RIGHT
+  LEFT
+
+  @@map("laterality")
+}
+
+enum PlacentaLocation {
+  ANTERIOR
+  POSTERIOR
+  FUNDAL
+  LATERAL
+
+  @@map("placenta_location")
+}
+
+enum PlacentaGrade {
+  I
+  II
+  III
+
+  @@map("placenta_grade")
+}
+
+enum AmnioticMethod {
+  MBV
+  ILA
+
+  @@map("amniotic_method")
+}
+
+model Patient {
+  id                String             @id
+  ownerUserId       String
+  owner             User               @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
+  fullName          String
+  birthDate         DateTime?
+  notes             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  pregnancyEpisodes PregnancyEpisode[]
+  exams             Exam[]
+
+  @@index([ownerUserId])
+  @@index([ownerUserId, fullName])
+  @@map("patient")
+}
+
+model PregnancyEpisode {
+  id                       String    @id
+  ownerUserId              String
+  owner                    User      @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
+  patientId                String
+  patient                  Patient   @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  /// DUM informativa
+  lmp                      DateTime?
+  gravidity                Int?
+  parity                   Int?
+  abortions                Int?
+  datingUltrasoundDate     DateTime?
+  datingUltrasoundGaWeeks  Int?
+  datingUltrasoundGaDays   Int?
+  createdAt                DateTime
+  updatedAt                DateTime
+  exams                    Exam[]
+
+  @@index([ownerUserId])
+  @@index([patientId])
+  @@map("pregnancy_episode")
+}
+
+model Exam {
+  id                     String            @id
+  ownerUserId            String
+  owner                  User              @relation(fields: [ownerUserId], references: [id], onDelete: Restrict)
+  patientId              String
+  patient                Patient           @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  pregnancyEpisodeId     String
+  pregnancyEpisode       PregnancyEpisode  @relation(fields: [pregnancyEpisodeId], references: [id], onDelete: Restrict)
+  protocol               ExamProtocol
+  status                 ExamStatus        @default(DRAFT)
+  /// ExamClinicalContext snapshots — free text, not longitudinal EHR
+  comorbidities          String?
+  continuousMedications  String?
+  placentaLocation       PlacentaLocation?
+  placentaGrade          PlacentaGrade?
+  amnioticMethod         AmnioticMethod?
+  amnioticValue          Float?
+  uterineArteryRightPi   Float?
+  uterineArteryLeftPi    Float?
+  /// true = present; null = not informed (never auto-absent)
+  uterineArteryRightNotch Boolean?
+  uterineArteryLeftNotch  Boolean?
+  createdAt              DateTime
+  updatedAt              DateTime
+  fetuses                Fetus[]
+
+  @@index([ownerUserId])
+  @@index([patientId])
+  @@index([pregnancyEpisodeId])
+  @@index([ownerUserId, status])
+  @@map("exam")
+}
+
+/// Fetal scope — one row per fetus. Sprint 2 creates exactly one (singleton).
+model Fetus {
+  id                   String             @id
+  examId               String
+  exam                 Exam               @relation(fields: [examId], references: [id], onDelete: Cascade)
+  /// Stable ordinal for future multiples (0 = first/only in V1)
+  ordinal              Int                @default(0)
+  lie                  FetalLie?
+  presentation         FetalPresentation?
+  spineSide            Laterality?
+  cephalicPoleSide     Laterality?
+  heartRateBpm         Int?
+  /// true = present; null = not informed (não marcado ≠ ausente)
+  bodyMovementsPresent Boolean?
+  swallowingPresent    Boolean?
+  biparietalDiameterMm Float?
+  headCircumferenceMm  Float?
+  abdominalCircumferenceMm Float?
+  femurLengthMm        Float?
+  umbilicalArteryPi    Float?
+  middleCerebralArteryPi Float?
+  ductusVenosusPi      Float?
+  createdAt            DateTime
+  updatedAt            DateTime
+
+  @@unique([examId, ordinal])
+  @@index([examId])
+  @@map("fetus")
 }
 
 model Session {
