@@ -1,10 +1,12 @@
 # Sprint 2 — Structured Clinical Draft
 
-**Status:** `IMPLEMENTED — AWAITING HUMAN QA`  
+**Status:** `SPRINT 2 = COMPLETED FOR CLINICAL PILOT` · `STRUCTURED CLINICAL DRAFT GATE = PASSED`  
+**QA:** `SPRINT 2 QA APPROVED` — proprietário/QA Alexandre  
 **Branch:** `feat/sprint-2-clinical-draft`  
 **PR:** https://github.com/alefeio/evolusg/pull/8  
-**Autorização:** formal (captura + draft; sem laudo)  
-**Dra. Karen:** `WAITING FOR SPRINT 2 QA`
+**Autorização:** formal (captura + draft; sem laudo)
+
+Isso **não** significa laudo clínico completo, classificação automática, produto pronto para uso clínico real nem autorização para dados reais. `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE` permanece.
 
 ## Escopo
 
@@ -49,9 +51,21 @@ Hadlock, percentil, crescimento, P5/P95, BCF auto, líquido auto, conclusão, PD
 - Deployment Protection da Vercel ativa neste Preview (SSO) — distinto da exception do host piloto.
 - QA humano: Alexandre, dados fictícios apenas.
 
-## QA manual (Alexandre)
+## Human QA
 
-1. login; 2. criar paciente fictícia; 3. criar gestação; 4. criar exame Doppler; 5. preencher parcialmente; 6. salvar draft; 7. sair; 8. reabrir; 9. confirmar; 10. editar; 11. salvar; 12. logout/login; 13. localizar e reabrir.
+`SPRINT 2 QA APPROVED`
 
-**Não mergear** até aprovação do QA humano.  
-Dra. Karen não testa o módulo clínico antes disso.
+Validado manualmente pelo proprietário/QA Alexandre, com dados fictícios e sem blocker:
+
+- criação e localização de paciente fictícia;
+- contexto gestacional;
+- criação do exame Obstétrica com Doppler;
+- preenchimento estruturado;
+- salvamento do rascunho;
+- reabertura, edição e persistência;
+- logout/login e recuperação posterior;
+- regras estruturais do formulário.
+
+Nenhum dado do teste é registrado aqui.
+
+Próximo passo após consolidação no piloto público: feedback clínico da Dra. Karen sobre a experiência de preenchimento, ainda somente com dados fictícios. Nenhuma Sprint 3 foi iniciada.
