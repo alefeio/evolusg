@@ -1,6 +1,6 @@
 # Proposta — Sprint 2 (primeira vertical slice clínica)
 
-**Status: PROPOSTA. NÃO AUTORIZADA.** Nada aqui autoriza implementação. Requer autorização explícita do proprietário.
+**Status: AUTORIZADA e implementada na branch `feat/sprint-2-clinical-draft`.** Ver [`SPRINT_2.md`](SPRINT_2.md).
 
 Base: reconciliação Clinical Discovery v0.1 + complementação do handoff singleton.
 
@@ -90,7 +90,7 @@ Frases e thresholds do handoff estão **documentados** (`CLINICALLY_APPROVED`). 
 |---|---|
 | Sprint 1 consolidada em `main` | atendido |
 | `BLOCKING CLINICAL QUESTIONS FOR SPRINT 2` | `NONE` |
-| Autorização explícita do proprietário | **pendente** |
+| Autorização explícita do proprietário | **atendido** |
 | Somente dados fictícios | obrigatório (banco compartilhado) |
 | Isolamento Production antes de uso clínico real | continua obrigatório |
 
