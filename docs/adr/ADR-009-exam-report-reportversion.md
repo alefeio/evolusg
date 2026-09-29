@@ -16,7 +16,7 @@ Separar o **evento clínico** (o ultrassom que aconteceu) do **documento** (o la
 | Modelo `Exam → Report → ReportVersion` | Decisão de arquitetura **candidata** | `PROPOSED` |
 | 1:1 Exam–Report no ciclo 1 | Hipótese de produto | `PROPOSED` / `PENDING PRODUCT DECISION` |
 | Documento emitido não se sobrescreve (novo arquivo + hash) | Intenção documental de produto | `PROPOSED` (forte); validar prática dela |
-| **Retificação não cria novo exame** | Hipótese de fluxo **e** regra profissional/documental | **`PENDING CLINICAL DISCOVERY`** / validação da prática atual — **não** é regra definitiva |
+| **Retificação não cria novo exame** | Decisão de fluxo de produto/documento | **`PROPOSED PRODUCT/DOCUMENT WORKFLOW DECISION`** — ver reconciliação v0.1 abaixo; **não** é regra clínica |
 | Motivo, autor, timestamp na correção | Hipótese de fluxo | `PENDING CLINICAL DISCOVERY` + `PENDING PRODUCT DECISION` |
 | Findings de trabalho no Exam + snapshot na versão | Decisão de arquitetura candidata | `PROPOSED` |
 | Como ela corrige hoje no Turing (novo exame, adendo, reimpressão…) | Fato a descobrir | `PENDING CLINICAL DISCOVERY` |
@@ -36,6 +36,20 @@ Não foram adicionados estados ou comportamentos além dos já candidatos no ADR
 - Requisito de um exame com vários documentos independentes no ciclo 1.
 - Evidência de que Exam+ReportVersion (sem Report) basta — abstração superdimensionada.
 - Descoberta incompatível com snapshot duplo de findings.
+
+## Reconciliação Clinical Discovery v0.1 — needs amendment
+
+A afirmação "retificação não cria outro `Exam`" apareceu na discovery. Ela é reclassificada, não aceita:
+
+| Antes | Agora |
+|---|---|
+| `PENDING CLINICAL DISCOVERY` (tratada como fato clínico a descobrir) | `PROPOSED PRODUCT/DOCUMENT WORKFLOW DECISION` |
+
+Justificativa da reclassificação: preservar a integridade da história de exames é decisão de **produto e documento**, não uma regra clínica que a médica dita. O que continua sendo pergunta clínica/operacional é **como ela corrige um laudo hoje** (novo registro, adendo, reimpressão) — isso segue `PENDING CLINICAL DISCOVERY` e é pergunta bloqueante antes de implementar emissão.
+
+O que **não** muda: a tríade `Exam → Report → ReportVersion` continua `PROPOSED`, e a invariante "documento emitido não se sobrescreve" continua a parte mais estável do ADR.
+
+Consequência para a próxima sprint: se o incremento parar antes da emissão do documento, esta decisão não precisa ser fechada.
 
 ## Decisão proposta (restrita)
 

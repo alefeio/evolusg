@@ -81,6 +81,18 @@ Quem tem override incompatível continua elaborando na **versão de protocolo (o
 
 **Não escolher A, B ou C nesta auditoria.**
 
+## Reconciliação Clinical Discovery v0.1 — clarified
+
+A discovery registrou uma hierarquia conceitual de origem de frase:
+
+```text
+Protocol Phrase → Organization Phrase → Professional Phrase → Manual Edit
+```
+
+Isso **não** escolhe A/B/C e **não** autoriza override. Efeito neste ADR: a identidade candidata (`phraseKey` + contrato de placeholders + `textRuleId`) continua compatível com a hierarquia, e o nível "Organization" passa a existir como camada prevista (ligada ao ADR-010, sem coluna).
+
+Também fica registrado que há frase **do protocolo sem dado de entrada** (técnica do exame). Frases singleton do protocolo v0.1 estão importadas em [`../clinical-discovery/PHRASE_CATALOG.md`](../clinical-discovery/PHRASE_CATALOG.md); emissão automática por threshold continua sujeita a `SOURCE_VALIDATION_PENDING`.
+
 ## Decisão proposta (restrita)
 
 Manter a candidata de identidade dupla (`phraseKey` + contrato + `textRuleId`) como `PROPOSED`. Comportamento de incompatibilidade: `PENDING PRODUCT DECISION` (estratégias A/B/C). Não implementar override na Sprint 0 nem no MVP 1 salvo decisão posterior.

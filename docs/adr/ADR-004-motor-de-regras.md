@@ -30,6 +30,19 @@ Expressar visibilidade, obrigatoriedade, validação e (mais tarde) cálculo e t
 - Cálculo aprovado que exija função fora de qualquer whitelist imaginada agora (tratar só quando o cálculo existir).
 - Evidência de overengineering: mais tempo no motor do que no laudo.
 
+## Reconciliação Clinical Discovery v0.1 — needs amendment
+
+O primeiro protocolo trouxe regras reais ([`OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md)) e uma exigência que a "ordem fixa de camadas" deste ADR não cobre.
+
+| Descoberta | Efeito neste ADR |
+|---|---|
+| Dependências de situação/apresentação (transversa ↔ córmica; dorso vs polo cefálico) | confirmam que condicionais binários simples bastam para **visibilidade**; nenhum operador exótico exigido |
+| "Não marcado ≠ ausente" | a camada de texto não pode inferir negativa; regra de omissão passa a ser validada, não hipótese |
+| Conclusão exige `priority`, deduplicação, consolidação, escopo materno/fetal/global, supressão e fusão de achados compatíveis | a etapa "conclusão" **não** é concatenação; precisa de estrutura própria |
+| Classificações dependem de referência versionada (ADR-014) | a camada de cálculo/classificação não pode rodar sem `SOURCE_VALIDATED` |
+
+Emenda proposta: a etapa de conclusão passa a ser tratada como **composição determinística de contribuições com escopo e chave de consolidação**, avaliada em ordem fixa — e não como concatenação de frases. Continua valendo: sem engine genérico, sem LLM, sem `eval`, sem operadores fechados nesta fase.
+
 ## Decisão proposta (restrita)
 
 Não escolher biblioteca nem fechar operadores nesta Sprint 0. O primeiro recorte validado define o subconjunto mínimo de regras. Cálculos continuam proibidos sem catálogo.

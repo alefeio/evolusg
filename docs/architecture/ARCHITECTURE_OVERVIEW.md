@@ -8,6 +8,19 @@ Monólito modular, um deploy, um banco, módulos com fronteira explícita.
 
 **Generalizar a arquitetura, especializar a implementação.** O núcleo não contém obstetrícia; o primeiro protocolo sim.
 
+### Formulação corrigida (reconciliação v0.1)
+
+| Afirmação | Estado |
+|---|---|
+| `PRODUCT INTENT = MULTIPROTOCOL` | `KNOWN` |
+| `FIRST PRODUCT CYCLE = OBSTETRIC-FIRST` | `KNOWN` |
+| `ARCHITECTURE = MUST NOT PRECLUDE MULTIPROTOCOL` | `KNOWN` |
+| `GENERIC ENGINE FOR ALL ULTRASOUND` | **não** é requisito imediato |
+
+O objetivo não é provar que a arquitetura suporta toda a ultrassonografia. É implementar o primeiro protocolo em profundidade sem criar decisões que impeçam expansão depois. A abstração deve surgir de necessidade concreta.
+
+Pergunta de controle a cada decisão da primeira vertical slice: *existe aqui alguma decisão que claramente impediria adicionar outro protocolo depois?* Se sim, ajustar. Se não, **não** criar abstração adicional.
+
 ## Camadas (alvo)
 
 1. **Web clínica** — formulário dinâmico, revisão, emissão. Zero regra clínica hardcoded.
@@ -27,9 +40,19 @@ Motores de protocolo, regra, cálculo e texto: TypeScript puro, testável sem Re
 
 `RepeatingGroup`, `phraseKey`, ExamType genérico e ReportVersion são **propostas** — incluir só se o recorte validado exigir. Não construir o núcleo para dezenas de exames nas Sprints 3–5.
 
-**Protocolo obstétrico:** campos, opções, visibilidade, frases, cálculos aprovados.
+**Protocolo obstétrico:** campos, opções, visibilidade, frases, cálculos aprovados. Baseline: [`../protocols/OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md).
 
 **Proibido:** `if (obstetric)` no motor; frases no JSX; colunas `apresentacao` no núcleo.
+
+### Três pontos que a primeira slice não pode travar
+
+Derivados da discovery de múltiplos e de referências (ver protocolo, seções 10 e 16):
+
+1. **escopo repetível** — findings, frases e contribuições de conclusão precisam suportar N fetos depois, mesmo que hoje seja sempre um;
+2. **referência versionada** — classificação clínica precisa apontar para tabela + versão; ver ADR-014;
+3. **conclusão com escopo** — contribuições precisam carregar escopo materno / fetal / global desde o início.
+
+Nenhum dos três exige engine genérico agora. Todos os três exigem não fechar a porta.
 
 ## Motores (resumo)
 

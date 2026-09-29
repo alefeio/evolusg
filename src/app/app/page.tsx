@@ -15,6 +15,24 @@ export default async function AppHomePage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
+          <h2 className="text-lg font-semibold text-text-primary">Fluxo clínico</h2>
+          <p className="mt-3 text-sm leading-6 text-text-secondary">
+            Paciente → gestação → exame obstétrico com Doppler (rascunho). Somente
+            dados fictícios.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link href="/app/pacientes">
+              <Button type="button">Pacientes</Button>
+            </Link>
+            <Link href="/app/exames">
+              <Button type="button" variant="secondary">
+                Exames
+              </Button>
+            </Link>
+          </div>
+        </Card>
+
+        <Card>
           <h2 className="text-lg font-semibold text-text-primary">Sua conta</h2>
           <dl className="mt-4 space-y-3 text-sm">
             <div>
@@ -28,13 +46,6 @@ export default async function AppHomePage() {
               </dd>
             </div>
           </dl>
-        </Card>
-
-        <Card>
-          <h2 className="text-lg font-semibold text-text-primary">Minha conta</h2>
-          <p className="mt-3 text-sm leading-6 text-text-secondary">
-            Atualize seus dados de acesso, senha e sessões quando precisar.
-          </p>
           <div className="mt-5">
             <Link href="/app/conta">
               <Button type="button" variant="secondary">

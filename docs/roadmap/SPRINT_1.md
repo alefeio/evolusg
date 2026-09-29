@@ -183,13 +183,13 @@ A captura local de e-mail está restrita a desenvolvimento (`NODE_ENV !== produc
 
 **Status operacional:** `QA FUNCTIONAL APPROVED` (ambiente liberado em `QA FUNCTIONAL READY`; QA manual concluído pelo proprietário)
 
-A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES` e está `COMPLETED FOR PILOT`. A Sprint 2 **não** foi iniciada. Nenhum domínio clínico / billing / admin / referral / APIMG foi implementado. Dra. Karen: `PILOT USER READY — FICTIONAL DATA ONLY`.
+A Sprint 1 permanece tecnicamente `ACCEPTED WITH OPERATIONAL PENDENCIES` e está `COMPLETED FOR PILOT`. A partir da sincronização com `main` (`2d070aa`), o draft clínico da Sprint 2 está nesta branch. A Sprint 3 **não** foi iniciada. Nenhum billing / admin / referral / APIMG foi implementado. Classificação clínica automática e laudo final continuam fora.
 
 ### Temporary Shared Database Strategy
 
 Decisão consciente do proprietário para a fase de desenvolvimento e piloto fictício:
 
-- Preview e o deploy Production existente **compartilham temporariamente** o banco atual (recurso Prisma Postgres `evolUSG`, `store_qI44qsXKg2Gz3E0v` — único vinculado ao projeto `evolusg`).
+- Preview e o deploy Production existente **compartilham temporariamente** o banco atual (o único recurso Prisma Postgres vinculado ao projeto).
 - Vale **somente** enquanto: não houver pacientes reais, exames reais, laudos reais nem operação comercial; todo teste clínico é fictício.
 - A ausência de banco Preview dedicado **não** é mais blocker para o QA funcional nem para o piloto inicial com dados fictícios.
 - Proibido nesta fase: dados de pacientes reais, exames reais, laudos reais, dados clínicos identificáveis de terceiros.
@@ -207,7 +207,7 @@ Antes de qualquer uso clínico real ou lançamento comercial, Production deve se
 - Branch: `pilot/identity-preview`
 - Merge recente: `658fa50` — `merge: sync pilot preview with latest main product copy` (inclui microcopy de produto PR #4 e remoção do rótulo redundante sob a logo PR #5 / `6fd04cf` em `main`)
 - Gates pós-sync: lint ✅ · typecheck ✅ · unit **41** · integration **2** · build ✅
-- Preview Git Ready: deployment `evolusg-kxmwath8f-…` no alias `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app`
+- Preview Git Ready no alias estável da branch piloto (deployments individuais são efêmeros e não são registrados aqui)
 
 ### Fato de deploy Production
 
@@ -237,7 +237,7 @@ Antes de qualquer uso clínico real ou lançamento comercial, Production deve se
 
 ### Inventário do banco (auditoria por metadados)
 
-- Recursos Prisma Postgres ligados ao projeto `evolusg`: **1** (`evolUSG`, `store_qI44qsXKg2Gz3E0v`, status `available`). Os demais recursos do escopo pertencem a outros projetos.
+- Recursos Prisma Postgres ligados ao projeto: **1** (status `available`). Os demais recursos da conta pertencem a outros projetos.
 - `vercel env ls --json`: `DATABASE_URL`, `POSTGRES_URL`, `PRISMA_DATABASE_URL`, `RUNTIME_DATABASE_URL` e `DATABASE_ENV` são **registros únicos** com alvo `preview + production` → mesmo valor, mesmo banco. Nenhuma variável de banco é branch-scoped.
 - Ambiente Development na Vercel: sem variáveis. Desenvolvimento local usa `.env` com `DATABASE_ENV=development`.
 - Connection strings são do tipo `sensitive`; a CLI não as expõe e nenhum valor foi lido/registrado.
@@ -257,7 +257,7 @@ Antes de qualquer uso clínico real ou lançamento comercial, Production deve se
 - `/app` anônimo no Preview: **307 → `/entrar?next=%2Fapp`** (proteção de rota operante).
 - Cadastro fora da allowlist no Preview: **HTTP 403 `REGISTRATION_NOT_ALLOWED`** com endereço sintético `.test` (sem envio a terceiros).
 - `RESEND_API_KEY` / `EMAIL_FROM` presentes (listagem Vercel).
-- Incidente corrigido: `EMAIL_FROM` apontava para o domínio raiz, **não verificado** no Resend, e todo envio falhava com `403 validation_error` → `EMAIL_SEND_FAILED`. O domínio verificado é o subdomínio de envio; `EMAIL_FROM` foi atualizado para `no-reply@email.evolusg.com.br` no registro compartilhado (Preview + Production, registro único preservado) e no `.env` local. Envio de teste pela API do Resend: **HTTP 200 aceito**.
+- Incidente corrigido: `EMAIL_FROM` apontava para o domínio raiz, **não verificado** no Resend, e todo envio falhava com `403 validation_error` → `EMAIL_SEND_FAILED`. O domínio verificado é o subdomínio de envio; `EMAIL_FROM` foi atualizado para um remetente nesse subdomínio, no registro compartilhado (Preview + Production, registro único preservado) e no `.env` local. Envio de teste pela API do Resend: **HTTP 200 aceito**.
 - `resend-sender.ts` agora propaga nome e mensagem do erro do Resend (commit `ae0c2d1`), em vez de mascarar como código genérico.
 - Preview do piloto redeployado para carregar o novo remetente; alias Git migrado para o deployment novo. Production **não** foi redeployada nem promovida.
 - Delivery real ponta a ponta (verificação/reset pela aplicação): **pendente da validação do QA**.
@@ -351,7 +351,7 @@ Coberto por testes automatizados em `src/lib/auth/auth-flows.test.ts` (43 unit n
 
 ### EMAIL_FROM
 
-- Registro **compartilhado Preview + Production** já corrigido para o subdomínio verificado (`no-reply@email.evolusg.com.br`), confirmado na leitura do escopo do Preview.
+- Registro **compartilhado Preview + Production** já corrigido para um remetente no subdomínio verificado do Resend, confirmado na leitura do escopo do Preview.
 - O Preview do piloto já foi redeployado e usa o novo remetente.
 - Production **não** foi redeployada nesta tarefa: o deployment atual continua com o remetente antigo até o próximo deploy, que herdará automaticamente o valor corrigido. Comportamento conhecido e esperado, não surpresa futura.
 
@@ -388,7 +388,7 @@ Validado manualmente pelo proprietário/QA no host Preview do piloto, sem partic
 
 Nenhum blocker funcional foi identificado. Nenhum e-mail, senha, token ou link privado foi registrado nesta documentação.
 
-Deployment que atendeu o QA e o fechamento: Preview `evolusg-fi32ypsir-…`, alias estável `https://evolusg-git-pilot-identity-preview-alefeios-projects.vercel.app` — home `200`, `/cadastro` `200`, `/app` anônimo `307 → /entrar?next=%2Fapp`, sem SSO da Vercel, copy e Brand/UI finais.
+Ambiente do QA e do fechamento: alias estável do Preview da branch piloto — home `200`, `/cadastro` `200`, `/app` anônimo `307 → /entrar?next=%2Fapp`, sem SSO da Vercel, copy e Brand/UI finais.
 
 ## Piloto de identidade/acesso — Dra. Karen
 

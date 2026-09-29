@@ -2,17 +2,24 @@
 
 Sprints de **duas semanas** são um **calendário de referência**, não um contrato.
 
-A **descoberta clínica da Sprint 0 continua em paralelo e não foi encerrada**. A Sprint 1 de fundação/autenticação está **autorizada** porque é independente das regras clínicas pendentes. Vertical slice clínico continua bloqueado pela saída da Sprint 0.
+Estado atual após a reconciliação Clinical Discovery v0.1:
 
-Numeração **não** foi alterada nesta auditoria. O que muda é o **grau de compromisso**.
+| Item | Estado |
+|---|---|
+| Sprint 0 | `INTENSIVE DISCOVERY ROUND 1 = COMPLETE`; `CLINICAL DISCOVERY = CONTINUOUS` |
+| Sprint 1 (fundação e autenticação) | concluída para piloto — [`SPRINT_1.md`](SPRINT_1.md) |
+| Primeiro recorte clínico | Obstétrica com Doppler, gestação única — [`protocolo`](../protocols/OBSTETRIC_DOPPLER_V0_1.md) |
+| Primeira vertical slice clínica | **proposta, não autorizada** — [`SPRINT_2_PROPOSAL.md`](SPRINT_2_PROPOSAL.md) |
+
+Numeração **não** foi alterada. O que muda é o **grau de compromisso**.
 
 ## Três horizontes
 
 ### Horizonte próximo (concreto o bastante para planejar a semana)
 
-- **Sprint 0** — descoberta clínica (em andamento, em paralelo).
-- **Sprint 1** — fundação técnica e autenticação. Ver [`SPRINT_1.md`](SPRINT_1.md).
-- Vertical slice clínico **não** está autorizado até os [critérios de saída da Sprint 0](../clinical-discovery/SPRINT_0.md#sprint-0-exit-criteria).
+- **Sprint 0** — descoberta clínica: rodada 1 completa, descoberta agora contínua.
+- **Sprint 1** — fundação técnica e autenticação: concluída para piloto. Ver [`SPRINT_1.md`](SPRINT_1.md).
+- **Primeira vertical slice clínica** — proposta em [`SPRINT_2_PROPOSAL.md`](SPRINT_2_PROPOSAL.md): captura estruturada de Obstétrica com Doppler (gestação única), sem geração textual e sem classificação clínica. **Aguarda autorização explícita.**
 
 ### Horizonte intermediário (indicativo; sujeito à descoberta)
 
@@ -44,7 +51,7 @@ O gate antigo “o motor aceitaria outro ExamType na Sprint 3” misturava o spi
 ## Correções de baseline (ainda hipóteses onde indicado)
 
 - `User` ≠ `ProfessionalProfile` — ADR-008 `PROPOSED`
-- Retificação = nova `ReportVersion` no mesmo `Exam` — **hipótese** ADR-009; `PENDING CLINICAL DISCOVERY` na prática dela
+- Retificação = nova `ReportVersion` no mesmo `Exam` — `PROPOSED PRODUCT/DOCUMENT WORKFLOW DECISION` (ADR-009); como ela corrige laudo hoje continua `PENDING CLINICAL DISCOVERY`
 - Paciente Core antes do MVP 1 — decisão de produto do recorte (capacidade); campos `PENDING CLINICAL DISCOVERY`
 - `organization_id` ubíquo — **não** aceito; ver ADR-010 (princípio ≠ coluna)
 - Fraseologia `phraseKey` — `PROPOSED`; upgrade A/B/C em aberto (ADR-007)
@@ -79,9 +86,11 @@ Horizonte próximo. Ver [`../clinical-discovery/SPRINT_0.md`](../clinical-discov
 
 ---
 
-### Sprint 2 — Identidade: User, sessão, ProfessionalProfile
+### Sprint 2 — proposta reorientada
 
-Indicativa. Não tratar médico como sinônimo de usuário.
+A numeração original previa "Identidade: User, sessão, ProfessionalProfile". A Sprint 1 já entregou `User`, sessão e autenticação; `ProfessionalProfile` só é necessário quando houver documento assinado.
+
+Proposta atual para a Sprint 2: **primeira vertical slice clínica de captura** — ver [`SPRINT_2_PROPOSAL.md`](SPRINT_2_PROPOSAL.md). `ProfessionalProfile` mínimo migra para o incremento de emissão documental. A separação `User` ≠ `ProfessionalProfile` (ADR-008) continua obrigatória na modelagem, independentemente de quando o perfil for implementado.
 
 ---
 
@@ -121,7 +130,7 @@ Indicativa. PDF/DOCX, identidade do `ProfessionalProfile`, documento imutável. 
 
 ### Sprints 8–11 — Obstetrícia além do recorte
 
-Horizonte distante. Títulos atuais (biometria, placenta/líquido, Doppler, múltiplos) são **placeholders**. Substituir pelos blocos que a descoberta nomear. Condicionais: só se houver evidência de rotina.
+Horizonte distante. Biometria, placenta, líquido e Doppler **deixam de ser placeholders distantes**: pertencem ao primeiro recorte e entram pela vertical slice, em incrementos (captura → texto → classificação). O que resta aqui é o que ficou explicitamente fora: múltiplos, sFGR e demais tipos obstétricos ainda não descobertos.
 
 ---
 

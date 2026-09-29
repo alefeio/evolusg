@@ -30,6 +30,15 @@ Não tratar o parágrafo do laudo como única verdade, para permitir personaliza
 - Requisito de interoperabilidade FHIR no ciclo 1 (`PENDING PRODUCT DECISION`; hoje não há).
 - Codeset incompatível com o vocabulário que ela realmente usa.
 
+## Reconciliação Clinical Discovery v0.1 — needs amendment
+
+Duas exigências concretas do primeiro protocolo:
+
+1. **Escopo repetível no `path`.** Biometria e Doppler fetal são por feto. Mesmo com a primeira vertical slice em `SINGLETON ONLY`, tratar esses dados como atributos diretos do `Exam` criaria decisão que impede gemelares depois. O `path` canônico precisa admitir escopo repetível (ex. conceitual `fetuses[n].biometry.ac`), sem que isso signifique implementar `RepeatingGroup` agora.
+2. **Ausência é "não informado".** Regra clínica validada: campo não marcado **não** significa achado ausente. Consequência no formato canônico: a inexistência de `Finding` nunca pode ser lida como negativa por nenhuma camada.
+
+Também fica registrado que existe **ownership** conceitual do dado (paciente / episódio gestacional / exame / feto / documento / preferência profissional): ver [`../clinical-discovery/CLINICAL_FIELD_CATALOG.md`](../clinical-discovery/CLINICAL_FIELD_CATALOG.md#ownership-do-dado-a-que-entidade-conceitual-pertence). Isso não altera o formato do `Finding`, mas impede que tudo seja gravado como se pertencesse ao `Exam`.
+
 ## Decisão proposta (restrita)
 
 Manter “estruturar o dado, projetar o texto”. Não aceitar o schema de Finding nem o duplo armazenamento como definitivos.

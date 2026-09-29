@@ -1,6 +1,6 @@
 # Inventário de exames obstétricos
 
-Status: **PENDING CLINICAL DISCOVERY**
+Status: **primeiro recorte decidido na rodada 1.** O inventário completo dos demais tipos permanece `PENDING CLINICAL DISCOVERY`.
 
 Preencher **somente** com nomes e frequências ditos pela Dra. Karen. Não importar uma lista-padrão de internet.
 
@@ -10,7 +10,7 @@ Uma linha por tipo de exame **como ela chama**. Frequência: `alta` | `média` |
 
 | ID | Nome usado pela Dra. Karen | Frequência | Candidato a MVP 1? | Entra no mesmo protocolo ou é outro? | Notas | Fonte |
 |---|---|---|---|---|---|---|
-| | | | | | | |
+| EX-01 | Ultrassonografia obstétrica com Doppler | alta | **sim — escolhido** | protocolo próprio: [`OBSTETRIC_DOPPLER_V0_1.md`](../protocols/OBSTETRIC_DOPPLER_V0_1.md) | primeira vertical slice restrita a gestação única | rodada 1 de discovery |
 
 ## Perguntas em aberto
 
@@ -24,7 +24,9 @@ Uma linha por tipo de exame **como ela chama**. Frequência: `alta` | `média` |
 
 | Campo | Valor |
 |---|---|
-| Exame escolhido | PENDING CLINICAL DISCOVERY |
+| Exame escolhido | Ultrassonografia obstétrica com Doppler |
+| Recorte da primeira vertical slice | gestação única (`SINGLETON ONLY`) |
 | Quem escolheu | Dra. Karen |
-| Data | |
-| Motivo | |
+| Data | rodada 1 de Clinical Discovery |
+| Motivo | alta frequência na rotina; permite validação frequente; riqueza suficiente para exercitar o produto de ponta a ponta |
+| Múltiplos (gemelar, trigemelar) | `DOCUMENTED FOR FUTURE IMPLEMENTATION` — fora da primeira slice |

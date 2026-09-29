@@ -33,6 +33,17 @@ O exemplo de `phraseKey` do tipo `obstetrics.fetus.presentation` é **ilustrativ
 - Regra validada de “não avaliado” / “não visualizado” incompatível com omissão simples.
 - Dois geradores (UI e servidor) divergindo — recusar na implementação futura; hoje só risco.
 
+## Reconciliação Clinical Discovery v0.1 — clarified
+
+| Item deste ADR | Estado após a discovery |
+|---|---|
+| "Omitir fragmento se o dado falta, salvo regra de 'não avaliado'" — antes uma mistura de proposta e pendência | **resolvido no lado clínico**: campo não marcado → nenhuma frase; nunca gerar "ausente" automático. A omissão passa a ter regra validada |
+| Composição na ordem do protocolo | confirmada: ordem das oito seções do laudo é requisito do protocolo v0.1 |
+| Fragmento sempre derivado de dado | **falso**: a frase de técnica pertence à `ProtocolVersion` e não depende de campo preenchido |
+| Conclusão como composição de fragmentos | insuficiente: ver emenda no ADR-004 (contribuições com escopo, consolidação e supressão) |
+
+Nada disso promove o ADR: fragmentos e `phraseKey` continuam `PROPOSED`.
+
 ## Decisão proposta (restrita)
 
 Motor determinístico + revisão humana. Não aceitar política de omissão nem amarração a `phraseKey` como definitivas. Overrides persistentes continuam depois do MVP 1 (`PENDING PRODUCT DECISION` no recorte).
