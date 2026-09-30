@@ -9,6 +9,7 @@ import {
   cerebroplacentalRatio,
   meanUterineArteryPi,
 } from "@/lib/clinical/arithmetic";
+import { applySavedSnapshot } from "@/lib/clinical/draft-baseline";
 import {
   showCephalicPoleField,
   showSpineField,
@@ -83,17 +84,18 @@ function num(value: number | null | undefined) {
 
 export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
   const [state, action, pending] = useActionState(saveExamDraftAction, initial);
+  const baseline = applySavedSnapshot(values, state.saved);
   const [lie, setLie] = useState<FetalLie | "">(
-    (values.fetus.lie as FetalLie | null) ?? "",
+    (baseline.fetus.lie as FetalLie | null) ?? "",
   );
-  const [rightPi, setRightPi] = useState(num(values.uterineArteryRightPi));
-  const [leftPi, setLeftPi] = useState(num(values.uterineArteryLeftPi));
+  const [rightPi, setRightPi] = useState(num(baseline.uterineArteryRightPi));
+  const [leftPi, setLeftPi] = useState(num(baseline.uterineArteryLeftPi));
   const [umbilicalPi, setUmbilicalPi] = useState(
-    num(values.fetus.umbilicalArteryPi),
+    num(baseline.fetus.umbilicalArteryPi),
   );
-  const [mcaPi, setMcaPi] = useState(num(values.fetus.middleCerebralArteryPi));
+  const [mcaPi, setMcaPi] = useState(num(baseline.fetus.middleCerebralArteryPi));
   const [amnioticMethod, setAmnioticMethod] = useState(
-    values.amnioticMethod ?? "",
+    baseline.amnioticMethod ?? "",
   );
 
   const meanPi = useMemo(
@@ -117,7 +119,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
   const lieValue = lie === "" ? null : lie;
 
   return (
-    <form action={action} className="space-y-8">
+    <form key={baseline.revision} action={action} className="space-y-8">
       <input name="examId" type="hidden" value={values.examId} />
 
       {state.ok ? (
@@ -157,7 +159,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
         </div>
         <Field htmlFor="comorbidities" label="Comorbidades (neste exame)">
           <Input
-            defaultValue={values.comorbidities ?? ""}
+            defaultValue={baseline.comorbidities ?? ""}
             id="comorbidities"
             name="comorbidities"
           />
@@ -167,7 +169,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           label="Medicações de uso contínuo (neste exame)"
         >
           <Input
-            defaultValue={values.continuousMedications ?? ""}
+            defaultValue={baseline.continuousMedications ?? ""}
             id="continuousMedications"
             name="continuousMedications"
           />
@@ -181,7 +183,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           </legend>
           <label className="flex items-center gap-2 text-sm text-text-primary">
             <input
-              defaultChecked={values.transducersUsed.includes(
+              defaultChecked={baseline.transducersUsed.includes(
                 "CONVEX_MULTIFREQUENCY",
               )}
               name="transducersUsed"
@@ -192,7 +194,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           </label>
           <label className="flex items-center gap-2 text-sm text-text-primary">
             <input
-              defaultChecked={values.transducersUsed.includes("ENDOCAVITARY")}
+              defaultChecked={baseline.transducersUsed.includes("ENDOCAVITARY")}
               name="transducersUsed"
               type="checkbox"
               value="ENDOCAVITARY"
@@ -226,7 +228,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           <Field htmlFor="presentation" label="Apresentação">
             <select
               className={selectClass}
-              defaultValue={values.fetus.presentation ?? ""}
+              defaultValue={baseline.fetus.presentation ?? ""}
               id="presentation"
               name="presentation"
             >
@@ -240,7 +242,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
             <Field htmlFor="spineSide" label="Dorso">
               <select
                 className={selectClass}
-                defaultValue={values.fetus.spineSide ?? ""}
+                defaultValue={baseline.fetus.spineSide ?? ""}
                 id="spineSide"
                 name="spineSide"
               >
@@ -257,7 +259,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
             <Field htmlFor="cephalicPoleSide" label="Polo cefálico">
               <select
                 className={selectClass}
-                defaultValue={values.fetus.cephalicPoleSide ?? ""}
+                defaultValue={baseline.fetus.cephalicPoleSide ?? ""}
                 id="cephalicPoleSide"
                 name="cephalicPoleSide"
               >
@@ -273,7 +275,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
 
         <Field htmlFor="heartRateBpm" label="BCF (bpm)">
           <Input
-            defaultValue={num(values.fetus.heartRateBpm)}
+            defaultValue={num(baseline.fetus.heartRateBpm)}
             id="heartRateBpm"
             name="heartRateBpm"
             type="number"
@@ -285,7 +287,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
 
         <label className="flex items-center gap-2 text-sm text-text-primary">
           <input
-            defaultChecked={presenceToCheckbox(values.fetus.bodyMovementsPresent)}
+            defaultChecked={presenceToCheckbox(baseline.fetus.bodyMovementsPresent)}
             name="bodyMovementsPresent"
             type="checkbox"
             value="true"
@@ -294,7 +296,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
         </label>
         <label className="flex items-center gap-2 text-sm text-text-primary">
           <input
-            defaultChecked={presenceToCheckbox(values.fetus.swallowingPresent)}
+            defaultChecked={presenceToCheckbox(baseline.fetus.swallowingPresent)}
             name="swallowingPresent"
             type="checkbox"
             value="true"
@@ -341,7 +343,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
         </p>
         <label className="flex items-center gap-2 text-sm">
           <input
-            defaultChecked={presenceToCheckbox(values.uterineArteryRightNotch)}
+            defaultChecked={presenceToCheckbox(baseline.uterineArteryRightNotch)}
             name="uterineArteryRightNotch"
             type="checkbox"
             value="true"
@@ -350,7 +352,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
         </label>
         <label className="flex items-center gap-2 text-sm">
           <input
-            defaultChecked={presenceToCheckbox(values.uterineArteryLeftNotch)}
+            defaultChecked={presenceToCheckbox(baseline.uterineArteryLeftNotch)}
             name="uterineArteryLeftNotch"
             type="checkbox"
             value="true"
@@ -384,7 +386,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           </Field>
           <Field htmlFor="ductusVenosusPi" label="IP ducto venoso">
             <Input
-              defaultValue={num(values.fetus.ductusVenosusPi)}
+              defaultValue={num(baseline.fetus.ductusVenosusPi)}
               id="ductusVenosusPi"
               name="ductusVenosusPi"
               step="0.01"
@@ -405,7 +407,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <Field htmlFor="biparietalDiameterMm" label="DBP (mm)">
             <Input
-              defaultValue={num(values.fetus.biparietalDiameterMm)}
+              defaultValue={num(baseline.fetus.biparietalDiameterMm)}
               id="biparietalDiameterMm"
               name="biparietalDiameterMm"
               step="0.1"
@@ -414,7 +416,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           </Field>
           <Field htmlFor="headCircumferenceMm" label="CC (mm)">
             <Input
-              defaultValue={num(values.fetus.headCircumferenceMm)}
+              defaultValue={num(baseline.fetus.headCircumferenceMm)}
               id="headCircumferenceMm"
               name="headCircumferenceMm"
               step="0.1"
@@ -423,7 +425,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           </Field>
           <Field htmlFor="abdominalCircumferenceMm" label="CA (mm)">
             <Input
-              defaultValue={num(values.fetus.abdominalCircumferenceMm)}
+              defaultValue={num(baseline.fetus.abdominalCircumferenceMm)}
               id="abdominalCircumferenceMm"
               name="abdominalCircumferenceMm"
               step="0.1"
@@ -432,7 +434,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           </Field>
           <Field htmlFor="femurLengthMm" label="CF (mm)">
             <Input
-              defaultValue={num(values.fetus.femurLengthMm)}
+              defaultValue={num(baseline.fetus.femurLengthMm)}
               id="femurLengthMm"
               name="femurLengthMm"
               step="0.1"
@@ -450,7 +452,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           <Field htmlFor="placentaLocation" label="Localização">
             <select
               className={selectClass}
-              defaultValue={values.placentaLocation ?? ""}
+              defaultValue={baseline.placentaLocation ?? ""}
               id="placentaLocation"
               name="placentaLocation"
             >
@@ -464,7 +466,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
           <Field htmlFor="placentaGrade" label="Grau">
             <select
               className={selectClass}
-              defaultValue={values.placentaGrade ?? ""}
+              defaultValue={baseline.placentaGrade ?? ""}
               id="placentaGrade"
               name="placentaGrade"
             >
@@ -498,7 +500,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
             label={amnioticMethod === "MBV" ? "Valor MBV" : "Valor ILA"}
           >
             <Input
-              defaultValue={num(values.amnioticValue)}
+              defaultValue={num(baseline.amnioticValue)}
               id="amnioticValue"
               name="amnioticValue"
               step="0.1"
