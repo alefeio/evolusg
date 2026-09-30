@@ -39,11 +39,13 @@ const optionalBpm = z.preprocess(
 const fetalLie = z.enum(["LONGITUDINAL", "TRANSVERSE"]).nullable();
 const fetalPresentation = z.enum(["CEPHALIC", "PELVIC", "CORMIC"]).nullable();
 const laterality = z.enum(["RIGHT", "LEFT"]).nullable();
+const spinePosition = z.enum(["RIGHT", "LEFT", "VARIABLE"]).nullable();
 const placentaLocation = z
   .enum(["ANTERIOR", "POSTERIOR", "FUNDAL", "LATERAL"])
   .nullable();
-const placentaGrade = z.enum(["I", "II", "III"]).nullable();
+const placentaGrade = z.enum(["GRADE_0", "I", "II", "III"]).nullable();
 const amnioticMethod = z.enum(["MBV", "ILA"]).nullable();
+const transducerType = z.enum(["CONVEX_MULTIFREQUENCY", "ENDOCAVITARY"]);
 
 function checkboxPresence(value: unknown): true | null {
   if (value === true || value === "true" || value === "on" || value === "1") {
@@ -85,7 +87,7 @@ export const updateExamDraftSchema = z
     continuousMedications: optionalTrimmed,
     lie: z.preprocess(emptyToNull, fetalLie),
     presentation: z.preprocess(emptyToNull, fetalPresentation),
-    spineSide: z.preprocess(emptyToNull, laterality),
+    spineSide: z.preprocess(emptyToNull, spinePosition),
     cephalicPoleSide: z.preprocess(emptyToNull, laterality),
     heartRateBpm: optionalBpm,
     bodyMovementsPresent: z.preprocess(checkboxPresence, z.literal(true).nullable()),
@@ -107,6 +109,13 @@ export const updateExamDraftSchema = z
       checkboxPresence,
       z.literal(true).nullable(),
     ),
+    transducersUsed: z.preprocess((value) => {
+      if (value == null || value === "") {
+        return [];
+      }
+      const list = Array.isArray(value) ? value : [value];
+      return [...new Set(list.filter((item) => item !== ""))];
+    }, z.array(transducerType)),
     placentaLocation: z.preprocess(emptyToNull, placentaLocation),
     placentaGrade: z.preprocess(emptyToNull, placentaGrade),
     amnioticMethod: z.preprocess(emptyToNull, amnioticMethod),

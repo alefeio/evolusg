@@ -18,6 +18,36 @@ describe("updateExamDraftSchema", () => {
     expect(parsed.swallowingPresent).toBe(true);
   });
 
+  it("allows empty, single and combined transducers without a phrase", () => {
+    const empty = updateExamDraftSchema.parse({
+      examId: "exam-1",
+      transducersUsed: [],
+      bodyMovementsPresent: false,
+      swallowingPresent: false,
+      uterineArteryRightNotch: false,
+      uterineArteryLeftNotch: false,
+    });
+    expect(empty.transducersUsed).toEqual([]);
+
+    const both = updateExamDraftSchema.parse({
+      examId: "exam-1",
+      transducersUsed: ["ENDOCAVITARY", "CONVEX_MULTIFREQUENCY", "ENDOCAVITARY"],
+      lie: "LONGITUDINAL",
+      spineSide: "VARIABLE",
+      placentaGrade: "GRADE_0",
+      bodyMovementsPresent: false,
+      swallowingPresent: false,
+      uterineArteryRightNotch: false,
+      uterineArteryLeftNotch: false,
+    });
+    expect(both.transducersUsed).toEqual([
+      "ENDOCAVITARY",
+      "CONVEX_MULTIFREQUENCY",
+    ]);
+    expect(both.spineSide).toBe("VARIABLE");
+    expect(both.placentaGrade).toBe("GRADE_0");
+  });
+
   it("clears amniotic value when method is empty", () => {
     const parsed = updateExamDraftSchema.parse({
       examId: "exam-1",

@@ -8,7 +8,12 @@ import {
 } from "@/lib/clinical/ownership";
 import { normalizePosition } from "@/lib/clinical/position-rules";
 import type { UpdateExamDraftInput } from "@/lib/clinical/schemas";
-import type { FetalLie, FetalPresentation, Laterality } from "@/lib/clinical/position-rules";
+import type {
+  FetalLie,
+  FetalPresentation,
+  Laterality,
+  SpinePosition,
+} from "@/lib/clinical/position-rules";
 
 export async function listDraftExamsForOwner(ownerUserId: string) {
   return prisma.exam.findMany({
@@ -90,7 +95,7 @@ export async function updateExamDraft(
   const position = normalizePosition({
     lie: (input.lie as FetalLie | null) ?? null,
     presentation: (input.presentation as FetalPresentation | null) ?? null,
-    spineSide: (input.spineSide as Laterality | null) ?? null,
+    spineSide: (input.spineSide as SpinePosition | null) ?? null,
     cephalicPoleSide: (input.cephalicPoleSide as Laterality | null) ?? null,
   });
 
@@ -111,6 +116,7 @@ export async function updateExamDraft(
         uterineArteryLeftPi: input.uterineArteryLeftPi,
         uterineArteryRightNotch: input.uterineArteryRightNotch,
         uterineArteryLeftNotch: input.uterineArteryLeftNotch,
+        transducersUsed: input.transducersUsed,
         updatedAt: timestamp,
       },
     }),

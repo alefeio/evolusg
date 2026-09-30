@@ -67,15 +67,23 @@ A composição do texto segue esta ordem. A ordem de **preenchimento** na interf
 
 ## 5. Técnica do exame
 
-Frase fixa da versão do protocolo: "Exame realizado com transdutor convexo multifrequencial."
+`CLINICAL PILOT FEEDBACK — BATCH 1`
 
-| Aspecto | Estado |
+A técnica deixa de ser uma frase fixa e passa a ser dado estruturado do exame. No mesmo exame podem coexistir:
+
+- transdutor convexo multifrequencial (`CONVEX_MULTIFREQUENCY`);
+- transdutor endocavitário (`ENDOCAVITARY`);
+- os dois juntos.
+
+Draft parcial pode ser salvo sem transdutor marcado. Registros anteriores ficam com a lista vazia — sem presumir convexo.
+
+| Caso | Frase |
 |---|---|
-| A frase pertence à `ProtocolVersion`, não a um campo preenchido | `CLINICALLY_APPROVED` |
-| Não pedir seleção manual de transdutor na rotina | `CLINICALLY_APPROVED` |
-| Prontidão técnica | `READY_FOR_IMPLEMENTATION` |
+| Somente convexo | "Exame realizado com transdutor convexo multifrequencial." — já conhecida |
+| Somente endocavitário | `PENDING PHRASE VALIDATION` |
+| Convexo + endocavitário | `PENDING PHRASE VALIDATION` |
 
-Consequência de modelagem: existe conteúdo textual que é **do protocolo** e não deriva de `Finding`. O motor textual precisa suportar fragmento sem dado de entrada.
+Nenhuma frase é gerada automaticamente nesta fase. Dado estruturado ≠ frase.
 
 ## 6. Situação, apresentação, dorso e polo cefálico
 
@@ -85,7 +93,7 @@ Codesets aprovados:
 |---|---|
 | Situação | longitudinal, transversa |
 | Apresentação | cefálica, pélvica, córmica |
-| Dorso | direita, esquerda |
+| Dorso | direita, esquerda, variável |
 | Polo cefálico | direita, esquerda |
 
 Dependências validadas:
@@ -213,7 +221,7 @@ Quando **normais**, o corpo deve ter texto específico para uterinas, umbilical,
 | Item | Fato importado | Fonte |
 |---|---|---|
 | BCF | faixa 120–160 bpm; bradi &lt;120; taqui &gt;160 | `CLINICALLY_APPROVED` + `SOURCE_VALIDATION_PENDING` |
-| Placenta | localização: anterior, posterior, fúndica, lateral; grau I/II/III; frase no corpo, não na conclusão | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` |
+| Placenta | localização: anterior, posterior, fúndica, lateral; grau 0/I/II/III; frase no corpo, não na conclusão | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` |
 | Líquido | escolha manual MBV **ou** ILA; MBV 3,0–8,0 / &lt;3 / &gt;8; ILA 3,0–24,0 / &lt;3 / &gt;24 | `CLINICALLY_APPROVED` + `SOURCE_VALIDATION_PENDING` |
 
 Nenhum desses números vira classificação automática de produção nesta fase.
