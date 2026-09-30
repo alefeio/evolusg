@@ -79,3 +79,19 @@ Incorporado depois do primeiro retorno da Dra. Karen, sem iniciar Sprint 3:
 - placenta: grau 0, I, II ou III.
 
 Frases para endocavitário isolado e para a combinação dos dois transdutores: `PENDING PHRASE VALIDATION`. Nenhum texto novo foi inventado.
+
+**QA:** `CLINICAL FEEDBACK BATCH 1 QA APPROVED`
+
+Validado manualmente pelo proprietário/QA Alexandre, sem dados do teste registrados aqui:
+
+- persistência e interface imediatamente após salvar;
+- drafts anteriores continuam compatíveis;
+- navegação “Voltar para a paciente”.
+
+Também validados: transdutor convexo, convexo com endocavitário, nenhum transdutor, dorso variável, placenta grau 0 e reload.
+
+## Infra backlog
+
+`PREVIEW AUTH ORIGIN CONFIGURATION — INFRASTRUCTURE HYGIENE`
+
+Novas branches de Preview têm exigido override manual de `BETTER_AUTH_URL`. O objetivo futuro é reduzir essa configuração sem abrir wildcard inseguro. Não implementado nesta Batch.
