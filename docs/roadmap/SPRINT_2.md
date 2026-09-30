@@ -69,3 +69,13 @@ Validado manualmente pelo proprietário/QA Alexandre, com dados fictícios e sem
 Nenhum dado do teste é registrado aqui.
 
 Próximo passo após consolidação no piloto público: feedback clínico da Dra. Karen sobre a experiência de preenchimento, ainda somente com dados fictícios. Nenhuma Sprint 3 foi iniciada.
+
+## Clinical pilot feedback — batch 1
+
+Incorporado depois do primeiro retorno da Dra. Karen, sem iniciar Sprint 3:
+
+- técnica: convexo multifrequencial e endocavitário podem coexistir no mesmo exame (`transducersUsed`);
+- dorso: direita, esquerda ou variável;
+- placenta: grau 0, I, II ou III.
+
+Frases para endocavitário isolado e para a combinação dos dois transdutores: `PENDING PHRASE VALIDATION`. Nenhum texto novo foi inventado.

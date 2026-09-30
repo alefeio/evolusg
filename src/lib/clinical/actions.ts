@@ -25,10 +25,14 @@ export type ActionState = {
 function formDataToObject(formData: FormData): Record<string, unknown> {
   const entries: Record<string, unknown> = {};
   for (const [key, value] of formData.entries()) {
-    if (typeof value === "string") {
-      entries[key] = value;
+    if (typeof value !== "string" || key === "transducersUsed") {
+      continue;
     }
+    entries[key] = value;
   }
+  entries.transducersUsed = formData
+    .getAll("transducersUsed")
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
   // Explicit checkboxes: absent means unchecked
   for (const name of [
     "bodyMovementsPresent",

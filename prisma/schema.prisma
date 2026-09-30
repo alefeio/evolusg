@@ -57,8 +57,17 @@ enum FetalPresentation {
 enum Laterality {
   RIGHT
   LEFT
+  /// Dorso apenas. Polo cefálico não usa este valor.
+  VARIABLE
 
   @@map("laterality")
+}
+
+enum TransducerType {
+  CONVEX_MULTIFREQUENCY
+  ENDOCAVITARY
+
+  @@map("transducer_type")
 }
 
 enum PlacentaLocation {
@@ -71,6 +80,7 @@ enum PlacentaLocation {
 }
 
 enum PlacentaGrade {
+  GRADE_0
   I
   II
   III
@@ -135,6 +145,8 @@ model Exam {
   pregnancyEpisode       PregnancyEpisode  @relation(fields: [pregnancyEpisodeId], references: [id], onDelete: Restrict)
   protocol               ExamProtocol
   status                 ExamStatus        @default(DRAFT)
+  /// Empty array = not informed. Existing drafts stay empty; no inferred convex.
+  transducersUsed        TransducerType[]  @default([])
   /// ExamClinicalContext snapshots — free text, not longitudinal EHR
   comorbidities          String?
   continuousMedications  String?

@@ -32,7 +32,7 @@ Identidade proposta (ADR-007, `PROPOSED`): `phraseKey` semântica estável + reg
 
 ## Índice — Obstétrica com Doppler v0.1 (gestação única)
 
-Regra de composição: chave sem dado de entrada **não** gera frase, e ausência **não** gera negativa (ver princípio "não marcado ≠ ausente"). Exceção: `protocol.technique`, que não depende de campo.
+Regra de composição: chave sem dado de entrada **não** gera frase, e ausência **não** gera negativa (ver princípio "não marcado ≠ ausente"). A técnica passou a depender da seleção estruturada de transdutores (`CLINICAL PILOT FEEDBACK — BATCH 1`).
 
 Frases cuja emissão depende de classificação por referência **não** podem ser emitidas automaticamente antes de `SOURCE_VALIDATED`. Documentar a frase ≠ autorizar emissão automática.
 
@@ -49,7 +49,9 @@ Regra: a diferença entre essas duas idades **não** gera alerta automático.
 
 | Phrase Key | Texto | Condição | Fonte / emissão |
 |---|---|---|---|
-| `protocol.technique` | "Exame realizado com transdutor convexo multifrequencial." | sempre; pertence à `ProtocolVersion` | `SOURCE_NOT_REQUIRED` |
+| `protocol.technique.convex` | "Exame realizado com transdutor convexo multifrequencial." | somente convexo | `SOURCE_NOT_REQUIRED` — frase conhecida; **não** emitir automaticamente nesta fase |
+| `protocol.technique.endocavitary` | `PENDING PHRASE VALIDATION` | somente endocavitário | dado estruturado já capturado |
+| `protocol.technique.both` | `PENDING PHRASE VALIDATION` | convexo e endocavitário no mesmo exame | dado estruturado já capturado |
 
 ### Situação / apresentação
 

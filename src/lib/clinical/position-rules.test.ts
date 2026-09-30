@@ -52,6 +52,26 @@ describe("normalizePosition", () => {
     ).toBe(true);
   });
 
+  it("keeps variable spine on longitudinal and clears it on transverse", () => {
+    const longitudinal = normalizePosition({
+      lie: "LONGITUDINAL",
+      presentation: "CEPHALIC",
+      spineSide: "VARIABLE",
+      cephalicPoleSide: null,
+    });
+    expect(longitudinal.spineSide).toBe("VARIABLE");
+    expect(longitudinal.cephalicPoleSide).toBeNull();
+
+    const transverse = normalizePosition({
+      lie: "TRANSVERSE",
+      presentation: "CORMIC",
+      spineSide: "VARIABLE",
+      cephalicPoleSide: "RIGHT",
+    });
+    expect(transverse.spineSide).toBeNull();
+    expect(transverse.cephalicPoleSide).toBe("RIGHT");
+  });
+
   it("exposes the right laterality fields", () => {
     expect(showSpineField("LONGITUDINAL")).toBe(true);
     expect(showCephalicPoleField("LONGITUDINAL")).toBe(false);

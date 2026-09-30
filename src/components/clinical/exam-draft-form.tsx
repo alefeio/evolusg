@@ -26,6 +26,7 @@ type ExamDraftValues = {
   examId: string;
   comorbidities: string | null;
   continuousMedications: string | null;
+  transducersUsed: string[];
   placentaLocation: string | null;
   placentaGrade: string | null;
   amnioticMethod: string | null;
@@ -174,11 +175,34 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
       </Section>
 
       <Section title="2. Técnica do exame">
-        <p className="rounded-[var(--radius-control)] border border-border bg-surface-soft px-4 py-3 text-sm text-text-primary">
-          Exame realizado com transdutor convexo multifrequencial.
-        </p>
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-semibold text-text-primary">
+            Transdutores utilizados
+          </legend>
+          <label className="flex items-center gap-2 text-sm text-text-primary">
+            <input
+              defaultChecked={values.transducersUsed.includes(
+                "CONVEX_MULTIFREQUENCY",
+              )}
+              name="transducersUsed"
+              type="checkbox"
+              value="CONVEX_MULTIFREQUENCY"
+            />
+            Transdutor convexo multifrequencial
+          </label>
+          <label className="flex items-center gap-2 text-sm text-text-primary">
+            <input
+              defaultChecked={values.transducersUsed.includes("ENDOCAVITARY")}
+              name="transducersUsed"
+              type="checkbox"
+              value="ENDOCAVITARY"
+            />
+            Transdutor endocavitário
+          </label>
+        </fieldset>
         <p className="text-xs text-text-secondary">
-          Frase fixa do protocolo — sem seleção manual.
+          Os dois podem ser marcados no mesmo exame. O rascunho pode ser salvo
+          sem seleção.
         </p>
       </Section>
 
@@ -223,6 +247,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
                 <option value="">Não informado</option>
                 <option value="RIGHT">Direita</option>
                 <option value="LEFT">Esquerda</option>
+                <option value="VARIABLE">Variável</option>
               </select>
             </Field>
           ) : (
@@ -444,6 +469,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
               name="placentaGrade"
             >
               <option value="">Não informado</option>
+              <option value="GRADE_0">0</option>
               <option value="I">I</option>
               <option value="II">II</option>
               <option value="III">III</option>

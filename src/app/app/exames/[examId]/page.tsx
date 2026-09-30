@@ -42,6 +42,7 @@ export default async function ExamDraftPage({
             examId: exam.id,
             comorbidities: exam.comorbidities,
             continuousMedications: exam.continuousMedications,
+            transducersUsed: exam.transducersUsed,
             placentaLocation: exam.placentaLocation,
             placentaGrade: exam.placentaGrade,
             amnioticMethod: exam.amnioticMethod,
