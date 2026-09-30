@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireSession } from "@/lib/auth/session";
 import { createPatient } from "@/lib/clinical/patient-service";
@@ -8,6 +9,7 @@ import {
   createObstetricDopplerDraft,
   updateExamDraft,
 } from "@/lib/clinical/exam-service";
+import { snapshotFromExam, type DraftFieldSnapshot } from "@/lib/clinical/draft-baseline";
 import { ClinicalAccessError } from "@/lib/clinical/ownership";
 import {
   createExamSchema,
@@ -20,15 +22,20 @@ export type ActionState = {
   ok: boolean;
   error?: string;
   fieldErrors?: Record<string, string[]>;
+  saved?: DraftFieldSnapshot;
 };
 
 function formDataToObject(formData: FormData): Record<string, unknown> {
   const entries: Record<string, unknown> = {};
   for (const [key, value] of formData.entries()) {
-    if (typeof value === "string") {
-      entries[key] = value;
+    if (typeof value !== "string" || key === "transducersUsed") {
+      continue;
     }
+    entries[key] = value;
   }
+  entries.transducersUsed = formData
+    .getAll("transducersUsed")
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
   // Explicit checkboxes: absent means unchecked
   for (const name of [
     "bodyMovementsPresent",
@@ -129,8 +136,9 @@ export async function saveExamDraftAction(
   }
 
   try {
-    await updateExamDraft(session.user.id, parsed.data);
-    return { ok: true };
+    const exam = await updateExamDraft(session.user.id, parsed.data);
+    revalidatePath(`/app/exames/${exam.id}`);
+    return { ok: true, saved: snapshotFromExam(exam) };
   } catch (error) {
     if (error instanceof ClinicalAccessError) {
       return { ok: false, error: error.message };

@@ -36,12 +36,20 @@ export default async function ExamDraftPage({
         title="Obstétrica com Doppler"
       />
 
+      <Link
+        className="inline-block text-sm font-semibold text-brand-blue-700"
+        href={`/app/pacientes/${exam.patientId}`}
+      >
+        Voltar para a paciente
+      </Link>
+
       <Card>
         <ExamDraftForm
           values={{
             examId: exam.id,
             comorbidities: exam.comorbidities,
             continuousMedications: exam.continuousMedications,
+            transducersUsed: exam.transducersUsed,
             placentaLocation: exam.placentaLocation,
             placentaGrade: exam.placentaGrade,
             amnioticMethod: exam.amnioticMethod,
@@ -82,13 +90,6 @@ export default async function ExamDraftPage({
           }}
         />
       </Card>
-
-      <Link
-        className="text-sm font-semibold text-brand-blue-700"
-        href={`/app/pacientes/${exam.patientId}`}
-      >
-        Voltar para a paciente
-      </Link>
     </div>
   );
 }

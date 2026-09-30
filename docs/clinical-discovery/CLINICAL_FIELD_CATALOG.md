@@ -114,7 +114,7 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `fetuses[n].vitality.swallowing` | Deglutição | Vitalidade | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].lie` | Situação (longitudinal, transversa) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].presentation` | Apresentação (cefálica, pélvica, córmica) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `fetuses[n].spinePosition` | Dorso (direita, esquerda) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `fetuses[n].spinePosition` | Dorso (direita, esquerda, variável) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].cephalicPolePosition` | Polo cefálico (direita, esquerda) | Posição fetal | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `maternal.uterineArtery.right.pi` | IP artéria uterina direita | Doppler | Exam (materno) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (percentis) / `NOT_ANALYZED` |
 | `maternal.uterineArtery.left.pi` | IP artéria uterina esquerda | Doppler | Exam (materno) | idem |
@@ -134,7 +134,8 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | Exam/Fetus (exame atual) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].growth.classification` | Crescimento (&lt;P5 / P5–P90 / &gt;P90) | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (thresholds informados) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `placenta.location` | Localização (anterior, posterior, fúndica, lateral) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `placenta.maturityGrade` | Grau de maturidade (I, II, III) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `exam.transducersUsed` | Transdutores (convexo multifrequencial, endocavitário; ambos podem coexistir) | Técnica | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `placenta.maturityGrade` | Grau de maturidade (0, I, II, III) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `amnioticFluid.method` | Método escolhido (MBV \| ILA) — escolha manual | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `amnioticFluid.mbv` | MBV | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / faixas informadas; `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `amnioticFluid.afi` | ILA | Líquido amniótico | Exam | idem |

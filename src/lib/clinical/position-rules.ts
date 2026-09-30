@@ -1,11 +1,12 @@
 export type FetalLie = "LONGITUDINAL" | "TRANSVERSE";
 export type FetalPresentation = "CEPHALIC" | "PELVIC" | "CORMIC";
 export type Laterality = "RIGHT" | "LEFT";
+export type SpinePosition = Laterality | "VARIABLE";
 
 export type PositionState = {
   lie: FetalLie | null;
   presentation: FetalPresentation | null;
-  spineSide: Laterality | null;
+  spineSide: SpinePosition | null;
   cephalicPoleSide: Laterality | null;
 };
 

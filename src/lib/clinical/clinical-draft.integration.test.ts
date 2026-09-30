@@ -126,6 +126,7 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
         placentaGrade: "II",
         amnioticMethod: "MBV",
         amnioticValue: 5,
+        transducersUsed: [],
       });
 
       expect(saved.comorbidities).toBe("HAS fictícia");
@@ -138,6 +139,80 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
       const reopened = await getExamDraft(exam.id, ownerA);
       expect(reopened.continuousMedications).toBe("Ácido fólico");
       expect(reopened.uterineArteryRightNotch).toBe(true);
+      expect(reopened.transducersUsed).toEqual([]);
+
+      const refined = await updateExamDraft(ownerA, {
+        examId: exam.id,
+        comorbidities: "HAS fictícia",
+        continuousMedications: "Ácido fólico",
+        lie: "LONGITUDINAL",
+        presentation: "CEPHALIC",
+        spineSide: "VARIABLE",
+        cephalicPoleSide: null,
+        heartRateBpm: 140,
+        bodyMovementsPresent: null,
+        swallowingPresent: true,
+        biparietalDiameterMm: 50,
+        headCircumferenceMm: null,
+        abdominalCircumferenceMm: null,
+        femurLengthMm: null,
+        umbilicalArteryPi: 1.1,
+        middleCerebralArteryPi: 1.4,
+        ductusVenosusPi: null,
+        uterineArteryRightPi: 1.0,
+        uterineArteryLeftPi: 1.2,
+        uterineArteryRightNotch: true,
+        uterineArteryLeftNotch: null,
+        placentaLocation: "ANTERIOR",
+        placentaGrade: "GRADE_0",
+        amnioticMethod: "MBV",
+        amnioticValue: 5,
+        transducersUsed: ["CONVEX_MULTIFREQUENCY", "ENDOCAVITARY"],
+      });
+
+      expect(refined.transducersUsed).toEqual([
+        "CONVEX_MULTIFREQUENCY",
+        "ENDOCAVITARY",
+      ]);
+      expect(refined.placentaGrade).toBe("GRADE_0");
+      expect(refined.fetuses[0]?.lie).toBe("LONGITUDINAL");
+      expect(refined.fetuses[0]?.spineSide).toBe("VARIABLE");
+
+      const edited = await updateExamDraft(ownerA, {
+        ...{
+          examId: exam.id,
+          comorbidities: "HAS fictícia",
+          continuousMedications: "Ácido fólico",
+          lie: "LONGITUDINAL" as const,
+          presentation: "CEPHALIC" as const,
+          spineSide: "LEFT" as const,
+          cephalicPoleSide: null,
+          heartRateBpm: 140,
+          bodyMovementsPresent: null,
+          swallowingPresent: true,
+          biparietalDiameterMm: 50,
+          headCircumferenceMm: null,
+          abdominalCircumferenceMm: null,
+          femurLengthMm: null,
+          umbilicalArteryPi: 1.1,
+          middleCerebralArteryPi: 1.4,
+          ductusVenosusPi: null,
+          uterineArteryRightPi: 1.0,
+          uterineArteryLeftPi: 1.2,
+          uterineArteryRightNotch: true,
+          uterineArteryLeftNotch: null,
+          placentaLocation: "ANTERIOR" as const,
+          placentaGrade: "GRADE_0" as const,
+          amnioticMethod: "MBV" as const,
+          amnioticValue: 5,
+          transducersUsed: ["ENDOCAVITARY"] as const,
+        },
+      });
+      const reopenedAgain = await getExamDraft(exam.id, ownerA);
+      expect(edited.transducersUsed).toEqual(["ENDOCAVITARY"]);
+      expect(reopenedAgain.transducersUsed).toEqual(["ENDOCAVITARY"]);
+      expect(reopenedAgain.placentaGrade).toBe("GRADE_0");
+      expect(reopenedAgain.fetuses[0]?.spineSide).toBe("LEFT");
 
       await expect(getExamDraft(exam.id, ownerB)).rejects.toBeInstanceOf(
         ClinicalAccessError,
