@@ -90,7 +90,8 @@ Faixa informada (`CLINICALLY_APPROVED` + `SOURCE_VALIDATION_PENDING`): **120–1
 
 | Phrase Key | Texto | Condição | Fonte / emissão |
 |---|---|---|---|
-| `fetus.biometry.efw` | "Peso fetal estimado: {{peso}} g (±10%), correspondente ao percentil {{percentil}} para a idade gestacional corrigida." | PFE disponível | `SOURCE_VALIDATION_PENDING` (Hadlock + percentil) |
+| `fetus.biometry.efw` | "Peso fetal estimado: {{peso}} g (±10%), correspondente ao percentil {{percentil}} para a idade gestacional corrigida." | PFE disponível | `SOURCE_VALIDATION_PENDING` (Hadlock + percentil do PFE) |
+| `fetus.biometry.acPercentile` | `PENDING PHRASE/PRODUCT VALIDATION` | percentil da CA | requisito essencial; não é o percentil do PFE; redação ainda não definida |
 
 Regras: mostrar DBP, CC, CA, CF explicitamente; **não** mostrar IG individual por medida; mostrar só IG estimada geral pela biometria. Margem inicial ±10% — configurável/versionável.
 

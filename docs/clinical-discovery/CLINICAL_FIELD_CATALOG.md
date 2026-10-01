@@ -123,14 +123,16 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `maternal.uterineArtery.left.notch` | Incisura esquerda | Doppler | Exam (materno) | idem |
 | `fetuses[n].doppler.umbilicalArtery.pi` | IP artéria umbilical | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].doppler.mca.pi` | IP ACM | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
-| `fetuses[n].doppler.ductusVenosus` | Ducto venoso | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].doppler.ductusVenosus.assessed` | Incluir ducto venoso neste exame | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` — `false` não é normal nem ausente |
+| `fetuses[n].doppler.ductusVenosus.pi` | IP ducto venoso | Doppler | Fetus | captura se o bloco estiver incluído; classificação `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].doppler.cpr` | RCP | Doppler | derivado (Fetus) | `CLINICALLY_APPROVED` (fórmula) / `SOURCE_VALIDATION_PENDING` (classificação por IG) / `NOT_ANALYZED` |
 | `fetuses[n].biometry.bpd` | DBP | Biometria | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` (medida) / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].biometry.hc` | CC | Biometria | Fetus | idem |
-| `fetuses[n].biometry.ac` | CA | Biometria | Fetus | idem |
+| `fetuses[n].biometry.ac` | CA (medida) | Biometria | Fetus | captura `READY_FOR_IMPLEMENTATION`; percentil ainda não |
+| `fetuses[n].biometry.acPercentile` | Percentil da CA | Biometria | derivado (Fetus) | `ESTIMATED` essencial; distinto do percentil do PFE; `SOURCE_VALIDATION_PENDING` / não implementado |
 | `fetuses[n].biometry.fl` | CF | Biometria | Fetus | idem |
 | `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (conceito Hadlock; margem ±10% versionável) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
-| `fetuses[n].biometry.efwPercentile` | Percentil de peso | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].biometry.efwPercentile` | Percentil do PFE | Biometria | derivado (Fetus) | `ESSENTIAL CLINICAL REQUIREMENT`; `SOURCE_VALIDATION_PENDING`; não implementado |
 | `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | Exam/Fetus (exame atual) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].growth.classification` | Crescimento (&lt;P5 / P5–P90 / &gt;P90) | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (thresholds informados) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `placenta.location` | Localização (anterior, posterior, fúndica, lateral) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |

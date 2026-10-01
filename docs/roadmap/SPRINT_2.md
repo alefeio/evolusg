@@ -90,6 +90,18 @@ Validado manualmente pelo proprietário/QA Alexandre, sem dados do teste registr
 
 Também validados: transdutor convexo, convexo com endocavitário, nenhum transdutor, dorso variável, placenta grau 0 e reload.
 
+## Clinical pilot feedback — batch 2
+
+`CLINICAL PILOT FEEDBACK — BATCH 2`
+
+### Ducto venoso
+
+A avaliação é opcional e manual. Não avaliar **não** significa normal, ausente ou alterado. Não há regra automática do tipo “ACM e umbilical normais, então omitir o ducto”: a classificação de normalidade continua `SOURCE_VALIDATION_PENDING`.
+
+### Percentis
+
+`ESTIMATED_FETAL_WEIGHT_PERCENTILE` e `ABDOMINAL_CIRCUMFERENCE_PERCENTILE` são requisitos clínicos essenciais e distintos. Nenhum dos dois é calculado enquanto Hadlock, as tabelas por idade gestacional e a interpolação semana+dia estiverem `SOURCE_VALIDATION_PENDING`. A redação do percentil da CA no laudo fica `PENDING PHRASE/PRODUCT VALIDATION`.
+
 ## Infra backlog
 
 `PREVIEW AUTH ORIGIN CONFIGURATION — INFRASTRUCTURE HYGIENE`

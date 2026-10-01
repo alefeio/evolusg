@@ -10,6 +10,7 @@ import {
   meanUterineArteryPi,
 } from "@/lib/clinical/arithmetic";
 import { applySavedSnapshot } from "@/lib/clinical/draft-baseline";
+import { ductusBlockIncluded } from "@/lib/clinical/ductus-assessment";
 import {
   showCephalicPoleField,
   showSpineField,
@@ -50,6 +51,7 @@ type ExamDraftValues = {
     femurLengthMm: number | null;
     umbilicalArteryPi: number | null;
     middleCerebralArteryPi: number | null;
+    ductusVenosusAssessed: boolean | null;
     ductusVenosusPi: number | null;
   };
   episode: {
@@ -97,6 +99,13 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
   const [amnioticMethod, setAmnioticMethod] = useState(
     baseline.amnioticMethod ?? "",
   );
+  const [ductusAssessed, setDuctusAssessed] = useState(() =>
+    ductusBlockIncluded(
+      baseline.fetus.ductusVenosusAssessed,
+      baseline.fetus.ductusVenosusPi,
+    ),
+  );
+  const [ductusPi, setDuctusPi] = useState(num(baseline.fetus.ductusVenosusPi));
 
   const meanPi = useMemo(
     () =>
@@ -384,15 +393,36 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
               value={mcaPi}
             />
           </Field>
-          <Field htmlFor="ductusVenosusPi" label="IP ducto venoso">
-            <Input
-              defaultValue={num(baseline.fetus.ductusVenosusPi)}
-              id="ductusVenosusPi"
-              name="ductusVenosusPi"
-              step="0.01"
-              type="number"
-            />
-          </Field>
+          <div className="space-y-3 sm:col-span-3">
+            <label className="flex items-center gap-2 text-sm text-text-primary">
+              <input
+                checked={ductusAssessed}
+                name="ductusVenosusAssessed"
+                onChange={(event) => setDuctusAssessed(event.target.checked)}
+                type="checkbox"
+                value="true"
+              />
+              Avaliar ducto venoso
+            </label>
+            {ductusAssessed ? (
+              <Field htmlFor="ductusVenosusPi" label="IP ducto venoso">
+                <Input
+                  id="ductusVenosusPi"
+                  name="ductusVenosusPi"
+                  onChange={(event) => setDuctusPi(event.target.value)}
+                  step="0.01"
+                  type="number"
+                  value={ductusPi}
+                />
+              </Field>
+            ) : (
+              <input name="ductusVenosusPi" type="hidden" value={ductusPi} />
+            )}
+            <p className="text-xs text-text-secondary">
+              Sem essa marcação, o ducto venoso não entra neste exame. Isso não
+              significa normal nem ausente.
+            </p>
+          </div>
         </div>
         <p className="text-sm text-text-secondary">
           RCP (ACM/umbilical):{" "}

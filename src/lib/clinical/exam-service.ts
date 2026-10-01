@@ -136,6 +136,7 @@ export async function updateExamDraft(
         femurLengthMm: input.femurLengthMm,
         umbilicalArteryPi: input.umbilicalArteryPi,
         middleCerebralArteryPi: input.middleCerebralArteryPi,
+        ductusVenosusAssessed: input.ductusVenosusAssessed,
         ductusVenosusPi: input.ductusVenosusPi,
         updatedAt: timestamp,
       },

@@ -18,14 +18,16 @@ Um item aqui significa: **o conceito clínico pode estar aprovado pela Dra. Kare
 
 | # | Referência pendente | O que ela bloqueia |
 |---|---|---|
-| 1 | Fórmula e versão de **Hadlock** para PFE | `fetus.efw.hadlock`; frase de biometria com peso; contribuição de conclusão por peso |
-| 2 | Tabela de **percentis de crescimento** fetal + versionamento | classificação &lt;P5 / P5–P90 / &gt;P90 (thresholds **informados** e importados; fonte formal pendente) |
+| 1 | Fórmula e versão de **Hadlock** para PFE | `fetus.efw.hadlock`; peso estimado |
+| 1b | Referência de **percentil do PFE** por IG (versão, semanas e dias) | `fetus.efwPercentile` — requisito essencial, ainda sem cálculo |
+| 1c | Referência de **percentil da CA** por IG (versão, semanas e dias) | `fetus.acPercentile` — requisito essencial e distinto do PFE; frase do laudo `PENDING PHRASE/PRODUCT VALIDATION` |
+| 2 | Tabela de **percentis de crescimento** fetal + versionamento | classificação &lt;P5 / P5–P90 / &gt;P90 |
 | 3 | Percentis das **artérias uterinas** por IG | avaliação automática de `> P95` (lado e média); frases de uterinas alteradas; contribuição consolidada de conclusão |
 | 4 | Referência da **artéria umbilical** | classificação e frase da umbilical; contribuição de conclusão |
 | 5 | Referência da **ACM** | classificação e frase da ACM |
 | 6 | Referência do **ducto venoso** | classificação e frase do DV |
 | 7 | Referência de interpretação do **RCP** por IG | classificação do RCP (fórmula já aprovada); proibido corte fixo `< 1` |
-| 8 | Política de **interpolação semana + dia** em tabelas | qualquer classificação que dependa de IG entre semanas; IG corrigida |
+| 8 | Política de **interpolação semana + dia** em tabelas | percentis do PFE e da CA, demais classificações por IG e IG corrigida |
 | 9 | Faixa de **BCF** (120–160 informada) | classificação/frase automática normal/bradi/taqui |
 | 10 | Faixas de **MBV** (3,0–8,0 / &lt;3 / &gt;8 informadas) | classificação/frase de líquido |
 | 11 | Faixas de **ILA** (3,0–24,0 / &lt;3 / &gt;24 informadas) | classificação/frase de líquido |

@@ -52,7 +52,8 @@ Fórmula aprovada clinicamente **não** é o mesmo que referência validada: uma
 | `uterineArtery.meanPi` | IP médio das artérias uterinas | `(IP direita + IP esquerda) / 2` | `SOURCE_NOT_REQUIRED` (definição aritmética) | `APPROVED` — candidato Sprint 2 (sem P95) |
 | `fetus.cpr` | Relação cerebroplacentária | `IP ACM / IP artéria umbilical` | fórmula aprovada; **interpretação** por IG `SOURCE_VALIDATION_PENDING` | `SOURCED` na fórmula, bloqueado na classificação |
 | `fetus.efw.hadlock` | Peso fetal estimado (Hadlock); margem ±10% versionável | conceito aprovado; fórmula/versão exatas pendentes | `SOURCE_VALIDATION_PENDING` | `NAMED` |
-| `fetus.efwPercentile` | Percentil de peso fetal | depende de tabela por IG | `SOURCE_VALIDATION_PENDING` | `NAMED` |
+| `fetus.efwPercentile` | Percentil do PFE | depende de referência por IG, distinta da CA | `SOURCE_VALIDATION_PENDING` | `NAMED` — essencial, não calculado |
+| `fetus.acPercentile` | Percentil da CA | depende de referência da circunferência abdominal por IG | `SOURCE_VALIDATION_PENDING` | `NAMED` — essencial, não calculado; não reutilizar o percentil do PFE |
 | `fetus.gestationalAgeByBiometry` | IG estimada geral pela biometria (exame atual) | composição das medidas; método exato pendente | `SOURCE_VALIDATION_PENDING` | `NAMED` |
 | `exam.correctedGestationalAge` | IG corrigida atual (derivada do episódio + data) | política de datação + aritmética de semanas/dias | `SOURCE_VALIDATION_PENDING` (política e interpolação) | `NAMED` |
 | `reference.weekDayInterpolation` | Interpolação semana + dia em tabelas de referência | **não definir** | `SOURCE_VALIDATION_PENDING` | `NAMED` — proibido inventar |
