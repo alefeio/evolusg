@@ -11,6 +11,8 @@ import {
 } from "@/lib/clinical/exam-service";
 import { ClinicalAccessError } from "@/lib/clinical/ownership";
 import { createId, now } from "@/lib/clinical/ids";
+import { ductusBlockIncluded } from "@/lib/clinical/ductus-assessment";
+import type { UpdateExamDraftInput } from "@/lib/clinical/schemas";
 
 const enabled = isSafeMigrationTarget() && Boolean(process.env.DATABASE_URL);
 const suffix = randomUUID();
@@ -117,6 +119,7 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
         femurLengthMm: null,
         umbilicalArteryPi: 1.1,
         middleCerebralArteryPi: 1.4,
+        ductusVenosusAssessed: false,
         ductusVenosusPi: null,
         uterineArteryRightPi: 1.0,
         uterineArteryLeftPi: 1.2,
@@ -158,6 +161,7 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
         femurLengthMm: null,
         umbilicalArteryPi: 1.1,
         middleCerebralArteryPi: 1.4,
+        ductusVenosusAssessed: false,
         ductusVenosusPi: null,
         uterineArteryRightPi: 1.0,
         uterineArteryLeftPi: 1.2,
@@ -196,7 +200,8 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
           femurLengthMm: null,
           umbilicalArteryPi: 1.1,
           middleCerebralArteryPi: 1.4,
-          ductusVenosusPi: null,
+          ductusVenosusAssessed: false,
+        ductusVenosusPi: null,
           uterineArteryRightPi: 1.0,
           uterineArteryLeftPi: 1.2,
           uterineArteryRightNotch: true,
@@ -219,4 +224,144 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
       );
     },
   );
+
+  it(
+    "keeps ductus inclusion separate from the stored IP",
+    { timeout: 90_000 },
+    async () => {
+      const patient = await createPatient(ownerA, {
+        fullName: `DV Fictícia ${suffix}`,
+        birthDate: null,
+        notes: null,
+      });
+      const episode = await createPregnancyEpisode(ownerA, {
+        patientId: patient.id,
+        lmp: null,
+        gravidity: null,
+        parity: null,
+        abortions: null,
+        datingUltrasoundDate: null,
+        datingUltrasoundGaWeeks: null,
+        datingUltrasoundGaDays: null,
+      });
+      const exam = await createObstetricDopplerDraft(ownerA, patient.id, episode.id);
+
+      const excluded = await updateExamDraft(ownerA, {
+        examId: exam.id,
+        comorbidities: null,
+        continuousMedications: null,
+        lie: null,
+        presentation: null,
+        spineSide: null,
+        cephalicPoleSide: null,
+        heartRateBpm: null,
+        bodyMovementsPresent: null,
+        swallowingPresent: null,
+        biparietalDiameterMm: null,
+        headCircumferenceMm: null,
+        abdominalCircumferenceMm: null,
+        femurLengthMm: null,
+        umbilicalArteryPi: null,
+        middleCerebralArteryPi: null,
+        ductusVenosusAssessed: false,
+        ductusVenosusPi: null,
+        uterineArteryRightPi: null,
+        uterineArteryLeftPi: null,
+        uterineArteryRightNotch: null,
+        uterineArteryLeftNotch: null,
+        placentaLocation: null,
+        placentaGrade: null,
+        amnioticMethod: null,
+        amnioticValue: null,
+        transducersUsed: [],
+      });
+      expect(excluded.fetuses[0]?.ductusVenosusAssessed).toBe(false);
+      expect(
+        ductusBlockIncluded(
+          excluded.fetuses[0]?.ductusVenosusAssessed,
+          excluded.fetuses[0]?.ductusVenosusPi,
+        ),
+      ).toBe(false);
+
+      const includedEmpty = await updateExamDraft(ownerA, {
+        ...excludedFields(exam.id),
+        ductusVenosusAssessed: true,
+        ductusVenosusPi: null,
+      });
+      expect(includedEmpty.fetuses[0]?.ductusVenosusAssessed).toBe(true);
+      expect(includedEmpty.fetuses[0]?.ductusVenosusPi).toBeNull();
+
+      const included = await updateExamDraft(ownerA, {
+        ...excludedFields(exam.id),
+        ductusVenosusAssessed: true,
+        ductusVenosusPi: 0.41,
+      });
+      expect(included.fetuses[0]?.ductusVenosusPi).toBeCloseTo(0.41);
+
+      const unchecked = await updateExamDraft(ownerA, {
+        ...excludedFields(exam.id),
+        ductusVenosusAssessed: false,
+        ductusVenosusPi: 0.41,
+      });
+      expect(unchecked.fetuses[0]?.ductusVenosusAssessed).toBe(false);
+      expect(unchecked.fetuses[0]?.ductusVenosusPi).toBeCloseTo(0.41);
+      expect(
+        ductusBlockIncluded(false, unchecked.fetuses[0]?.ductusVenosusPi),
+      ).toBe(false);
+
+      await prisma.fetus.update({
+        where: { id: unchecked.fetuses[0]!.id },
+        data: { ductusVenosusAssessed: null, ductusVenosusPi: 0.55 },
+      });
+      const legacy = await getExamDraft(exam.id, ownerA);
+      expect(legacy.fetuses[0]?.ductusVenosusAssessed).toBeNull();
+      expect(
+        ductusBlockIncluded(null, legacy.fetuses[0]?.ductusVenosusPi),
+      ).toBe(true);
+
+      await prisma.fetus.update({
+        where: { id: unchecked.fetuses[0]!.id },
+        data: { ductusVenosusAssessed: null, ductusVenosusPi: null },
+      });
+      const emptyLegacy = await getExamDraft(exam.id, ownerA);
+      expect(
+        ductusBlockIncluded(
+          emptyLegacy.fetuses[0]?.ductusVenosusAssessed,
+          emptyLegacy.fetuses[0]?.ductusVenosusPi,
+        ),
+      ).toBe(false);
+    },
+  );
 });
+
+function excludedFields(examId: string): UpdateExamDraftInput {
+  return {
+    examId,
+    comorbidities: null,
+    continuousMedications: null,
+    lie: null,
+    presentation: null,
+    spineSide: null,
+    cephalicPoleSide: null,
+    heartRateBpm: null,
+    bodyMovementsPresent: null,
+    swallowingPresent: null,
+    biparietalDiameterMm: null,
+    headCircumferenceMm: null,
+    abdominalCircumferenceMm: null,
+    femurLengthMm: null,
+    umbilicalArteryPi: null,
+    middleCerebralArteryPi: null,
+    ductusVenosusAssessed: false,
+    ductusVenosusPi: null,
+    uterineArteryRightPi: null,
+    uterineArteryLeftPi: null,
+    uterineArteryRightNotch: null,
+    uterineArteryLeftNotch: null,
+    placentaLocation: null,
+    placentaGrade: null,
+    amnioticMethod: null,
+    amnioticValue: null,
+    transducersUsed: [],
+  };
+}

@@ -90,6 +90,38 @@ Validado manualmente pelo proprietário/QA Alexandre, sem dados do teste registr
 
 Também validados: transdutor convexo, convexo com endocavitário, nenhum transdutor, dorso variável, placenta grau 0 e reload.
 
+## Clinical pilot feedback — batch 2
+
+`CLINICAL PILOT FEEDBACK — BATCH 2`
+
+### Ducto venoso
+
+A avaliação é opcional e manual. Não há regra automática do tipo “ACM e umbilical normais, então omitir o ducto”: a classificação de normalidade continua `SOURCE_VALIDATION_PENDING`.
+
+| Estado | Significado |
+|---|---|
+| `ductusVenosusAssessed = false` | Bloco não incluído neste exame. Não é normal, ausente, negativo, não detectado nem alterado. |
+| `true` + IP vazio | Válido em rascunho: bloco incluído, ainda sem valor. |
+| `true` + IP preenchido | Bloco incluído com valor capturado. |
+| `null` | Legado ou ainda não decidido. Se já existir IP, a tela trata o bloco como incluído. Sem IP, não presume avaliação. |
+
+Desmarcar o bloco grava `false` e preserva o IP já digitado.
+
+**QA:** `CLINICAL FEEDBACK BATCH 2 QA APPROVED`
+
+Validado manualmente pelo proprietário/QA Alexandre, sem dados do teste registrados aqui:
+
+- semântica do ducto venoso opcional;
+- persistência do estado `assessed`;
+- rascunho parcial com bloco selecionado e sem IP;
+- preservação do IP ao desmarcar;
+- drafts anteriores com e sem ducto venoso;
+- ausência de interpretação automática de normalidade.
+
+### Percentis
+
+`PFE_PERCENTILE` (`ESTIMATED_FETAL_WEIGHT_PERCENTILE`) e `CA_PERCENTILE` (`ABDOMINAL_CIRCUMFERENCE_PERCENTILE`) são requisitos clínicos essenciais e distintos. Nenhum dos dois é calculado enquanto Hadlock, as tabelas por idade gestacional e a interpolação semana+dia estiverem `SOURCE_VALIDATION_PENDING`. A redação do percentil da CA no laudo fica `PENDING PHRASE/PRODUCT VALIDATION`.
+
 ## Infra backlog
 
 `PREVIEW AUTH ORIGIN CONFIGURATION — INFRASTRUCTURE HYGIENE`

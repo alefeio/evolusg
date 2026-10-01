@@ -31,6 +31,7 @@ const loaded = {
     femurLengthMm: null,
     umbilicalArteryPi: null,
     middleCerebralArteryPi: null,
+    ductusVenosusAssessed: null,
     ductusVenosusPi: null,
   },
 };
@@ -62,6 +63,7 @@ function saved(overrides: Partial<DraftFieldSnapshot>): DraftFieldSnapshot {
     femurLengthMm: null,
     umbilicalArteryPi: null,
     middleCerebralArteryPi: null,
+    ductusVenosusAssessed: null,
     ductusVenosusPi: null,
     ...overrides,
   };
@@ -137,7 +139,8 @@ describe("snapshotFromExam", () => {
           femurLengthMm: null,
           umbilicalArteryPi: null,
           middleCerebralArteryPi: null,
-          ductusVenosusPi: null,
+          ductusVenosusAssessed: null,
+    ductusVenosusPi: null,
         },
       ],
     });

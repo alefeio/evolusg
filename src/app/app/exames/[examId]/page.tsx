@@ -72,6 +72,7 @@ export default async function ExamDraftPage({
               femurLengthMm: fetus.femurLengthMm,
               umbilicalArteryPi: fetus.umbilicalArteryPi,
               middleCerebralArteryPi: fetus.middleCerebralArteryPi,
+              ductusVenosusAssessed: fetus.ductusVenosusAssessed,
               ductusVenosusPi: fetus.ductusVenosusPi,
             },
             episode: {

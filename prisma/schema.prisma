@@ -191,6 +191,10 @@ model Fetus {
   femurLengthMm        Float?
   umbilicalArteryPi    Float?
   middleCerebralArteryPi Float?
+  /// true = bloco incluído neste exame; false = não incluído.
+  /// false NÃO é normalidade, ausência ou resultado negativo.
+  /// null = legado/ainda não decidido. Se já houver IP, a interface trata como incluído.
+  ductusVenosusAssessed Boolean?
   ductusVenosusPi      Float?
   createdAt            DateTime
   updatedAt            DateTime

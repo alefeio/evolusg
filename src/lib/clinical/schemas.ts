@@ -98,6 +98,9 @@ export const updateExamDraftSchema = z
     femurLengthMm: optionalFloat,
     umbilicalArteryPi: optionalFloat,
     middleCerebralArteryPi: optionalFloat,
+    ductusVenosusAssessed: z.preprocess((value) => {
+      return value === true || value === "true" || value === "on" || value === "1";
+    }, z.boolean()),
     ductusVenosusPi: optionalFloat,
     uterineArteryRightPi: optionalFloat,
     uterineArteryLeftPi: optionalFloat,
