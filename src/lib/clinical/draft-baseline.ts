@@ -24,6 +24,7 @@ export type DraftFieldSnapshot = {
   femurLengthMm: number | null;
   umbilicalArteryPi: number | null;
   middleCerebralArteryPi: number | null;
+  ductusVenosusAssessed: boolean | null;
   ductusVenosusPi: number | null;
 };
 
@@ -54,6 +55,7 @@ type ExamLike = {
     femurLengthMm: number | null;
     umbilicalArteryPi: number | null;
     middleCerebralArteryPi: number | null;
+    ductusVenosusAssessed: boolean | null;
     ductusVenosusPi: number | null;
   }>;
 };
@@ -86,6 +88,7 @@ export function snapshotFromExam(exam: ExamLike): DraftFieldSnapshot {
     femurLengthMm: fetus?.femurLengthMm ?? null,
     umbilicalArteryPi: fetus?.umbilicalArteryPi ?? null,
     middleCerebralArteryPi: fetus?.middleCerebralArteryPi ?? null,
+    ductusVenosusAssessed: fetus?.ductusVenosusAssessed ?? null,
     ductusVenosusPi: fetus?.ductusVenosusPi ?? null,
   };
 }
@@ -127,6 +130,7 @@ export function applySavedSnapshot<T extends { fetus: Record<string, unknown> }>
       femurLengthMm: saved.femurLengthMm,
       umbilicalArteryPi: saved.umbilicalArteryPi,
       middleCerebralArteryPi: saved.middleCerebralArteryPi,
+      ductusVenosusAssessed: saved.ductusVenosusAssessed,
       ductusVenosusPi: saved.ductusVenosusPi,
     },
   };
