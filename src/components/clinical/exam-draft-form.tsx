@@ -405,11 +405,17 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
               Avaliar ducto venoso
             </label>
             {ductusAssessed ? (
-              <Field htmlFor="ductusVenosusPi" label="IP ducto venoso">
+              <Field
+                error={state.fieldErrors?.ductusVenosusPi?.[0]}
+                htmlFor="ductusVenosusPi"
+                label="IP ducto venoso"
+              >
                 <Input
                   id="ductusVenosusPi"
+                  invalid={Boolean(state.fieldErrors?.ductusVenosusPi)}
                   name="ductusVenosusPi"
                   onChange={(event) => setDuctusPi(event.target.value)}
+                  required
                   step="0.01"
                   type="number"
                   value={ductusPi}

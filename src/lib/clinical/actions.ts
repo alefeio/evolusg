@@ -10,6 +10,7 @@ import {
   updateExamDraft,
 } from "@/lib/clinical/exam-service";
 import { snapshotFromExam, type DraftFieldSnapshot } from "@/lib/clinical/draft-baseline";
+import { DuctusAssessmentError, DUCTUS_PI_REQUIRED_MESSAGE } from "@/lib/clinical/ductus-assessment";
 import { ClinicalAccessError } from "@/lib/clinical/ownership";
 import {
   createExamSchema,
@@ -128,9 +129,12 @@ export async function saveExamDraftAction(
   const session = await requireSession();
   const parsed = updateExamDraftSchema.safeParse(formDataToObject(formData));
   if (!parsed.success) {
+    const ductusIssue = parsed.error.issues.find(
+      (issue) => issue.message === DUCTUS_PI_REQUIRED_MESSAGE,
+    );
     return {
       ok: false,
-      error: "Não foi possível salvar. Revise os campos.",
+      error: ductusIssue?.message ?? "Não foi possível salvar. Revise os campos.",
       fieldErrors: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
@@ -140,7 +144,7 @@ export async function saveExamDraftAction(
     revalidatePath(`/app/exames/${exam.id}`);
     return { ok: true, saved: snapshotFromExam(exam) };
   } catch (error) {
-    if (error instanceof ClinicalAccessError) {
+    if (error instanceof ClinicalAccessError || error instanceof DuctusAssessmentError) {
       return { ok: false, error: error.message };
     }
     throw error;
