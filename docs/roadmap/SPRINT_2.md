@@ -134,6 +134,28 @@ Salvar com o ducto venoso marcado exige IP. Durante a edição o campo pode apar
 
 Os percentis do PFE e da CA continuam essenciais e `SOURCE_VALIDATION_PENDING`, sem cálculo.
 
+**QA:** `CLINICAL FEEDBACK BATCH 3 QA APPROVED`
+
+Validado manualmente pelo proprietário/QA Alexandre, sem valores clínicos registrados aqui:
+
+- ducto venoso não avaliado pode ser salvo;
+- ducto venoso selecionado sem IP é rejeitado;
+- a mensagem de validação é compreensível;
+- ducto venoso selecionado com IP é persistido;
+- desmarcação preserva o IP;
+- drafts legados continuam utilizáveis;
+- nenhuma regressão relevante foi encontrada.
+
+`CLINICAL STRUCTURED CAPTURE = STABILIZED FOR CURRENT SINGLETON PILOT`
+
+O macrofluxo, a ordem do formulário e a captura estruturada singleton estão utilizáveis no piloto atual, com drafts funcionando e os refinamentos clínicos já incorporados. Isso não é protocolo clínico completo, cálculo validado, laudo final nem prontidão para dados reais.
+
+## Próximo bloco de análise
+
+`CLINICAL REFERENCE VALIDATION — NEXT PLANNING BLOCK`
+
+Ainda não iniciado. Prioridades iniciais, sem implementação nesta etapa: cálculo de PFE/Hadlock, percentil do PFE, percentil da CA, referências por idade gestacional, versionamento das fontes e interpolação semana+dia.
+
 ## Infra backlog
 
 `PREVIEW AUTH ORIGIN CONFIGURATION — INFRASTRUCTURE HYGIENE`
