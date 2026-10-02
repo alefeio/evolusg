@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ductusSaveError, DUCTUS_PI_REQUIRED_MESSAGE } from "@/lib/clinical/ductus-assessment";
 import { normalizePosition } from "@/lib/clinical/position-rules";
 import { presenceFromCheckbox } from "@/lib/clinical/presence";
 
@@ -123,6 +124,15 @@ export const updateExamDraftSchema = z
     placentaGrade: z.preprocess(emptyToNull, placentaGrade),
     amnioticMethod: z.preprocess(emptyToNull, amnioticMethod),
     amnioticValue: optionalFloat,
+  })
+  .superRefine((data, context) => {
+    if (ductusSaveError(data.ductusVenosusAssessed, data.ductusVenosusPi)) {
+      context.addIssue({
+        code: "custom",
+        message: DUCTUS_PI_REQUIRED_MESSAGE,
+        path: ["ductusVenosusPi"],
+      });
+    }
   })
   .transform((data) => {
     const position = normalizePosition({

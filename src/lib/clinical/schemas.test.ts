@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DUCTUS_PI_REQUIRED_MESSAGE } from "@/lib/clinical/ductus-assessment";
 import { updateExamDraftSchema } from "@/lib/clinical/schemas";
 
 describe("updateExamDraftSchema", () => {
@@ -60,5 +61,33 @@ describe("updateExamDraftSchema", () => {
     });
     expect(parsed.amnioticMethod).toBeNull();
     expect(parsed.amnioticValue).toBeNull();
+  });
+
+  it("rejects a selected ductus venosus without an IP", () => {
+    const rejected = updateExamDraftSchema.safeParse({
+      examId: "exam-1",
+      ductusVenosusAssessed: true,
+      ductusVenosusPi: "",
+      bodyMovementsPresent: false,
+      swallowingPresent: false,
+      uterineArteryRightNotch: false,
+      uterineArteryLeftNotch: false,
+    });
+    expect(rejected.success).toBe(false);
+    if (!rejected.success) {
+      expect(rejected.error.issues[0]?.message).toBe(DUCTUS_PI_REQUIRED_MESSAGE);
+    }
+
+    const accepted = updateExamDraftSchema.parse({
+      examId: "exam-1",
+      ductusVenosusAssessed: false,
+      ductusVenosusPi: "",
+      bodyMovementsPresent: false,
+      swallowingPresent: false,
+      uterineArteryRightNotch: false,
+      uterineArteryLeftNotch: false,
+    });
+    expect(accepted.ductusVenosusAssessed).toBe(false);
+    expect(accepted.ductusVenosusPi).toBeNull();
   });
 });

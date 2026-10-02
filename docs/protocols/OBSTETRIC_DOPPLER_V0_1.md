@@ -205,7 +205,7 @@ Tabela P95: `SOURCE_VALIDATION_PENDING`. Frases literais: [`PHRASE_CATALOG.md`](
 |---|---|---|---|
 | Umbilical | IP &gt; P95; IP &lt; P5 não altera | "Aumento da resistência hemodinâmica materno-fetal." | `SOURCE_VALIDATION_PENDING` |
 | ACM | IP &lt; P5; IP &gt; P95 não altera | "Dopplerfluxometria indicando centralização da hemodinâmica fetal." (só conclusão) | `SOURCE_VALIDATION_PENDING` |
-| Ducto venoso | avaliação **opcional e manual** (`CLINICAL PILOT FEEDBACK — BATCH 2`); IP só se a médica incluir o bloco. Não incluir ≠ normal. Sem automação a partir de ACM/umbilical. Classificação IP &lt; P5 continua fora | corpo + conclusão pendentes | `SOURCE_VALIDATION_PENDING` para classificação; inclusão `SOURCE_NOT_REQUIRED` |
+| Ducto venoso | avaliação opcional e manual. Salvar com o bloco marcado exige IP (`DUCTUS_VENOSUS_SELECTED_REQUIRES_PI`). Não incluir ≠ normal. Sem automação a partir de ACM/umbilical. Classificação do IP continua fora | `SOURCE_VALIDATION_PENDING` para classificação |
 | RCP | abaixo do estimado por IG (semanas+dias) | ver catálogo | `SOURCE_VALIDATION_PENDING` |
 
 ```text

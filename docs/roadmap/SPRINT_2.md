@@ -101,7 +101,7 @@ A avaliação é opcional e manual. Não há regra automática do tipo “ACM e 
 | Estado | Significado |
 |---|---|
 | `ductusVenosusAssessed = false` | Bloco não incluído neste exame. Não é normal, ausente, negativo, não detectado nem alterado. |
-| `true` + IP vazio | Válido em rascunho: bloco incluído, ainda sem valor. |
+| `true` + IP vazio | Estado transitório da tela. **Não** pode ser salvo. O próximo save exige IP ou desmarcação. Registros antigos nesse estado ainda abrem. |
 | `true` + IP preenchido | Bloco incluído com valor capturado. |
 | `null` | Legado ou ainda não decidido. Se já existir IP, a tela trata o bloco como incluído. Sem IP, não presume avaliação. |
 
@@ -121,6 +121,40 @@ Validado manualmente pelo proprietário/QA Alexandre, sem dados do teste registr
 ### Percentis
 
 `PFE_PERCENTILE` (`ESTIMATED_FETAL_WEIGHT_PERCENTILE`) e `CA_PERCENTILE` (`ABDOMINAL_CIRCUMFERENCE_PERCENTILE`) são requisitos clínicos essenciais e distintos. Nenhum dos dois é calculado enquanto Hadlock, as tabelas por idade gestacional e a interpolação semana+dia estiverem `SOURCE_VALIDATION_PENDING`. A redação do percentil da CA no laudo fica `PENDING PHRASE/PRODUCT VALIDATION`.
+
+## Clinical pilot feedback — batch 3
+
+`DUCTUS_VENOSUS_SELECTED_REQUIRES_PI = CLINICALLY_APPROVED`
+
+`CLINICAL FORM ORDER = VALIDATED BY PILOT USER`
+
+A Dra. Karen confirmou que conseguiria preencher o exame, com uma paciente na sua frente, na ordem atual das seções. Isso valida a macroestrutura. Não congela pequenos ajustes futuros de interface e não reorganiza as seções.
+
+Salvar com o ducto venoso marcado exige IP. Durante a edição o campo pode aparecer vazio; o bloqueio é só no salvamento. Não selecionar continua válido e não significa normalidade. Um registro antigo marcado sem IP ainda abre; o próximo save pede o IP ou a desmarcação. Desmarcar continua preservando o IP já digitado.
+
+Os percentis do PFE e da CA continuam essenciais e `SOURCE_VALIDATION_PENDING`, sem cálculo.
+
+**QA:** `CLINICAL FEEDBACK BATCH 3 QA APPROVED`
+
+Validado manualmente pelo proprietário/QA Alexandre, sem valores clínicos registrados aqui:
+
+- ducto venoso não avaliado pode ser salvo;
+- ducto venoso selecionado sem IP é rejeitado;
+- a mensagem de validação é compreensível;
+- ducto venoso selecionado com IP é persistido;
+- desmarcação preserva o IP;
+- drafts legados continuam utilizáveis;
+- nenhuma regressão relevante foi encontrada.
+
+`CLINICAL STRUCTURED CAPTURE = STABILIZED FOR CURRENT SINGLETON PILOT`
+
+O macrofluxo, a ordem do formulário e a captura estruturada singleton estão utilizáveis no piloto atual, com drafts funcionando e os refinamentos clínicos já incorporados. Isso não é protocolo clínico completo, cálculo validado, laudo final nem prontidão para dados reais.
+
+## Próximo bloco de análise
+
+`CLINICAL REFERENCE VALIDATION — NEXT PLANNING BLOCK`
+
+Ainda não iniciado. Prioridades iniciais, sem implementação nesta etapa: cálculo de PFE/Hadlock, percentil do PFE, percentil da CA, referências por idade gestacional, versionamento das fontes e interpolação semana+dia.
 
 ## Infra backlog
 

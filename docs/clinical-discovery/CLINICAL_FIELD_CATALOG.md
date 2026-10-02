@@ -124,7 +124,7 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `fetuses[n].doppler.umbilicalArtery.pi` | IP artéria umbilical | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].doppler.mca.pi` | IP ACM | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].doppler.ductusVenosus.assessed` | Incluir ducto venoso neste exame | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` — `false` não é normal nem ausente |
-| `fetuses[n].doppler.ductusVenosus.pi` | IP ducto venoso | Doppler | Fetus | captura se o bloco estiver incluído; classificação `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
+| `fetuses[n].doppler.ductusVenosus.pi` | IP ducto venoso | Doppler | Fetus | obrigatório para salvar se o bloco estiver incluído; classificação `SOURCE_VALIDATION_PENDING` |
 | `fetuses[n].doppler.cpr` | RCP | Doppler | derivado (Fetus) | `CLINICALLY_APPROVED` (fórmula) / `SOURCE_VALIDATION_PENDING` (classificação por IG) / `NOT_ANALYZED` |
 | `fetuses[n].biometry.bpd` | DBP | Biometria | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` (medida) / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].biometry.hc` | CC | Biometria | Fetus | idem |

@@ -6,6 +6,7 @@ import {
   requireOwnedExam,
   requireOwnedPatient,
 } from "@/lib/clinical/ownership";
+import { ductusSaveError, DuctusAssessmentError } from "@/lib/clinical/ductus-assessment";
 import { normalizePosition } from "@/lib/clinical/position-rules";
 import type { UpdateExamDraftInput } from "@/lib/clinical/schemas";
 import type {
@@ -90,6 +91,14 @@ export async function updateExamDraft(
   const fetus = exam.fetuses[0];
   if (!fetus) {
     throw new Error("Exame singleton sem feto — estado inconsistente.");
+  }
+
+  const ductusError = ductusSaveError(
+    input.ductusVenosusAssessed,
+    input.ductusVenosusPi,
+  );
+  if (ductusError) {
+    throw new DuctusAssessmentError(ductusError);
   }
 
   const position = normalizePosition({
