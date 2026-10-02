@@ -11,7 +11,7 @@ import {
 } from "@/lib/clinical/exam-service";
 import { ClinicalAccessError } from "@/lib/clinical/ownership";
 import { createId, now } from "@/lib/clinical/ids";
-import { ductusBlockIncluded } from "@/lib/clinical/ductus-assessment";
+import { ductusBlockIncluded, DuctusAssessmentError } from "@/lib/clinical/ductus-assessment";
 import type { UpdateExamDraftInput } from "@/lib/clinical/schemas";
 
 const enabled = isSafeMigrationTarget() && Boolean(process.env.DATABASE_URL);
@@ -283,13 +283,13 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
         ),
       ).toBe(false);
 
-      const includedEmpty = await updateExamDraft(ownerA, {
-        ...excludedFields(exam.id),
-        ductusVenosusAssessed: true,
-        ductusVenosusPi: null,
-      });
-      expect(includedEmpty.fetuses[0]?.ductusVenosusAssessed).toBe(true);
-      expect(includedEmpty.fetuses[0]?.ductusVenosusPi).toBeNull();
+      await expect(
+        updateExamDraft(ownerA, {
+          ...excludedFields(exam.id),
+          ductusVenosusAssessed: true,
+          ductusVenosusPi: null,
+        }),
+      ).rejects.toBeInstanceOf(DuctusAssessmentError);
 
       const included = await updateExamDraft(ownerA, {
         ...excludedFields(exam.id),
@@ -330,6 +330,39 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
           emptyLegacy.fetuses[0]?.ductusVenosusPi,
         ),
       ).toBe(false);
+
+      await prisma.fetus.update({
+        where: { id: unchecked.fetuses[0]!.id },
+        data: { ductusVenosusAssessed: true, ductusVenosusPi: null },
+      });
+      const openedLegacy = await getExamDraft(exam.id, ownerA);
+      expect(openedLegacy.fetuses[0]?.ductusVenosusAssessed).toBe(true);
+      expect(openedLegacy.fetuses[0]?.ductusVenosusPi).toBeNull();
+      await expect(
+        updateExamDraft(ownerA, {
+          ...excludedFields(exam.id),
+          ductusVenosusAssessed: true,
+          ductusVenosusPi: null,
+        }),
+      ).rejects.toBeInstanceOf(DuctusAssessmentError);
+
+      const repaired = await updateExamDraft(ownerA, {
+        ...excludedFields(exam.id),
+        ductusVenosusAssessed: true,
+        ductusVenosusPi: 0.33,
+      });
+      expect(repaired.fetuses[0]?.ductusVenosusPi).toBeCloseTo(0.33);
+
+      await prisma.fetus.update({
+        where: { id: unchecked.fetuses[0]!.id },
+        data: { ductusVenosusAssessed: true, ductusVenosusPi: null },
+      });
+      const cleared = await updateExamDraft(ownerA, {
+        ...excludedFields(exam.id),
+        ductusVenosusAssessed: false,
+        ductusVenosusPi: null,
+      });
+      expect(cleared.fetuses[0]?.ductusVenosusAssessed).toBe(false);
     },
   );
 });

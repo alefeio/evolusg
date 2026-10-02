@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { ductusBlockIncluded } from "@/lib/clinical/ductus-assessment";
+import {
+  DUCTUS_PI_REQUIRED_MESSAGE,
+  ductusBlockIncluded,
+  ductusSaveError,
+} from "@/lib/clinical/ductus-assessment";
 
 describe("ductusBlockIncluded", () => {
   it("does not infer assessment when nothing was stored", () => {
@@ -17,5 +21,13 @@ describe("ductusBlockIncluded", () => {
 
   it("hides the block when explicitly excluded and keeps the decision separate from the IP", () => {
     expect(ductusBlockIncluded(false, 0.42)).toBe(false);
+  });
+});
+
+describe("ductusSaveError", () => {
+  it("allows exclusion and a selected value, and rejects a selected empty IP", () => {
+    expect(ductusSaveError(false, null)).toBeNull();
+    expect(ductusSaveError(true, 0.4)).toBeNull();
+    expect(ductusSaveError(true, null)).toBe(DUCTUS_PI_REQUIRED_MESSAGE);
   });
 });
