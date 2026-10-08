@@ -51,9 +51,9 @@ Fórmula aprovada clinicamente **não** é o mesmo que referência validada: uma
 |---|---|---|---|---|
 | `uterineArtery.meanPi` | IP médio das artérias uterinas | `(IP direita + IP esquerda) / 2` | `SOURCE_NOT_REQUIRED` (definição aritmética) | `APPROVED` — candidato Sprint 2 (sem P95) |
 | `fetus.cpr` | Relação cerebroplacentária | `IP ACM / IP artéria umbilical` | fórmula aprovada; **interpretação** por IG `SOURCE_VALIDATION_PENDING` | `SOURCED` na fórmula, bloqueado na classificação |
-| `fetus.efw.hadlock` | Peso fetal estimado (Hadlock); margem ±10% versionável | conceito aprovado; fórmula/versão exatas pendentes | `SOURCE_VALIDATION_PENDING` | `NAMED` |
-| `fetus.efwPercentile` | Percentil do PFE | depende de referência por IG, distinta da CA | `SOURCE_VALIDATION_PENDING` | `NAMED` — essencial, não calculado |
-| `fetus.acPercentile` | Percentil da CA | depende de referência da circunferência abdominal por IG | `SOURCE_VALIDATION_PENDING` | `NAMED` — essencial, não calculado; não reutilizar o percentil do PFE |
+| `fetus.efw.hadlock` | Peso fetal estimado; margem ±10% versionável | família AC+BPD+FL+HC identificada; não liberada | `EFW_HADLOCK_1985_BPD_HC_AC_FL` — `DEVICE_MATCH_PENDING` | `NAMED` — não `ACTIVE` |
+| `fetus.efwPercentile` | Percentil do PFE | comparação do PFE com referência de crescimento por IG | `EFW_GROWTH_HADLOCK_1991` — `METHOD_DEFINITION_PENDING` | `NAMED` — não `ACTIVE` |
+| `fetus.acPercentile` | Percentil da CA | percentil da circunferência abdominal; distinto do PFE | `AC_GROWTH_HADLOCK_1984` — `SOURCE_VALIDATION_PENDING` | `NAMED` — não `ACTIVE` |
 | `fetus.gestationalAgeByBiometry` | IG estimada geral pela biometria (exame atual) | composição das medidas; método exato pendente | `SOURCE_VALIDATION_PENDING` | `NAMED` |
 | `exam.correctedGestationalAge` | IG corrigida atual (derivada do episódio + data) | política de datação + aritmética de semanas/dias | `SOURCE_VALIDATION_PENDING` (política e interpolação) | `NAMED` |
 | `reference.weekDayInterpolation` | Interpolação semana + dia em tabelas de referência | **não definir** | `SOURCE_VALIDATION_PENDING` | `NAMED` — proibido inventar |
@@ -66,3 +66,34 @@ Restrições registradas:
 - Nenhuma interpolação entre semanas/dias pode ser inventada pela engenharia.
 - Cálculo cuja saída alimente classificação, alerta ou conclusão só entra em produção com `SOURCE_VALIDATED`.
 - Cálculo puramente aritmético (`uterineArtery.meanPi`) pode ser candidato à Sprint 2; a **comparação com P95** não.
+
+## Pacote Hadlock — candidatos, nenhum ativo
+
+Detalhe e dispositivo: [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md). `implementation status` de todos: não implementado. Eixo de fonte do cálculo: `SOURCE_VALIDATION_PENDING` até `CLINICALLY_RELEASED`.
+
+### `fetus.efw.hadlock`
+
+- Status do cálculo: `NAMED`, não `ACTIVE`.
+- Referência: `EFW_HADLOCK_1985_BPD_HC_AC_FL` (`DEVICE_MATCH_PENDING`).
+- Entradas exigidas pela candidata: BPD, HC, AC, FL. Unidades ainda não congeladas.
+- Fonte científica identificada: Hadlock et al. 1985; corroboração `LOINC 11732-5`. A equação não foi transcrita aqui.
+- Dependências: compatibilidade ainda aberta com o GE Voluson E6.
+- Bloqueios abertos: configuração do Voluson E6, conferência da equação no texto completo, unidades/precisão/arredondamento, fixtures. Publicação primária e corroboração padronizada: fechadas.
+
+### `fetus.efwPercentile`
+
+- Status do cálculo: `NAMED`, não `ACTIVE`.
+- Referência: `EFW_GROWTH_HADLOCK_1991` (`METHOD_DEFINITION_PENDING`).
+- Entradas: PFE e idade gestacional em semanas + dias.
+- Dependências: `fetus.efw.hadlock`.
+- Bloqueios: escolha explícita entre equações/distribuição, tabela publicada, interpolação da tabela ou outra política validada; semana + dia; precisão, limites e arredondamento; fixtures; comparação com dispositivo. Tabela e equações de Hadlock 1991 podem não coincidir.
+
+### `fetus.acPercentile`
+
+- Status do cálculo: `NAMED`, não `ACTIVE`.
+- Referência: `AC_GROWTH_HADLOCK_1984` (`SOURCE_VALIDATION_PENDING`).
+- Entradas: CA medida e idade gestacional em semanas + dias.
+- Dependências: nenhuma fórmula de peso.
+- Bloqueios: publicação, equação ou tabela, desvio-padrão quando aplicável, semana + dia, fixtures.
+
+`reference.weekDayInterpolation` não é uma política global. Cada referência declara a própria. Ver ADR-014.

@@ -1,7 +1,8 @@
 # ADRs — evolUSG
 
-ADRs 001–012 e 014 permanecem **PROPOSED**.  
-**ADR-013** (autenticação da Sprint 1) está **ACCEPTED** apenas no escopo autorizado dessa sprint. Não promover ADRs clínicos.
+ADRs 001–012 permanecem **PROPOSED**.  
+**ADR-013** está **ACCEPTED** apenas no escopo da Sprint 1.  
+**ADR-014** está **ACCEPTED** apenas no princípio “cálculo clínico depende de referência explícita, versionada e rastreável”. Isso não valida Hadlock nem autoriza schema.
 
 Não transformar hipótese em decisão. Auditoria da Sprint 0: ver classificação `KNOWN` / `PROPOSED` / pendências **dentro de cada ADR**.
 
@@ -22,7 +23,7 @@ Não transformar hipótese em decisão. Auditoria da Sprint 0: ver classificaç�
 | [ADR-011](ADR-011-residencia-e-transferencia-de-dados.md) | Residência e transferência internacional | PROPOSED | Adequado ao estágio |
 | [ADR-012](ADR-012-estados-do-laudo.md) | Estados do laudo | PROPOSED | Máquina candidata; não definitiva |
 | [ADR-013](ADR-013-fundacao-de-autenticacao.md) | Fundação de autenticação | **ACCEPTED** | Somente decisões da Sprint 1 (Better Auth, e-mail+senha, Resend, allowlist) |
-| [ADR-014](ADR-014-referencias-clinicas-versionadas.md) | Referências clínicas versionadas | PROPOSED | Problema real; desenho aberto |
+| [ADR-014](ADR-014-referencias-clinicas-versionadas.md) | Referências clínicas versionadas | **ACCEPTED** (princípio) | Schema, interpolação e curvas continuam abertos |
 
 ## Impacto da reconciliação Clinical Discovery v0.1
 

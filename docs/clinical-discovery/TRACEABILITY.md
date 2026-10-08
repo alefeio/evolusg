@@ -5,14 +5,30 @@ Este documento define **processo**. Não contém regras clínicas. Não cria imp
 Objetivo: no futuro, seguir uma cadeia curta, sem dezenas de tipos de ID.
 
 ```text
+ClinicalReference
+  → ClinicalRequirement
+    → Calculation
+      → Fixture
+        → Automated Test
+          → ProtocolVersion
+            → ReportVersion futura
+```
+
+A descoberta continua alimentando o requisito. O elo novo é a referência que o cálculo futuro precisa citar:
+
+```text
 Clinical Discovery
   → Validated Clinical Requirement
     → Technical Requirement
       → Protocol artifact (campo / regra / cálculo / texto)
-        → Clinical Fixture
-          → Automated test (quando existir código)
-            → Protocol Version
+        → ClinicalReference (quando o artefato depende de fonte)
+          → Clinical Fixture
+            → Automated test (quando existir código)
+              → Protocol Version
+                → ReportVersion futura
 ```
+
+Um resultado clínico futuro precisa responder qual `referenceId@implementationVersion` gerou o número. Versionamento e taxonomia: [ADR-014](../adr/ADR-014-referencias-clinicas-versionadas.md). A taxonomia da referência não substitui os três eixos abaixo.
 
 ## Identificadores
 
@@ -196,8 +212,9 @@ Primeira rodada intensiva de discovery concluída. O protocolo inicial existe co
 | `CD` (evidência) | registrada na rodada 1; frases e faixas singleton importadas do handoff |
 | `CR` (requisito validado) | estrutura, ordem, posição, placenta, ownership V1, fraseologia singleton |
 | `TR` | não aberto — depende de autorização da próxima sprint |
+| `ClinicalReference` | modelo conceitual e pacote Hadlock v0.1 documentados; nenhum cálculo ativado |
 | `FIELD` / `RULE` / `CALC` / `TEXT` | catalogados; classificação por threshold bloqueada por fonte |
-| `FIX` | fixtures estruturais (incl. episódio + snapshots); expected output clínico pendente |
+| `FIX` | fixtures estruturais existem; fixtures de referência especificadas e ainda sem número clínico |
 | `ProtocolVersion` | não existe artefato executável |
 
 Nada aqui promove `CD` a `CR` automaticamente, e nada aqui autoriza implementação.
