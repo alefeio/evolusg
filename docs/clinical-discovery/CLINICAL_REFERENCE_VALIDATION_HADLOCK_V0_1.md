@@ -6,6 +6,22 @@ Princípio: [ADR-014](../adr/ADR-014-referencias-clinicas-versionadas.md). Catá
 
 Nenhum item abaixo está `READY_FOR_IMPLEMENTATION`, `IMPLEMENTED_NOT_CLINICALLY_RELEASED` ou `CLINICALLY_RELEASED`. Nenhum `@n` está ativo.
 
+## Review da fundação
+
+`CLINICAL REFERENCE FOUNDATION REVIEW APPROVED`
+
+O review documental e arquitetural aprovou a fundação, não as referências clínicas. Foram aprovados: a ADR-014 como princípio arquitetural; a taxonomia de status; a separação entre `ClinicalReference` e `Calculation`; o versionamento; a rastreabilidade; a especificação conceitual de fixtures; a separação entre referência científica e compatibilidade de dispositivo; o pacote Hadlock v0.1; e a manutenção dos blockers metodológicos.
+
+Esse review não altera status clínico. Permanecem `EFW_HADLOCK_1985_BPD_HC_AC_FL` = `DEVICE_MATCH_PENDING`, `EFW_GROWTH_HADLOCK_1991` = `METHOD_DEFINITION_PENDING` e `AC_GROWTH_HADLOCK_1984` = `SOURCE_VALIDATION_PENDING`.
+
+Os blockers restantes pertencem à validação dos futuros cálculos. Para o PFE: configuração específica do GE Voluson E6, conferência direta da equação no texto primário, unidades/precisão/arredondamento e fixtures sintéticas validadas. Para o percentil do PFE: método exato Hadlock 1991, tabela versus equação ou distribuição, política de semanas + dias, interpolação, precisão/limites/arredondamento, fixtures e comparação futura com dispositivo. Para o percentil da CA: publicação, método/equação/tabela, dispersão, semanas + dias, política de percentil e fixtures.
+
+## Próximo bloco
+
+`CLINICAL REFERENCE VALIDATION — BIOMETRY & GROWTH = NEXT`
+
+Ainda não iniciado. Prioridades, sem execução nesta consolidação: fechar o PFE Hadlock 1985; definir o método do percentil do PFE Hadlock 1991; validar o percentil da CA Hadlock 1984; semanas + dias; unidades, precisão e arredondamento; fixtures científicas ou sintéticas. Isso não abre Sprint nova e não ativa cálculo.
+
 ## Preferência clínica registrada
 
 Família Hadlock. A Dra. Karen quer comportamento compatível com o GE Voluson como referência prática. DBP, CC, CA e CF são as medidas capturadas e desejadas. Isso nomeia a candidata de peso; não confirma a variante gravada no aparelho e não aprova coeficientes.
