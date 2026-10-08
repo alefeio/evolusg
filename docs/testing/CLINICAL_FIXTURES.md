@@ -115,9 +115,13 @@ Exemplo de identidade, sem medidas e sem resultado:
 fixtureId: EFW_HADLOCK_1985_CASE_001
 referenceId: EFW_HADLOCK_1985_BPD_HC_AC_FL
 inputs: BPD, HC, AC, FL
+caminho: BPD + HC + AC + FL → Hadlock 1985 → EFW em gramas
 expectedOutput: EFW em gramas
+tolerance: a definir com a política de arredondamento
 approvalStatus: não aprovado
 ```
+
+A fixture futura precisa trazer valores não identificáveis, proveniência segura, resultado esperado, tolerância e `referenceId` com versão. Nenhum número de fotografia de exame entra nesse caso.
 
 Proveniência aceitável no futuro: valor sintético, exemplo explicitamente publicado, caso derivado de fonte já validada, ou valor aprovado de propósito para teste.
 

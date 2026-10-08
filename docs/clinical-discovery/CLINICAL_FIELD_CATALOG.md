@@ -130,7 +130,7 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `fetuses[n].biometry.hc` | CC | Biometria | Fetus | captura, mesmo eixo do DBP |
 | `fetuses[n].biometry.ac` | CA (medida) | Biometria | Fetus | captura, mesmo eixo do DBP; não é o percentil |
 | `fetuses[n].biometry.fl` | CF | Biometria | Fetus | captura, mesmo eixo do DBP |
-| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_HADLOCK_1985_BPD_HC_AC_FL`; `SOURCE_VALIDATION_PENDING`; não implementado |
+| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_HADLOCK_1985_BPD_HC_AC_FL`; fonte Hadlock 1985 identificada; Voluson E6 pendente; não implementado |
 | `fetuses[n].biometry.efwPercentile` | Percentil do PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_GROWTH_HADLOCK_1991`; essencial; não implementado |
 | `fetuses[n].biometry.acPercentile` | Percentil da CA | Biometria | derivado (Fetus) | futuro derivado → `AC_GROWTH_HADLOCK_1984`; essencial e distinto do PFE; não implementado |
 | `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | Exam/Fetus (exame atual) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |

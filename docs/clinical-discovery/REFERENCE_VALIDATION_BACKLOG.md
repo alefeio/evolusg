@@ -62,16 +62,21 @@ O eixo de fonte dos cálculos continua `SOURCE_VALIDATION_PENDING`. O status fin
 
 ### PFE / `fetus.efw.hadlock`
 
-- Confirmar a variante selecionada no GE Voluson E6 (`GE_VOLUSON_E6_EFW_CONFIGURATION = PENDING DEVICE CONFIRMATION`).
-- Validar a publicação primária.
-- Validar coeficientes, unidades e política de arredondamento.
-- Definir fixtures sintéticas ou publicadas, com aprovação explícita.
+- Configuração do GE Voluson E6: `OPEN` (`GE_VOLUSON_E6_EFW_CONFIGURATION = PENDING DEVICE CONFIRMATION`).
+- Publicação primária identificada: `DONE` (Hadlock et al., Am J Obstet Gynecol. 1985;151(3):333-337).
+- Família AC+BPD+FL+HC: `STRONGLY CORROBORATED`.
+- Corroboração por terminologia padronizada (`LOINC 11732-5`): `DONE`.
+- Conferência direta da transcrição da equação no texto completo do artigo: `OPEN`.
+- Unidades, precisão e política de arredondamento: `OPEN`.
+- Fixtures sintéticas validadas: `OPEN`.
 
 ### Percentil do PFE / `fetus.efwPercentile`
 
-- Validar a publicação de `EFW_GROWTH_HADLOCK_1991`.
-- Definir o método exato, semana + dia e interpolação ou equação.
-- Definir fixtures e comparar com o comportamento esperado do Voluson.
+- Método exato de percentil Hadlock 1991: `OPEN`. `Hadlock 1991` não basta; tabela e equações publicadas podem divergir.
+- Política fórmula versus tabela: `OPEN`.
+- Política de semana + dia: `OPEN`.
+- Fixtures validadas: `OPEN`.
+- Comparação com dispositivo: `OPEN`.
 
 ### Percentil da CA / `fetus.acPercentile`
 

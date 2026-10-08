@@ -51,7 +51,7 @@ Fórmula aprovada clinicamente **não** é o mesmo que referência validada: uma
 |---|---|---|---|---|
 | `uterineArtery.meanPi` | IP médio das artérias uterinas | `(IP direita + IP esquerda) / 2` | `SOURCE_NOT_REQUIRED` (definição aritmética) | `APPROVED` — candidato Sprint 2 (sem P95) |
 | `fetus.cpr` | Relação cerebroplacentária | `IP ACM / IP artéria umbilical` | fórmula aprovada; **interpretação** por IG `SOURCE_VALIDATION_PENDING` | `SOURCED` na fórmula, bloqueado na classificação |
-| `fetus.efw.hadlock` | Peso fetal estimado; margem ±10% versionável | conceito aprovado; fórmula não aprovada | `EFW_HADLOCK_1985_BPD_HC_AC_FL` — `DEVICE_MATCH_PENDING` | `NAMED` — não `ACTIVE` |
+| `fetus.efw.hadlock` | Peso fetal estimado; margem ±10% versionável | família AC+BPD+FL+HC identificada; não liberada | `EFW_HADLOCK_1985_BPD_HC_AC_FL` — `DEVICE_MATCH_PENDING` | `NAMED` — não `ACTIVE` |
 | `fetus.efwPercentile` | Percentil do PFE | comparação do PFE com referência de crescimento por IG | `EFW_GROWTH_HADLOCK_1991` — `METHOD_DEFINITION_PENDING` | `NAMED` — não `ACTIVE` |
 | `fetus.acPercentile` | Percentil da CA | percentil da circunferência abdominal; distinto do PFE | `AC_GROWTH_HADLOCK_1984` — `SOURCE_VALIDATION_PENDING` | `NAMED` — não `ACTIVE` |
 | `fetus.gestationalAgeByBiometry` | IG estimada geral pela biometria (exame atual) | composição das medidas; método exato pendente | `SOURCE_VALIDATION_PENDING` | `NAMED` |
@@ -76,8 +76,9 @@ Detalhe e dispositivo: [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICA
 - Status do cálculo: `NAMED`, não `ACTIVE`.
 - Referência: `EFW_HADLOCK_1985_BPD_HC_AC_FL` (`DEVICE_MATCH_PENDING`).
 - Entradas exigidas pela candidata: BPD, HC, AC, FL. Unidades ainda não congeladas.
-- Dependências: confirmação da variante no GE Voluson E6.
-- Bloqueios: configuração do aparelho, publicação primária, coeficientes, unidades, arredondamento, fixtures.
+- Fonte científica identificada: Hadlock et al. 1985; corroboração `LOINC 11732-5`. A equação não foi transcrita aqui.
+- Dependências: compatibilidade ainda aberta com o GE Voluson E6.
+- Bloqueios abertos: configuração do Voluson E6, conferência da equação no texto completo, unidades/precisão/arredondamento, fixtures. Publicação primária e corroboração padronizada: fechadas.
 
 ### `fetus.efwPercentile`
 
@@ -85,7 +86,7 @@ Detalhe e dispositivo: [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICA
 - Referência: `EFW_GROWTH_HADLOCK_1991` (`METHOD_DEFINITION_PENDING`).
 - Entradas: PFE e idade gestacional em semanas + dias.
 - Dependências: `fetus.efw.hadlock`.
-- Bloqueios: publicação, método exato, semana + dia, interpolação ou equação, fixtures, comparação com o Voluson.
+- Bloqueios: escolha explícita entre equações/distribuição, tabela publicada, interpolação da tabela ou outra política validada; semana + dia; precisão, limites e arredondamento; fixtures; comparação com dispositivo. Tabela e equações de Hadlock 1991 podem não coincidir.
 
 ### `fetus.acPercentile`
 
