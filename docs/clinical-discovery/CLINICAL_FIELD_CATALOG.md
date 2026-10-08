@@ -126,13 +126,13 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `fetuses[n].doppler.ductusVenosus.assessed` | Incluir ducto venoso neste exame | Doppler | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` — `false` não é normal nem ausente |
 | `fetuses[n].doppler.ductusVenosus.pi` | IP ducto venoso | Doppler | Fetus | obrigatório para salvar se o bloco estiver incluído; classificação `SOURCE_VALIDATION_PENDING` |
 | `fetuses[n].doppler.cpr` | RCP | Doppler | derivado (Fetus) | `CLINICALLY_APPROVED` (fórmula) / `SOURCE_VALIDATION_PENDING` (classificação por IG) / `NOT_ANALYZED` |
-| `fetuses[n].biometry.bpd` | DBP | Biometria | Fetus | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` (medida) / `READY_FOR_IMPLEMENTATION` |
-| `fetuses[n].biometry.hc` | CC | Biometria | Fetus | idem |
-| `fetuses[n].biometry.ac` | CA (medida) | Biometria | Fetus | captura `READY_FOR_IMPLEMENTATION`; percentil ainda não |
-| `fetuses[n].biometry.acPercentile` | Percentil da CA | Biometria | derivado (Fetus) | `ESTIMATED` essencial; distinto do percentil do PFE; `SOURCE_VALIDATION_PENDING` / não implementado |
-| `fetuses[n].biometry.fl` | CF | Biometria | Fetus | idem |
-| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (conceito Hadlock; margem ±10% versionável) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
-| `fetuses[n].biometry.efwPercentile` | Percentil do PFE | Biometria | derivado (Fetus) | `ESSENTIAL CLINICAL REQUIREMENT`; `SOURCE_VALIDATION_PENDING`; não implementado |
+| `fetuses[n].biometry.bpd` | DBP | Biometria | Fetus | captura: `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
+| `fetuses[n].biometry.hc` | CC | Biometria | Fetus | captura, mesmo eixo do DBP |
+| `fetuses[n].biometry.ac` | CA (medida) | Biometria | Fetus | captura, mesmo eixo do DBP; não é o percentil |
+| `fetuses[n].biometry.fl` | CF | Biometria | Fetus | captura, mesmo eixo do DBP |
+| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_HADLOCK_1985_BPD_HC_AC_FL`; `SOURCE_VALIDATION_PENDING`; não implementado |
+| `fetuses[n].biometry.efwPercentile` | Percentil do PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_GROWTH_HADLOCK_1991`; essencial; não implementado |
+| `fetuses[n].biometry.acPercentile` | Percentil da CA | Biometria | derivado (Fetus) | futuro derivado → `AC_GROWTH_HADLOCK_1984`; essencial e distinto do PFE; não implementado |
 | `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | Exam/Fetus (exame atual) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].growth.classification` | Crescimento (&lt;P5 / P5–P90 / &gt;P90) | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (thresholds informados) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `placenta.location` | Localização (anterior, posterior, fúndica, lateral) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
@@ -141,6 +141,8 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `amnioticFluid.method` | Método escolhido (MBV \| ILA) — escolha manual | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `amnioticFluid.mbv` | MBV | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / faixas informadas; `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `amnioticFluid.afi` | ILA | Líquido amniótico | Exam | idem |
+
+DBP, CC, CA e CF são captura. PFE, percentil do PFE e percentil da CA são saídas futuras e apontam para o pacote [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md). Nenhum derivado está implementado.
 
 Campos não listados: `PENDING CLINICAL DISCOVERY`. Não preencher por dedução de engenharia.
 

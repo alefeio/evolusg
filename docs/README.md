@@ -16,8 +16,9 @@ A **Sprint 1** (fundação e autenticação) está concluída para piloto: [`roa
 8. Sprint 0 e catálogos: [`clinical-discovery/SPRINT_0.md`](clinical-discovery/SPRINT_0.md)
 9. Rastreabilidade e eixos de status: [`clinical-discovery/TRACEABILITY.md`](clinical-discovery/TRACEABILITY.md)
 10. Referências pendentes: [`clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md`](clinical-discovery/REFERENCE_VALIDATION_BACKLOG.md)
-11. Modelo conceitual: [`architecture/DOMAIN_MODEL.md`](architecture/DOMAIN_MODEL.md)
-12. ADRs: [`adr/README.md`](adr/README.md)
+11. Pacote Hadlock v0.1 (sem cálculo): [`clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md)
+12. Modelo conceitual: [`architecture/DOMAIN_MODEL.md`](architecture/DOMAIN_MODEL.md)
+13. ADRs: [`adr/README.md`](adr/README.md)
 
 ## Estrutura
 
@@ -42,7 +43,7 @@ docs/
 | `PENDING TECHNICAL VALIDATION` | Falta prova técnica / inventário. |
 | `KNOWN` | Restrição ou fato já explícito — ainda assim não é desenho detalhado aceito. |
 | `PROPOSED` | Hipótese. Não tratar como decisão aceita. |
-| `ACCEPTED` | Só após aprovação explícita. ADR-013 (autenticação da Sprint 1) está `ACCEPTED`. ADRs clínicos permanecem `PROPOSED`. |
+| `ACCEPTED` | Só após aprovação explícita. ADR-013 está `ACCEPTED` no escopo da Sprint 1. ADR-014 está `ACCEPTED` só no princípio de referência explícita, versionada e rastreável. Os demais ADRs permanecem `PROPOSED`. |
 
 Convenções acrescentadas pela reconciliação clínica v0.1 (detalhe em [`clinical-discovery/TRACEABILITY.md`](clinical-discovery/TRACEABILITY.md#três-eixos-de-status-reconciliação-v01)):
 

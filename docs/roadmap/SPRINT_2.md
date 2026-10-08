@@ -152,9 +152,9 @@ O macrofluxo, a ordem do formulário e a captura estruturada singleton estão ut
 
 ## Próximo bloco de análise
 
-`CLINICAL REFERENCE VALIDATION — NEXT PLANNING BLOCK`
+`CLINICAL REFERENCE VALIDATION — FOUNDATION DOCUMENTED`
 
-Ainda não iniciado. Prioridades iniciais, sem implementação nesta etapa: cálculo de PFE/Hadlock, percentil do PFE, percentil da CA, referências por idade gestacional, versionamento das fontes e interpolação semana+dia.
+A fundação documental está em [`../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md) e na ADR-014. Isso não inicia Sprint nova e não ativa PFE, percentil do PFE, percentil da CA, interpolação nem classificação.
 
 ## Infra backlog
 

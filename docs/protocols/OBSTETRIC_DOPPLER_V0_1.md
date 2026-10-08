@@ -137,12 +137,13 @@ Campos: DBP, CC, CA, CF (mostrar medidas); PFE; percentil.
 |---|---|---|
 | Não exibir IG individual por medida | `CLINICALLY_APPROVED` | `SOURCE_NOT_REQUIRED` |
 | Exibir IG estimada **geral** pela biometria (contexto do exame atual) | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-| PFE por Hadlock; frase com ±10% (margem versionável) | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-| Percentil de peso | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
+| PFE por Hadlock; frase com ±10% (margem versionável) | `CLINICALLY_APPROVED` | candidata `EFW_HADLOCK_1985_BPD_HC_AC_FL` — `DEVICE_MATCH_PENDING`; fórmula não aprovada |
+| Percentil de peso | `CLINICALLY_APPROVED` | candidata `EFW_GROWTH_HADLOCK_1991` — `METHOD_DEFINITION_PENDING` |
+| Percentil da CA | `CLINICALLY_APPROVED` | candidata `AC_GROWTH_HADLOCK_1984` — `SOURCE_VALIDATION_PENDING`; distinto do percentil do PFE |
 
 Diferença entre IG corrigida e IG pela biometria: **não** gera alerta automático.
 
-Nenhum cálculo definitivo de produção enquanto a fonte não estiver validada.
+Nenhum cálculo definitivo de produção enquanto a fonte não estiver validada. Pacote e dispositivo: [`../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md).
 
 ## 9. Crescimento fetal
 
