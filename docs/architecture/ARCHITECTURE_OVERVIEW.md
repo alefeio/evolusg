@@ -49,7 +49,7 @@ Motores de protocolo, regra, cálculo e texto: TypeScript puro, testável sem Re
 Derivados da discovery de múltiplos e de referências (ver protocolo, seções 10 e 16):
 
 1. **escopo repetível** — findings, frases e contribuições de conclusão precisam suportar N fetos depois, mesmo que hoje seja sempre um;
-2. **referência versionada** — classificação clínica precisa apontar para tabela + versão; ver ADR-014;
+2. **referência versionada** — classificação clínica precisa apontar para referência + versão; princípio aceito na ADR-014, sem curva validada;
 3. **conclusão com escopo** — contribuições precisam carregar escopo materno / fetal / global desde o início.
 
 Nenhum dos três exige engine genérico agora. Todos os três exigem não fechar a porta.

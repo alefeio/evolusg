@@ -90,3 +90,39 @@ Cenários estruturais adicionais (sem dependência de fonte para a forma):
 | `OB-DOPPLER-TWIN-NORMAL-001` | gemelar sem alterações — repeating group de fetos |
 | `OB-DOPPLER-TWIN-SFGR-001` | gemelar com sFGR — escopo fetal + discordância |
 | `OB-DOPPLER-TRIPLET-DISCORDANCE-001` | trigemelar com discordância — N fetos e identificação estável |
+
+## Fixtures de referência clínica
+
+Especificação para fixtures futuras de cálculo. Não há teste executável e não há valor numérico aprovado nesta fundação.
+
+Formato conceitual:
+
+| Campo | Função |
+|---|---|
+| `fixtureId` | Identidade estável, ligada à referência |
+| `referenceId` | `ClinicalReference` exercitada |
+| `gestationalAgeWeeks` / `gestationalAgeDays` | Idade gestacional em semanas + dias |
+| `inputs` / `inputUnits` | Entradas e unidades exigidas pela referência |
+| `expectedOutput` | Saída esperada |
+| `tolerance` | Tolerância aceita na comparação |
+| `expectedPercentile` | Quando a saída for percentil |
+| `provenance` | Origem do caso: sintético, exemplo publicado ou valor aprovado para teste |
+| `approvalStatus` | Permanece pendente até aprovação explícita |
+
+Exemplo de identidade, sem medidas e sem resultado:
+
+```text
+fixtureId: EFW_HADLOCK_1985_CASE_001
+referenceId: EFW_HADLOCK_1985_BPD_HC_AC_FL
+inputs: BPD, HC, AC, FL
+caminho: BPD + HC + AC + FL → Hadlock 1985 → EFW em gramas
+expectedOutput: EFW em gramas
+tolerance: a definir com a política de arredondamento
+approvalStatus: não aprovado
+```
+
+A fixture futura precisa trazer valores não identificáveis, proveniência segura, resultado esperado, tolerância e `referenceId` com versão. Nenhum número de fotografia de exame entra nesse caso.
+
+Proveniência aceitável no futuro: valor sintético, exemplo explicitamente publicado, caso derivado de fonte já validada, ou valor aprovado de propósito para teste.
+
+Proibido usar como fixture oficial imagem, identificador ou medida de exame real enviados na investigação clínica. Esse material não entra no repositório.

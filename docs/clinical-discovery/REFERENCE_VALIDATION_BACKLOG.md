@@ -18,9 +18,9 @@ Um item aqui significa: **o conceito clínico pode estar aprovado pela Dra. Kare
 
 | # | Referência pendente | O que ela bloqueia |
 |---|---|---|
-| 1 | Fórmula e versão de **Hadlock** para PFE | `fetus.efw.hadlock`; peso estimado |
-| 1b | Referência de **percentil do PFE** por IG (versão, semanas e dias) | `fetus.efwPercentile` — requisito essencial, ainda sem cálculo |
-| 1c | Referência de **percentil da CA** por IG (versão, semanas e dias) | `fetus.acPercentile` — requisito essencial e distinto do PFE; frase do laudo `PENDING PHRASE/PRODUCT VALIDATION` |
+| 1 | PFE Hadlock — `EFW_HADLOCK_1985_BPD_HC_AC_FL`, `DEVICE_MATCH_PENDING` | `fetus.efw.hadlock` |
+| 1b | Percentil do PFE — `EFW_GROWTH_HADLOCK_1991`, `METHOD_DEFINITION_PENDING` | `fetus.efwPercentile` |
+| 1c | Percentil da CA — `AC_GROWTH_HADLOCK_1984`, `SOURCE_VALIDATION_PENDING` | `fetus.acPercentile`; frase do laudo `PENDING PHRASE/PRODUCT VALIDATION` |
 | 2 | Tabela de **percentis de crescimento** fetal + versionamento | classificação &lt;P5 / P5–P90 / &gt;P90 |
 | 3 | Percentis das **artérias uterinas** por IG | avaliação automática de `> P95` (lado e média); frases de uterinas alteradas; contribuição consolidada de conclusão |
 | 4 | Referência da **artéria umbilical** | classificação e frase da umbilical; contribuição de conclusão |
@@ -55,6 +55,38 @@ Complementação singleton: frases e faixas abaixo **deixaram** de ser `PENDING 
 Transcrever **não** valida a fonte: um número informado em entrevista continua `SOURCE_VALIDATION_PENDING` até haver referência formal.
 
 Frases de **múltiplos**: não importadas nesta complementação (`DOCUMENTED FOR FUTURE IMPLEMENTATION`); não necessárias para Sprint 2 singleton.
+
+## Pacote Hadlock v0.1 — bloqueios concretos
+
+O eixo de fonte dos cálculos continua `SOURCE_VALIDATION_PENDING`. O status fino da referência está em [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md). Imagens de exame real não entram como fixture.
+
+### PFE / `fetus.efw.hadlock`
+
+- Configuração do GE Voluson E6: `OPEN` (`GE_VOLUSON_E6_EFW_CONFIGURATION = PENDING DEVICE CONFIRMATION`).
+- Publicação primária identificada: `DONE` (Hadlock et al., Am J Obstet Gynecol. 1985;151(3):333-337).
+- Família AC+BPD+FL+HC: `STRONGLY CORROBORATED`.
+- Corroboração por terminologia padronizada (`LOINC 11732-5`): `DONE`.
+- Conferência direta da transcrição da equação no texto completo do artigo: `OPEN`.
+- Unidades, precisão e política de arredondamento: `OPEN`.
+- Fixtures sintéticas validadas: `OPEN`.
+
+### Percentil do PFE / `fetus.efwPercentile`
+
+- Método exato de percentil Hadlock 1991: `OPEN`. `Hadlock 1991` não basta; tabela e equações publicadas podem divergir.
+- Política fórmula versus tabela: `OPEN`.
+- Política de semana + dia: `OPEN`.
+- Fixtures validadas: `OPEN`.
+- Comparação com dispositivo: `OPEN`.
+
+### Percentil da CA / `fetus.acPercentile`
+
+- Validar a publicação de `AC_GROWTH_HADLOCK_1984`.
+- Validar equação ou tabela e o desvio-padrão quando a referência o usar.
+- Definir semana + dia e fixtures.
+
+### Item 8
+
+A interpolação semana + dia não é uma regra única do produto. Cada referência declara a própria política. O item 8 permanece aberto para as candidatas acima e para as demais classificações por idade gestacional.
 
 ## Regra de saída
 

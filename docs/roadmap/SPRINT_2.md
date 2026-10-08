@@ -152,9 +152,13 @@ O macrofluxo, a ordem do formulário e a captura estruturada singleton estão ut
 
 ## Próximo bloco de análise
 
-`CLINICAL REFERENCE VALIDATION — NEXT PLANNING BLOCK`
+`CLINICAL REFERENCE FOUNDATION REVIEW APPROVED`
 
-Ainda não iniciado. Prioridades iniciais, sem implementação nesta etapa: cálculo de PFE/Hadlock, percentil do PFE, percentil da CA, referências por idade gestacional, versionamento das fontes e interpolação semana+dia.
+A fundação documental em [`../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md) e na ADR-014 foi aprovada como arquitetura. Os status das candidatas Hadlock não mudam com esse review.
+
+`CLINICAL REFERENCE VALIDATION — BIOMETRY & GROWTH = NEXT`
+
+Ainda não iniciado. O próximo trabalho é fechar o PFE Hadlock 1985, o método do percentil do PFE Hadlock 1991, o percentil da CA Hadlock 1984, semanas + dias, unidades/precisão/arredondamento e fixtures. Isso não inicia Sprint nova e não ativa cálculo.
 
 ## Infra backlog
 
