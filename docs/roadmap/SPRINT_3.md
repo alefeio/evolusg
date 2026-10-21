@@ -46,4 +46,27 @@ As três referências ficam `IMPLEMENTED_NOT_CLINICALLY_RELEASED`.
 
 `PRODUCTION DATABASE ISOLATION REQUIRED BEFORE REAL CLINICAL USE`
 
+## Human QA
+
+`BIOMETRY GROWTH ENGINE V1 QA APPROVED`
+
+Validado manualmente pelo proprietário/QA Alexandre, com dados fictícios e sem blocker:
+
+- captura da data clínica do exame;
+- PFE automático;
+- percentil automático do PFE;
+- percentil automático da CA;
+- recálculo imediato;
+- comportamento com input incompleto;
+- comportamento sem data do exame;
+- salvar e reabrir;
+- ausência de classificação clínica automática;
+- UX geral.
+
+Nenhum valor usado no QA é registrado aqui.
+
+Este QA não promove as referências a `CLINICALLY_RELEASED`. `GE_VOLUSON_E6_EFW_CONFIGURATION = PENDING DEVICE CONFIRMATION` continua como gate de compatibilidade prática.
+
+Próxima rodada humana: validação clínica da Dra. Karen, somente com dados fictícios, sobre a coerência prática dos resultados e da experiência. Não é conferência manual de coeficientes e não ativa classificação nem texto de laudo.
+
 A ordem do formulário permanece `CLINICAL FORM ORDER = VALIDATED BY PILOT USER`. A seção de biometria passou a mostrar um campo por linha e o resultado ao lado do dado, sem mudar a ordem das seções.

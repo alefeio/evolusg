@@ -212,7 +212,7 @@ Primeira rodada intensiva de discovery concluída. O protocolo inicial existe co
 | `CD` (evidência) | registrada na rodada 1; frases e faixas singleton importadas do handoff |
 | `CR` (requisito validado) | estrutura, ordem, posição, placenta, ownership V1, fraseologia singleton |
 | `TR` | não aberto — depende de autorização da próxima sprint |
-| `ClinicalReference` | três referências Hadlock `@1` implementadas e não liberadas clinicamente |
+| `ClinicalReference` | três referências Hadlock `@1` em `IMPLEMENTED_NOT_CLINICALLY_RELEASED`; `BIOMETRY GROWTH ENGINE V1 QA APPROVED` não promove a `CLINICALLY_RELEASED` |
 | `exam.examDate` | dia civil do exame; `EXAM CLINICAL DATE != RECORD CREATED AT`; `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT` |
 | `FIELD` / `RULE` / `CALC` / `TEXT` | biometria quantitativa calculada; classificação e texto de laudo continuam bloqueados |
 | `FIX` | fixtures estruturais e fixtures sintéticas de biometria/crescimento |

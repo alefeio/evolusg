@@ -12,6 +12,10 @@ O review de 2026-10-08 aprovou a arquitetura, não o uso clínico. O status daqu
 
 ## Motor V1
 
+`BIOMETRY GROWTH ENGINE V1 QA APPROVED`
+
+O proprietário/QA Alexandre aprovou a experiência quantitativa: data clínica do exame, PFE, percentil do PFE, percentil da CA, recálculo, input incompleto, ausência de data, salvar/reabrir e ausência de classificação automática. Nenhum valor de QA é registrado. Isso não é `CLINICALLY_RELEASED`.
+
 `CLINICAL REFERENCE VALIDATION — BIOMETRY & GROWTH` foi executado como Sprint 3, só para PFE, percentil do PFE e percentil da CA.
 
 | Referência | Versão | Status |

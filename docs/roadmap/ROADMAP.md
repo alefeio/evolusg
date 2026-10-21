@@ -96,9 +96,9 @@ Proposta atual para a Sprint 2: **primeira vertical slice clínica de captura** 
 
 ### Sprint 3 — Biometry & Growth Engine V1
 
-Em [`SPRINT_3.md`](SPRINT_3.md). Motor de PFE, percentil do PFE e percentil da CA. Não é laudo, classificação nem `CLINICALLY_RELEASED`.
+Em [`SPRINT_3.md`](SPRINT_3.md). Motor de PFE, percentil do PFE e percentil da CA. `BIOMETRY GROWTH ENGINE V1 QA APPROVED`. Não é laudo, classificação nem `CLINICALLY_RELEASED`.
 
-**Gate desta Sprint:** cálculos determinísticos com fixtures sintéticas. Liberação clínica fica para QA humano posterior.
+**Gate desta Sprint:** cálculos determinísticos com fixtures sintéticas e QA humano do proprietário. A validação clínica da Dra. Karen ainda não ocorreu.
 
 ---
 
