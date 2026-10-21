@@ -121,7 +121,14 @@ tolerance: a definir com a política de arredondamento
 approvalStatus: não aprovado
 ```
 
-A fixture futura precisa trazer valores não identificáveis, proveniência segura, resultado esperado, tolerância e `referenceId` com versão. Nenhum número de fotografia de exame entra nesse caso.
+A fixture futura de PFE demonstra `BPD + HC + AC + FL → Hadlock 1985 → EFW em gramas`, com `referenceId` e versão. Os casos executáveis desta Sprint são sintéticos e vivem em `src/lib/clinical/growth/biometry-growth.test.ts`:
+
+- PFE típico, menor, maior e com milímetros fracionários, incluindo a diferença entre peso cru e peso arredondado para a tela;
+- percentil do PFE nas cinco âncoras, entre âncoras, abaixo de P3, acima de P97, semana exata, semana + dias, 39s 6d, 40s 0d e fora da faixa;
+- linhas de 27, 29 e 30 semanas, com P97 de 30 semanas em 1949 g;
+- percentil da CA na média, abaixo, acima, 12s 0d, 40s 0d e fora da faixa.
+
+Nenhum desses casos usa medida de exame real.
 
 Proveniência aceitável no futuro: valor sintético, exemplo explicitamente publicado, caso derivado de fonte já validada, ou valor aprovado de propósito para teste.
 

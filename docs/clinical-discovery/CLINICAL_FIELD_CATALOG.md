@@ -130,9 +130,9 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `fetuses[n].biometry.hc` | CC | Biometria | Fetus | captura, mesmo eixo do DBP |
 | `fetuses[n].biometry.ac` | CA (medida) | Biometria | Fetus | captura, mesmo eixo do DBP; não é o percentil |
 | `fetuses[n].biometry.fl` | CF | Biometria | Fetus | captura, mesmo eixo do DBP |
-| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_HADLOCK_1985_BPD_HC_AC_FL`; fonte Hadlock 1985 identificada; Voluson E6 pendente; não implementado |
-| `fetuses[n].biometry.efwPercentile` | Percentil do PFE | Biometria | derivado (Fetus) | futuro derivado → `EFW_GROWTH_HADLOCK_1991`; essencial; não implementado |
-| `fetuses[n].biometry.acPercentile` | Percentil da CA | Biometria | derivado (Fetus) | futuro derivado → `AC_GROWTH_HADLOCK_1984`; essencial e distinto do PFE; não implementado |
+| `fetuses[n].biometry.efw` | PFE | Biometria | derivado (Fetus) | `EFW_HADLOCK_1985_BPD_HC_AC_FL@1`; `IMPLEMENTED_NOT_CLINICALLY_RELEASED`; não persistido |
+| `fetuses[n].biometry.efwPercentile` | Percentil do PFE | Biometria | derivado (Fetus) | `EFW_GROWTH_HADLOCK_1991_CHART_Z_INTERP@1`; quantitativo; sem classificação |
+| `fetuses[n].biometry.acPercentile` | Percentil da CA | Biometria | derivado (Fetus) | `AC_GROWTH_HADLOCK_1984@1`; distinto do PFE; sem classificação |
 | `fetuses[n].biometry.estimatedGestationalAge` | IG estimada geral pela biometria | Biometria | Exam/Fetus (exame atual) | `CLINICALLY_APPROVED` (exibir só a geral) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `fetuses[n].growth.classification` | Crescimento (&lt;P5 / P5–P90 / &gt;P90) | Biometria | derivado (Fetus) | `CLINICALLY_APPROVED` (thresholds informados) / `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `placenta.location` | Localização (anterior, posterior, fúndica, lateral) | Placenta | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
@@ -142,7 +142,7 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `amnioticFluid.mbv` | MBV | Líquido amniótico | Exam | `CLINICALLY_APPROVED` / faixas informadas; `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |
 | `amnioticFluid.afi` | ILA | Líquido amniótico | Exam | idem |
 
-DBP, CC, CA e CF são captura. PFE, percentil do PFE e percentil da CA são saídas futuras e apontam para o pacote [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md). Nenhum derivado está implementado.
+DBP, CC, CA e CF são captura. PFE, percentil do PFE e percentil da CA são derivados em tempo de execução pelo motor da Sprint 3 e não são colunas. Nenhum deles está `CLINICALLY_RELEASED`.
 
 Campos não listados: `PENDING CLINICAL DISCOVERY`. Não preencher por dedução de engenharia.
 

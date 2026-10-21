@@ -94,11 +94,11 @@ Proposta atual para a Sprint 2: **primeira vertical slice clínica de captura** 
 
 ---
 
-### Sprint 3 — Primeiro núcleo de protocolo (mínimo)
+### Sprint 3 — Biometry & Growth Engine V1
 
-Indicativa. Ainda não iniciada. A fundação de referências clínicas está aprovada como documentação e não conta como Sprint 3. O próximo bloco, também ainda não iniciado, é `CLINICAL REFERENCE VALIDATION — BIOMETRY & GROWTH`. Artefato versionável **do recorte validado**, não um metamodelo para dezenas de exames. Fixture = dados desse recorte.
+Em [`SPRINT_3.md`](SPRINT_3.md). Motor de PFE, percentil do PFE e percentil da CA. Não é laudo, classificação nem `CLINICALLY_RELEASED`.
 
-**Gate:** o recorte da Sprint 0 cabe no artefato; regras clínicas só as validadas. **Não** exigir segundo ExamType.
+**Gate desta Sprint:** cálculos determinísticos com fixtures sintéticas. Liberação clínica fica para QA humano posterior.
 
 ---
 
