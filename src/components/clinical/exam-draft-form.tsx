@@ -9,6 +9,10 @@ import {
   cerebroplacentalRatio,
   meanUterineArteryPi,
 } from "@/lib/clinical/arithmetic";
+import {
+  deriveBiometryGrowth,
+  parseOptionalMeasurement,
+} from "@/lib/clinical/growth/derive-biometry-growth";
 import { applySavedSnapshot } from "@/lib/clinical/draft-baseline";
 import { ductusBlockIncluded } from "@/lib/clinical/ductus-assessment";
 import {
@@ -63,6 +67,7 @@ type ExamDraftValues = {
     datingUltrasoundGaWeeks: number | null;
     datingUltrasoundGaDays: number | null;
   };
+  examDate: string | null;
 };
 
 function Section({
@@ -106,6 +111,10 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
     ),
   );
   const [ductusPi, setDuctusPi] = useState(num(baseline.fetus.ductusVenosusPi));
+  const [bpdMm, setBpdMm] = useState(num(baseline.fetus.biparietalDiameterMm));
+  const [hcMm, setHcMm] = useState(num(baseline.fetus.headCircumferenceMm));
+  const [acMm, setAcMm] = useState(num(baseline.fetus.abdominalCircumferenceMm));
+  const [flMm, setFlMm] = useState(num(baseline.fetus.femurLengthMm));
 
   const meanPi = useMemo(
     () =>
@@ -126,6 +135,26 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
   );
 
   const lieValue = lie === "" ? null : lie;
+  const growth = useMemo(
+    () =>
+      deriveBiometryGrowth({
+        biparietalDiameterMm: parseOptionalMeasurement(bpdMm),
+        headCircumferenceMm: parseOptionalMeasurement(hcMm),
+        abdominalCircumferenceMm: parseOptionalMeasurement(acMm),
+        femurLengthMm: parseOptionalMeasurement(flMm),
+        datingUltrasoundDate: values.episode.datingUltrasoundDate,
+        datingUltrasoundGaWeeks: values.episode.datingUltrasoundGaWeeks,
+        datingUltrasoundGaDays: values.episode.datingUltrasoundGaDays,
+        examDate: values.examDate,
+      }),
+    [acMm, bpdMm, flMm, hcMm, values.episode, values.examDate],
+  );
+  const correctedGa =
+    growth.gestationalAge.status === "OK"
+      ? `${growth.gestationalAge.weeks}s ${growth.gestationalAge.days}d`
+      : "Indisponível";
+  const efwDisplay =
+    growth.efw.status === "OK" ? `${growth.efw.displayWeightGrams} g` : "Indisponível";
 
   return (
     <form key={baseline.revision} action={action} className="space-y-8">
@@ -440,46 +469,73 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
       </Section>
 
       <Section title="5. Biometria fetal">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-4">
           <Field htmlFor="biparietalDiameterMm" label="DBP (mm)">
             <Input
-              defaultValue={num(baseline.fetus.biparietalDiameterMm)}
               id="biparietalDiameterMm"
               name="biparietalDiameterMm"
+              onChange={(event) => setBpdMm(event.target.value)}
               step="0.1"
               type="number"
+              value={bpdMm}
             />
           </Field>
           <Field htmlFor="headCircumferenceMm" label="CC (mm)">
             <Input
-              defaultValue={num(baseline.fetus.headCircumferenceMm)}
               id="headCircumferenceMm"
               name="headCircumferenceMm"
+              onChange={(event) => setHcMm(event.target.value)}
               step="0.1"
               type="number"
+              value={hcMm}
             />
           </Field>
-          <Field htmlFor="abdominalCircumferenceMm" label="CA (mm)">
-            <Input
-              defaultValue={num(baseline.fetus.abdominalCircumferenceMm)}
-              id="abdominalCircumferenceMm"
-              name="abdominalCircumferenceMm"
-              step="0.1"
-              type="number"
-            />
-          </Field>
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+            <Field htmlFor="abdominalCircumferenceMm" label="CA (mm)">
+              <Input
+                id="abdominalCircumferenceMm"
+                name="abdominalCircumferenceMm"
+                onChange={(event) => setAcMm(event.target.value)}
+                step="0.1"
+                type="number"
+                value={acMm}
+              />
+            </Field>
+            <p className="pb-2 text-sm text-text-secondary">
+              Percentil da CA:{" "}
+              <span className="font-semibold text-text-primary">
+                {growth.acPercentile.display}
+              </span>
+            </p>
+          </div>
           <Field htmlFor="femurLengthMm" label="CF (mm)">
             <Input
-              defaultValue={num(baseline.fetus.femurLengthMm)}
               id="femurLengthMm"
               name="femurLengthMm"
+              onChange={(event) => setFlMm(event.target.value)}
               step="0.1"
               type="number"
+              value={flMm}
             />
           </Field>
         </div>
+        <div aria-live="polite" className="space-y-1 text-sm text-text-secondary">
+          <p>
+            IG corrigida:{" "}
+            <span className="font-semibold text-text-primary">{correctedGa}</span>
+          </p>
+          <p>
+            PFE: <span className="font-semibold text-text-primary">{efwDisplay}</span>
+          </p>
+          <p>
+            Percentil do PFE:{" "}
+            <span className="font-semibold text-text-primary">
+              {growth.efwPercentile.display}
+            </span>
+          </p>
+        </div>
         <p className="text-xs text-text-secondary">
-          Sem PFE, percentil ou classificação de crescimento nesta Sprint.
+          Resultados quantitativos, sem classificação de crescimento.
         </p>
       </Section>
 
