@@ -101,9 +101,11 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
 
       expect(exam.status).toBe("DRAFT");
       expect(exam.fetuses).toHaveLength(1);
+      expect(exam.examDate).toBeNull();
 
       const saved = await updateExamDraft(ownerA, {
         examId: exam.id,
+        examDate: null,
         comorbidities: "HAS fictícia",
         continuousMedications: "Ácido fólico",
         lie: "TRANSVERSE",
@@ -146,6 +148,7 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
 
       const refined = await updateExamDraft(ownerA, {
         examId: exam.id,
+        examDate: null,
         comorbidities: "HAS fictícia",
         continuousMedications: "Ácido fólico",
         lie: "LONGITUDINAL",
@@ -185,6 +188,7 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
       const edited = await updateExamDraft(ownerA, {
         ...{
           examId: exam.id,
+          examDate: null,
           comorbidities: "HAS fictícia",
           continuousMedications: "Ácido fólico",
           lie: "LONGITUDINAL" as const,
@@ -248,6 +252,7 @@ describe.skipIf(!enabled)("Clinical draft ownership + persistence", () => {
 
       const excluded = await updateExamDraft(ownerA, {
         examId: exam.id,
+        examDate: null,
         comorbidities: null,
         continuousMedications: null,
         lie: null,
@@ -396,5 +401,6 @@ function excludedFields(examId: string): UpdateExamDraftInput {
     amnioticMethod: null,
     amnioticValue: null,
     transducersUsed: [],
+    examDate: null,
   };
 }

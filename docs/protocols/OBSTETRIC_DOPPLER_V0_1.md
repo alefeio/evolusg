@@ -137,13 +137,15 @@ Campos: DBP, CC, CA, CF (mostrar medidas); PFE; percentil.
 |---|---|---|
 | Não exibir IG individual por medida | `CLINICALLY_APPROVED` | `SOURCE_NOT_REQUIRED` |
 | Exibir IG estimada **geral** pela biometria (contexto do exame atual) | `CLINICALLY_APPROVED` | `SOURCE_VALIDATION_PENDING` |
-| PFE por Hadlock; frase com ±10% (margem versionável) | `CLINICALLY_APPROVED` | candidata `EFW_HADLOCK_1985_BPD_HC_AC_FL` — fonte Hadlock 1985 AC+BPD+FL+HC identificada; `DEVICE_MATCH_PENDING` pelo Voluson E6; não liberada |
-| Percentil de peso | `CLINICALLY_APPROVED` | candidata `EFW_GROWTH_HADLOCK_1991` — `METHOD_DEFINITION_PENDING` |
-| Percentil da CA | `CLINICALLY_APPROVED` | candidata `AC_GROWTH_HADLOCK_1984` — `SOURCE_VALIDATION_PENDING`; distinto do percentil do PFE |
+| PFE por Hadlock; frase com ±10% (margem versionável) | `CLINICALLY_APPROVED` | `EFW_HADLOCK_1985_BPD_HC_AC_FL@1` implementado; não liberado; frase ainda não emitida |
+| Percentil de peso | `CLINICALLY_APPROVED` | `EFW_GROWTH_HADLOCK_1991_CHART_Z_INTERP@1`; quantitativo; sem classificação |
+| Percentil da CA | `CLINICALLY_APPROVED` | `AC_GROWTH_HADLOCK_1984@1`; distinto do percentil do PFE |
 
 Diferença entre IG corrigida e IG pela biometria: **não** gera alerta automático.
 
-Nenhum cálculo definitivo de produção enquanto a fonte não estiver validada. Pacote e dispositivo: [`../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md).
+Nenhum destes três cálculos está `CLINICALLY_RELEASED`. Não há classificação automática de crescimento. Pacote: [`../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md).
+
+A data clínica do exame é `exam.examDate` (dia civil). `EXAM CLINICAL DATE != RECORD CREATED AT`. `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`.
 
 ## 9. Crescimento fetal
 

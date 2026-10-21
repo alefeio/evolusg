@@ -44,7 +44,7 @@ Níveis conceituais: `Patient` · `PregnancyEpisode` · `Exam` / `ExamClinicalCo
 
 **Medicações:** `CONTINUOUS_MEDICATIONS_V1 = EXAM_CONTEXT_SNAPSHOT` (uso contínuo informado no exame). Sem medication history, prescription model, start/end. Futuro: `PATIENT LONGITUDINAL MEDICATION MODEL — FUTURE`.
 
-**IG corrigida atual:** valor **derivado** do contexto do episódio + data do exame/atual. Não duplicar como fonte independente. **IG pela biometria** pertence ao exame atual, não ao episódio.
+**IG corrigida atual:** valor **derivado** da primeira ultrassonografia de datação mais `exam.examDate`. Não duplicar como fonte independente. `EXAM CLINICAL DATE != RECORD CREATED AT`. `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`. **IG pela biometria** pertence ao exame atual, não ao episódio.
 
 ## Escopo fetal e múltiplos
 
