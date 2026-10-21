@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --exclude \"src/**/*.integration.test.ts\"",
     "test:watch": "vitest",
-    "test:integration": "vitest run src/lib/auth/auth-postgres.integration.test.ts src/lib/clinical/clinical-draft.integration.test.ts",
+    "test:integration": "vitest run --fileParallelism=false src/lib/auth/auth-postgres.integration.test.ts src/lib/clinical/clinical-draft.integration.test.ts src/lib/clinical/biometry-growth.integration.test.ts",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy"
