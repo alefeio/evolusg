@@ -159,6 +159,8 @@ model Exam {
   /// true = present; null = not informed (never auto-absent)
   uterineArteryRightNotch Boolean?
   uterineArteryLeftNotch  Boolean?
+  /// Civil date when the ultrasound was performed. Never backfilled from createdAt.
+  examDate               DateTime?         @db.Date
   createdAt              DateTime
   updatedAt              DateTime
   fetuses                Fetus[]

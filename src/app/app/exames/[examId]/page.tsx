@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireSession } from "@/lib/auth/session";
 import { getExamDraft } from "@/lib/clinical/exam-service";
+import { utcCivilDate } from "@/lib/clinical/growth/civil-date";
 import { ExamDraftForm } from "@/components/clinical/exam-draft-form";
 import { Card, PageHeader } from "@/components/ui";
 
@@ -88,6 +89,7 @@ export default async function ExamDraftPage({
               datingUltrasoundGaDays:
                 exam.pregnancyEpisode.datingUltrasoundGaDays,
             },
+            examDate: exam.examDate ? utcCivilDate(exam.examDate) : null,
           }}
         />
       </Card>

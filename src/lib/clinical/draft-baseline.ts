@@ -1,3 +1,5 @@
+import { utcCivilDate } from "@/lib/clinical/growth/civil-date";
+
 export type DraftFieldSnapshot = {
   revision: string;
   comorbidities: string | null;
@@ -26,10 +28,12 @@ export type DraftFieldSnapshot = {
   middleCerebralArteryPi: number | null;
   ductusVenosusAssessed: boolean | null;
   ductusVenosusPi: number | null;
+  examDate: string | null;
 };
 
 type ExamLike = {
   updatedAt: Date;
+  examDate: Date | null;
   comorbidities: string | null;
   continuousMedications: string | null;
   transducersUsed: string[];
@@ -64,6 +68,7 @@ export function snapshotFromExam(exam: ExamLike): DraftFieldSnapshot {
   const fetus = exam.fetuses[0];
   return {
     revision: exam.updatedAt.toISOString(),
+    examDate: exam.examDate ? utcCivilDate(exam.examDate) : null,
     comorbidities: exam.comorbidities,
     continuousMedications: exam.continuousMedications,
     transducersUsed: [...exam.transducersUsed],
@@ -104,6 +109,7 @@ export function applySavedSnapshot<T extends { fetus: Record<string, unknown> }>
   return {
     ...loaded,
     revision: saved.revision,
+    examDate: saved.examDate,
     comorbidities: saved.comorbidities,
     continuousMedications: saved.continuousMedications,
     transducersUsed: saved.transducersUsed,

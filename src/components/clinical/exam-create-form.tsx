@@ -5,7 +5,7 @@ import {
   createExamAction,
   type ActionState,
 } from "@/lib/clinical/actions";
-import { Alert, Button, Field } from "@/components/ui";
+import { Alert, Button, Field, Input } from "@/components/ui";
 
 const initial: ActionState = { ok: false };
 
@@ -48,6 +48,10 @@ export function ExamCreateForm({
             </option>
           ))}
         </select>
+      </Field>
+
+      <Field htmlFor="examDate" label="Data do exame">
+        <Input id="examDate" name="examDate" type="date" />
       </Field>
 
       <p className="text-sm text-text-secondary">

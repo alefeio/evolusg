@@ -112,6 +112,7 @@ export async function createExamAction(
       session.user.id,
       parsed.data.patientId,
       parsed.data.pregnancyEpisodeId,
+      parsed.data.examDate,
     );
     redirect(`/app/exames/${exam.id}`);
   } catch (error) {

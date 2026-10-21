@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ductusSaveError, DUCTUS_PI_REQUIRED_MESSAGE } from "@/lib/clinical/ductus-assessment";
+import { civilDateToUtcDate, civilDayIndex } from "@/lib/clinical/growth/civil-date";
 import { normalizePosition } from "@/lib/clinical/position-rules";
 import { presenceFromCheckbox } from "@/lib/clinical/presence";
 
@@ -16,6 +17,22 @@ const optionalTrimmed = z.preprocess(
 );
 
 const optionalDate = z.preprocess(emptyToNull, z.coerce.date().nullable());
+
+const optionalCivilDate = z.preprocess(
+  emptyToNull,
+  z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Informe uma data válida.")
+    .refine((value) => civilDayIndex(value) != null, "Informe uma data válida.")
+    .transform((value) => {
+      const date = civilDateToUtcDate(value);
+      if (!date) {
+        throw new Error("Informe uma data válida.");
+      }
+      return date;
+    })
+    .nullable(),
+);
 
 const optionalNonNegInt = z.preprocess(
   emptyToNull,
@@ -79,11 +96,13 @@ export const createPregnancyEpisodeSchema = z.object({
 export const createExamSchema = z.object({
   patientId: z.string().min(1),
   pregnancyEpisodeId: z.string().min(1),
+  examDate: optionalCivilDate,
 });
 
 export const updateExamDraftSchema = z
   .object({
     examId: z.string().min(1),
+    examDate: optionalCivilDate,
     comorbidities: optionalTrimmed,
     continuousMedications: optionalTrimmed,
     lie: z.preprocess(emptyToNull, fetalLie),

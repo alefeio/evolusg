@@ -51,11 +51,11 @@ Fórmula aprovada clinicamente **não** é o mesmo que referência validada: uma
 |---|---|---|---|---|
 | `uterineArtery.meanPi` | IP médio das artérias uterinas | `(IP direita + IP esquerda) / 2` | `SOURCE_NOT_REQUIRED` (definição aritmética) | `APPROVED` — candidato Sprint 2 (sem P95) |
 | `fetus.cpr` | Relação cerebroplacentária | `IP ACM / IP artéria umbilical` | fórmula aprovada; **interpretação** por IG `SOURCE_VALIDATION_PENDING` | `SOURCED` na fórmula, bloqueado na classificação |
-| `fetus.efw.hadlock` | Peso fetal estimado; margem ±10% versionável | família AC+BPD+FL+HC identificada; não liberada | `EFW_HADLOCK_1985_BPD_HC_AC_FL` — `DEVICE_MATCH_PENDING` | `NAMED` — não `ACTIVE` |
-| `fetus.efwPercentile` | Percentil do PFE | comparação do PFE com referência de crescimento por IG | `EFW_GROWTH_HADLOCK_1991` — `METHOD_DEFINITION_PENDING` | `NAMED` — não `ACTIVE` |
-| `fetus.acPercentile` | Percentil da CA | percentil da circunferência abdominal; distinto do PFE | `AC_GROWTH_HADLOCK_1984` — `SOURCE_VALIDATION_PENDING` | `NAMED` — não `ACTIVE` |
+| `fetus.efw.hadlock` | Peso fetal estimado | Hadlock 1985, quatro medidas, mm→cm sem arredondar o meio | `EFW_HADLOCK_1985_BPD_HC_AC_FL@1` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
+| `fetus.efwPercentile` | Percentil do PFE | chart 1991 + dia + z-score; não é a fórmula original de percentil | `EFW_GROWTH_HADLOCK_1991_CHART_Z_INTERP@1` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
+| `fetus.acPercentile` | Percentil da CA | média quadrática Hadlock 1984, DP 1,34 cm | `AC_GROWTH_HADLOCK_1984@1` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
 | `fetus.gestationalAgeByBiometry` | IG estimada geral pela biometria (exame atual) | composição das medidas; método exato pendente | `SOURCE_VALIDATION_PENDING` | `NAMED` |
-| `exam.correctedGestationalAge` | IG corrigida atual (derivada do episódio + data) | política de datação + aritmética de semanas/dias | `SOURCE_VALIDATION_PENDING` (política e interpolação) | `NAMED` |
+| `exam.correctedGestationalAge` | IG corrigida atual (1ª USG + `exam.examDate`) | dias civis; nunca `Exam.createdAt` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
 | `reference.weekDayInterpolation` | Interpolação semana + dia em tabelas de referência | **não definir** | `SOURCE_VALIDATION_PENDING` | `NAMED` — proibido inventar |
 
 Nota: o handoff usa **IP** (índice de pulsatilidade); a chave técnica `meanPi` / `pi` permanece estável.
@@ -67,33 +67,41 @@ Restrições registradas:
 - Cálculo cuja saída alimente classificação, alerta ou conclusão só entra em produção com `SOURCE_VALIDATED`.
 - Cálculo puramente aritmético (`uterineArtery.meanPi`) pode ser candidato à Sprint 2; a **comparação com P95** não.
 
-## Pacote Hadlock — candidatos, nenhum ativo
+## Pacote Hadlock V1 — implementado, não liberado
 
-Detalhe e dispositivo: [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md). `implementation status` de todos: não implementado. Eixo de fonte do cálculo: `SOURCE_VALIDATION_PENDING` até `CLINICALLY_RELEASED`.
+Detalhe: [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md) e [`../roadmap/SPRINT_3.md`](../roadmap/SPRINT_3.md). Nenhum dos três está `CLINICALLY_RELEASED`. O Voluson E6 segue como gate de compatibilidade prática.
 
 ### `fetus.efw.hadlock`
 
-- Status do cálculo: `NAMED`, não `ACTIVE`.
-- Referência: `EFW_HADLOCK_1985_BPD_HC_AC_FL` (`DEVICE_MATCH_PENDING`).
-- Entradas exigidas pela candidata: BPD, HC, AC, FL. Unidades ainda não congeladas.
-- Fonte científica identificada: Hadlock et al. 1985; corroboração `LOINC 11732-5`. A equação não foi transcrita aqui.
-- Dependências: compatibilidade ainda aberta com o GE Voluson E6.
-- Bloqueios abertos: configuração do Voluson E6, conferência da equação no texto completo, unidades/precisão/arredondamento, fixtures. Publicação primária e corroboração padronizada: fechadas.
+- Status: `IMPLEMENTED_NOT_CLINICALLY_RELEASED`.
+- Referência: `EFW_HADLOCK_1985_BPD_HC_AC_FL@1`.
+- Entradas: BPD, HC, AC e FL em milímetros. Equação em centímetros.
+- Saída interna crua; tela em gramas inteiras.
+- Sem fallback de fórmula. Medida faltante: indisponível, rascunho continua.
 
 ### `fetus.efwPercentile`
 
-- Status do cálculo: `NAMED`, não `ACTIVE`.
-- Referência: `EFW_GROWTH_HADLOCK_1991` (`METHOD_DEFINITION_PENDING`).
-- Entradas: PFE e idade gestacional em semanas + dias.
-- Dependências: `fetus.efw.hadlock`.
-- Bloqueios: escolha explícita entre equações/distribuição, tabela publicada, interpolação da tabela ou outra política validada; semana + dia; precisão, limites e arredondamento; fixtures; comparação com dispositivo. Tabela e equações de Hadlock 1991 podem não coincidir.
+- Status: `IMPLEMENTED_NOT_CLINICALLY_RELEASED`.
+- Referência: `EFW_GROWTH_HADLOCK_1991_CHART_Z_INTERP@1`.
+- Chart: `HADLOCK_1991_CHART_COMPAT_V1`. P97 de 30 semanas = 1949 g, não o 1649 g publicado.
+- Entradas: peso cru e IG em semanas + dias.
+- Abaixo de P3 e acima de P97 não são extrapolados.
 
 ### `fetus.acPercentile`
 
-- Status do cálculo: `NAMED`, não `ACTIVE`.
-- Referência: `AC_GROWTH_HADLOCK_1984` (`SOURCE_VALIDATION_PENDING`).
-- Entradas: CA medida e idade gestacional em semanas + dias.
-- Dependências: nenhuma fórmula de peso.
-- Bloqueios: publicação, equação ou tabela, desvio-padrão quando aplicável, semana + dia, fixtures.
+- Status: `IMPLEMENTED_NOT_CLINICALLY_RELEASED`.
+- Referência: `AC_GROWTH_HADLOCK_1984@1`.
+- Entradas: CA em milímetros e IG decimal `semanas + dias / 7`.
+- Faixa 12s 0d–40s 0d. Não classifica crescimento.
 
-`reference.weekDayInterpolation` não é uma política global. Cada referência declara a própria. Ver ADR-014.
+`reference.weekDayInterpolation` não é política global. O percentil do PFE declara `INTERPOLATED_TABLE`. O percentil da CA declara `CONTINUOUS_EQUATION`.
+
+### `exam.correctedGestationalAge`
+
+- Status: `IMPLEMENTED_NOT_CLINICALLY_RELEASED`.
+- Entradas: data da primeira ultrassonografia, IG em semanas e dias, e `exam.examDate`.
+- `EXAM CLINICAL DATE != RECORD CREATED AT`.
+- `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`.
+- Sem `examDate`: percentis `UNAVAILABLE_MISSING_EXAM_DATE`; o PFE segue com as quatro medidas.
+- Âncora incompleta: sem percentis e sem fallback de DUM.
+- `examDate` anterior à primeira ultrassonografia: dado inconsistente, sem cálculo silencioso.
