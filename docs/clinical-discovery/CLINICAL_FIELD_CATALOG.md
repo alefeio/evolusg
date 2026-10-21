@@ -32,7 +32,7 @@ Não criar schema físico. Ver detalhe em [`../architecture/DOMAIN_MODEL.md`](..
 | G / P / A | `PregnancyEpisode` (snapshot obstétrico) | snapshot do episódio; **não** significa imutável na vida da paciente; histórico obstétrico longitudinal = futuro | `APPROVED FOR SPRINT_2 MODELING` |
 | Data da 1ª USG de datação | `PregnancyEpisode` | âncora de datação | `APPROVED FOR SPRINT_2 MODELING` |
 | IG na 1ª USG (semanas + dias) | `PregnancyEpisode` | âncora de datação | `APPROVED FOR SPRINT_2 MODELING` |
-| IG corrigida atual | **derivada** (episódio + data do exame) | não duplicar como fonte independente | `APPROVED FOR SPRINT_2 MODELING` (conceito); cálculo de produção `NOT_ANALYZED` |
+| IG corrigida atual | **derivada** (episódio + `exam.examDate`) | não duplicar como fonte independente; `createdAt` não é entrada clínica | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
 | IG estimada pela biometria atual | `Exam` / Fetus (contexto do exame atual) | **não** pertence ao PregnancyEpisode | `APPROVED FOR SPRINT_2 MODELING` (conceito) |
 | Comorbidades | `Exam` / ExamClinicalContext (**snapshot**) | `COMORBIDITIES_V1 = EXAM_CONTEXT_SNAPSHOT`; longitudinal Patient = futuro | `APPROVED FOR SPRINT_2 MODELING` |
 | Medicações de uso contínuo | `Exam` / ExamClinicalContext (**snapshot**) | `CONTINUOUS_MEDICATIONS_V1 = EXAM_CONTEXT_SNAPSHOT`; longitudinal Patient = futuro | `APPROVED FOR SPRINT_2 MODELING` |
@@ -106,7 +106,8 @@ Legenda de status: decisão clínica / fonte / prontidão técnica.
 | `pregnancy.gravidity` `pregnancy.parity` `pregnancy.abortions` | G / P / A (snapshot) | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `pregnancy.datingUltrasound.date` | Data da 1ª USG de datação | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `pregnancy.datingUltrasound.gestationalAge` | IG na 1ª USG (semanas + dias) | Dados clínicos | PregnancyEpisode | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
-| `exam.correctedGestationalAge` | IG corrigida atual | Dados clínicos | derivado (episódio + data do exame) | `CLINICALLY_APPROVED` / `SOURCE_VALIDATION_PENDING` (política) / `NOT_ANALYZED` |
+| `exam.examDate` | Data do exame (dia civil em que a ultrassonografia foi realizada) | Dados clínicos | Exam | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / capturada; `EXAM CLINICAL DATE != RECORD CREATED AT` |
+| `exam.correctedGestationalAge` | IG corrigida atual | Dados clínicos | derivado (episódio + `exam.examDate`) | `IMPLEMENTED_NOT_CLINICALLY_RELEASED`; `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT` |
 | `exam.comorbidities` | Comorbidades (snapshot) | Dados clínicos | ExamClinicalContext | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `exam.continuousMedications` | Medicações de uso contínuo (snapshot) | Dados clínicos | ExamClinicalContext | `CLINICALLY_APPROVED` / `SOURCE_NOT_REQUIRED` / `READY_FOR_IMPLEMENTATION` |
 | `fetuses[n].vitality.heartRate` | BCF | Vitalidade | Fetus | `CLINICALLY_APPROVED` / faixa 120–160 informada; `SOURCE_VALIDATION_PENDING` / `NOT_ANALYZED` |

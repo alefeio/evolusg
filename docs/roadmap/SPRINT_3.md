@@ -20,15 +20,17 @@ Fora de escopo: classificação de crescimento, PIG/GIG/FGR, conclusão, interpr
 
 ## Registro
 
-O conjunto é `BIOMETRY_GROWTH_HADLOCK_V1`, em `src/lib/clinical/growth/`. Não há framework universal nem tabela Prisma de referência. Os resultados não são gravados: saem dos inputs persistidos e da versão da referência. `NO DATABASE MIGRATION`.
+O conjunto é `BIOMETRY_GROWTH_HADLOCK_V1`, em `src/lib/clinical/growth/`. Não há framework universal nem tabela Prisma de referência. Os resultados derivados não são gravados: saem dos inputs persistidos e da versão da referência.
+
+A data em que a ultrassonografia foi realizada é `Exam.examDate`, coluna PostgreSQL `DATE`, dia civil, sem hora. `EXAM CLINICAL DATE != RECORD CREATED AT`. `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`. A migration é só aditiva e não copia `createdAt` para exames antigos.
 
 A precisão interna não é a precisão de tela. O PFE interno permanece cru; a tela arredonda para gramas inteiras; o percentil do PFE usa o peso cru.
 
 ## Idade gestacional
 
-A IG corrigida usa a primeira ultrassonografia de datação mais os dias civis até a data do exame. Não usa DUM como fallback. Sem âncora confiável, os percentis ficam indisponíveis e o PFE ainda pode ser calculado.
+A IG corrigida usa a primeira ultrassonografia de datação mais os dias civis até `Exam.examDate`. Não usa DUM como fallback. Sem data do exame, os percentis ficam `UNAVAILABLE_MISSING_EXAM_DATE` e o PFE ainda pode ser calculado. Sem âncora completa, os percentis continuam indisponíveis. Se a data do exame for anterior à primeira ultrassonografia, o cálculo não segue em silêncio.
 
-Não há campo próprio de data do exame. A V1 lê o calendário UTC de `Exam.createdAt`, na mesma forma `YYYY-MM-DD` das outras datas clínicas, e subtrai datas civis. Isso evita horário local e DST. Não é a confirmação de um campo clínico futuro de “data do exame”.
+`EXAM CLINICAL DATE != RECORD CREATED AT`. `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`. A subtração é de datas civis, sem horário local, offset ou DST. Exames anteriores à coluna permanecem com `examDate` nulo até a data ser informada.
 
 ## Dispositivo
 

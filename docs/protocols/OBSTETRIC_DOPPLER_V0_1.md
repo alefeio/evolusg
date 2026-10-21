@@ -145,6 +145,8 @@ Diferença entre IG corrigida e IG pela biometria: **não** gera alerta automát
 
 Nenhum destes três cálculos está `CLINICALLY_RELEASED`. Não há classificação automática de crescimento. Pacote: [`../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](../clinical-discovery/CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md).
 
+A data clínica do exame é `exam.examDate` (dia civil). `EXAM CLINICAL DATE != RECORD CREATED AT`. `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`.
+
 ## 9. Crescimento fetal
 
 Thresholds informados (`CLINICALLY_APPROVED`):

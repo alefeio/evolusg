@@ -89,19 +89,22 @@ describe.skipIf(!enabled)("Biometry growth derivation on draft", () => {
         datingUltrasoundGaWeeks: null,
         datingUltrasoundGaDays: null,
       });
+      const clinicalExamDate = new Date("2026-03-20T00:00:00.000Z");
       const created = await createObstetricDopplerDraft(
         ownerA,
         patient.id,
         episode.id,
+        clinicalExamDate,
       );
       await prisma.exam.update({
         where: { id: created.id },
-        data: { createdAt: new Date("2026-03-15T15:00:00.000Z") },
+        data: { createdAt: new Date("2026-04-02T15:00:00.000Z") },
       });
 
       const incomplete = await updateExamDraft(ownerA, {
         ...blankDraft(created.id),
         biparietalDiameterMm: 80,
+        examDate: clinicalExamDate,
       });
       expect(incomplete.fetuses[0]?.femurLengthMm).toBeNull();
       const incompleteView = deriveFromExam(incomplete);
@@ -113,8 +116,12 @@ describe.skipIf(!enabled)("Biometry growth derivation on draft", () => {
         headCircumferenceMm: 280,
         abdominalCircumferenceMm: 260,
         femurLengthMm: 60,
+        examDate: clinicalExamDate,
       });
       const withoutGa = deriveFromExam(complete);
+      expect(complete.examDate).toEqual(clinicalExamDate);
+      expect(utcCivilDate(complete.createdAt)).toBe("2026-04-02");
+      expect(utcCivilDate(complete.examDate as Date)).toBe("2026-03-20");
       expect(withoutGa.efw.status).toBe("OK");
       expect(withoutGa.efwPercentile.status).toBe("UNAVAILABLE_GA");
       expect(withoutGa.acPercentile.status).toBe("UNAVAILABLE_GA");
@@ -130,11 +137,13 @@ describe.skipIf(!enabled)("Biometry growth derivation on draft", () => {
       });
       const dated = await getExamDraft(created.id, ownerA);
       const withGa = deriveFromExam(dated);
+      expect(utcCivilDate(dated.examDate as Date)).toBe("2026-03-20");
+      expect(utcCivilDate(dated.createdAt)).not.toBe(utcCivilDate(dated.examDate as Date));
       expect(withGa.gestationalAge).toEqual({
         status: "OK",
-        totalDays: 157,
-        weeks: 22,
-        days: 3,
+        totalDays: 162,
+        weeks: 23,
+        days: 1,
       });
       expect(withGa.efw.status).toBe("OK");
       expect(withGa.efwPercentile.status).not.toBe("UNAVAILABLE_GA");
@@ -146,6 +155,7 @@ describe.skipIf(!enabled)("Biometry growth derivation on draft", () => {
         headCircumferenceMm: 280,
         abdominalCircumferenceMm: 260,
         femurLengthMm: 60,
+        examDate: clinicalExamDate,
       });
       const editedView = deriveFromExam(edited);
       expect(editedView.efw.status).toBe("OK");
@@ -154,14 +164,54 @@ describe.skipIf(!enabled)("Biometry growth derivation on draft", () => {
         expect(editedView.efw.rawWeightGrams).not.toBe(withGa.efw.rawWeightGrams);
       }
 
+      const reopened = await getExamDraft(created.id, ownerA);
+      const reopenedView = deriveFromExam(reopened);
+      expect(utcCivilDate(reopened.examDate as Date)).toBe("2026-03-20");
+      expect(reopenedView.gestationalAge).toEqual(withGa.gestationalAge);
+      expect(reopenedView.efw).toEqual(editedView.efw);
+      expect(reopenedView.efwPercentile).toEqual(editedView.efwPercentile);
+
       const cleared = await updateExamDraft(ownerA, {
         ...blankDraft(created.id),
         biparietalDiameterMm: 85,
         headCircumferenceMm: 280,
         abdominalCircumferenceMm: 260,
         femurLengthMm: null,
+        examDate: clinicalExamDate,
       });
       expect(deriveFromExam(cleared).efw.status).toBe("UNAVAILABLE_INCOMPLETE_INPUT");
+
+      const legacy = await createObstetricDopplerDraft(ownerA, patient.id, episode.id);
+      const openedLegacy = await getExamDraft(legacy.id, ownerA);
+      expect(openedLegacy.examDate).toBeNull();
+      const legacyBiometry = await updateExamDraft(ownerA, {
+        ...blankDraft(legacy.id),
+        biparietalDiameterMm: 80,
+        headCircumferenceMm: 280,
+        abdominalCircumferenceMm: 260,
+        femurLengthMm: 60,
+        examDate: null,
+      });
+      const legacyView = deriveFromExam(legacyBiometry);
+      expect(legacyView.efw.status).toBe("OK");
+      expect(legacyView.efwPercentile.status).toBe("UNAVAILABLE_MISSING_EXAM_DATE");
+      expect(legacyView.acPercentile.status).toBe("UNAVAILABLE_MISSING_EXAM_DATE");
+
+      const legacyDated = await updateExamDraft(ownerA, {
+        ...blankDraft(legacy.id),
+        biparietalDiameterMm: 80,
+        headCircumferenceMm: 280,
+        abdominalCircumferenceMm: 260,
+        femurLengthMm: 60,
+        examDate: clinicalExamDate,
+      });
+      const legacyDatedView = deriveFromExam(legacyDated);
+      expect(utcCivilDate(legacyDated.examDate as Date)).toBe("2026-03-20");
+      expect(utcCivilDate(legacyDated.createdAt)).not.toBe("2026-03-20");
+      expect(legacyDatedView.gestationalAge).toEqual(withGa.gestationalAge);
+      expect(legacyDatedView.efwPercentile.status).toBe("ABOVE_P97");
+      expect(legacyDatedView.efwPercentile.display).toBe(">P97");
+      expect(legacyDatedView.acPercentile.status).toBe("OK");
 
       await expect(getExamDraft(created.id, ownerB)).rejects.toBeInstanceOf(
         ClinicalAccessError,
@@ -184,7 +234,7 @@ function deriveFromExam(
       : null,
     datingUltrasoundGaWeeks: exam.pregnancyEpisode.datingUltrasoundGaWeeks,
     datingUltrasoundGaDays: exam.pregnancyEpisode.datingUltrasoundGaDays,
-    examDate: utcCivilDate(exam.createdAt),
+    examDate: exam.examDate ? utcCivilDate(exam.examDate) : null,
   });
 }
 
@@ -217,5 +267,6 @@ function blankDraft(examId: string): UpdateExamDraftInput {
     amnioticMethod: null,
     amnioticValue: null,
     transducersUsed: [],
+    examDate: null,
   };
 }

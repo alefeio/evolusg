@@ -31,6 +31,7 @@ export async function createObstetricDopplerDraft(
   ownerUserId: string,
   patientId: string,
   pregnancyEpisodeId: string,
+  examDate: Date | null = null,
 ) {
   const patient = await requireOwnedPatient(patientId, ownerUserId);
   const episode = await requireOwnedEpisode(pregnancyEpisodeId, ownerUserId);
@@ -53,6 +54,7 @@ export async function createObstetricDopplerDraft(
         pregnancyEpisodeId,
         protocol: "OBSTETRIC_DOPPLER",
         status: "DRAFT",
+        examDate,
         createdAt: timestamp,
         updatedAt: timestamp,
       },
@@ -126,6 +128,7 @@ export async function updateExamDraft(
         uterineArteryRightNotch: input.uterineArteryRightNotch,
         uterineArteryLeftNotch: input.uterineArteryLeftNotch,
         transducersUsed: input.transducersUsed,
+        examDate: input.examDate,
         updatedAt: timestamp,
       },
     }),

@@ -65,6 +65,7 @@ function saved(overrides: Partial<DraftFieldSnapshot>): DraftFieldSnapshot {
     middleCerebralArteryPi: null,
     ductusVenosusAssessed: null,
     ductusVenosusPi: null,
+    examDate: null,
     ...overrides,
   };
 }
@@ -113,6 +114,7 @@ describe("snapshotFromExam", () => {
   it("copies the persisted fetus and transducer array", () => {
     const snapshot = snapshotFromExam({
       updatedAt: new Date("2026-09-30T12:00:00.000Z"),
+      examDate: new Date("2026-04-02T00:00:00.000Z"),
       comorbidities: null,
       continuousMedications: null,
       transducersUsed: ["ENDOCAVITARY"],
@@ -150,5 +152,7 @@ describe("snapshotFromExam", () => {
     expect(snapshot.placentaGrade).toBe("GRADE_0");
     expect(snapshot.bodyMovementsPresent).toBeNull();
     expect(snapshot.heartRateBpm).toBe(150);
+    expect(snapshot.examDate).toBe("2026-04-02");
+    expect(snapshot.examDate).not.toBe(snapshot.revision.slice(0, 10));
   });
 });

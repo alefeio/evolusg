@@ -30,9 +30,26 @@ export function elapsedCivilDays(fromIso: string, toIso: string): number | null 
   return to - from;
 }
 
-/** Mesma convenção já usada para datas clínicas date-only: calendário UTC do instante. */
+/**
+ * Formats a value already stored as a civil date (UTC midnight).
+ * Do not pass Exam.createdAt: that instant is not the clinical exam date.
+ */
 export function utcCivilDate(value: Date): string {
-  return value.toISOString().slice(0, 10);
+  const year = value.getUTCFullYear();
+  const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(value.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function civilDateToUtcDate(isoDate: string): Date | null {
+  if (civilDayIndex(isoDate) == null) {
+    return null;
+  }
+  const [year, month, day] = isoDate.split("-").map(Number);
+  if (year == null || month == null || day == null) {
+    return null;
+  }
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
 export function addCivilDays(isoDate: string, days: number): string | null {

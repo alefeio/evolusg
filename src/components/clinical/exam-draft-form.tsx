@@ -115,6 +115,7 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
   const [hcMm, setHcMm] = useState(num(baseline.fetus.headCircumferenceMm));
   const [acMm, setAcMm] = useState(num(baseline.fetus.abdominalCircumferenceMm));
   const [flMm, setFlMm] = useState(num(baseline.fetus.femurLengthMm));
+  const [examDate, setExamDate] = useState(baseline.examDate ?? "");
 
   const meanPi = useMemo(
     () =>
@@ -145,9 +146,9 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
         datingUltrasoundDate: values.episode.datingUltrasoundDate,
         datingUltrasoundGaWeeks: values.episode.datingUltrasoundGaWeeks,
         datingUltrasoundGaDays: values.episode.datingUltrasoundGaDays,
-        examDate: values.examDate,
+        examDate: examDate === "" ? null : examDate,
       }),
-    [acMm, bpdMm, flMm, hcMm, values.episode, values.examDate],
+    [acMm, bpdMm, examDate, flMm, hcMm, values.episode],
   );
   const correctedGa =
     growth.gestationalAge.status === "OK"
@@ -195,6 +196,15 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
             </span>
           </p>
         </div>
+        <Field htmlFor="examDate" label="Data do exame">
+          <Input
+            id="examDate"
+            name="examDate"
+            onChange={(event) => setExamDate(event.target.value)}
+            type="date"
+            value={examDate}
+          />
+        </Field>
         <Field htmlFor="comorbidities" label="Comorbidades (neste exame)">
           <Input
             defaultValue={baseline.comorbidities ?? ""}
@@ -533,6 +543,13 @@ export function ExamDraftForm({ values }: { values: ExamDraftValues }) {
               {growth.efwPercentile.display}
             </span>
           </p>
+          {growth.efw.status === "OK" &&
+          growth.gestationalAge.status === "UNAVAILABLE_MISSING_EXAM_DATE" ? (
+            <p>Informe a data do exame para calcular os percentis.</p>
+          ) : null}
+          {growth.gestationalAge.status === "INCONSISTENT_EXAM_DATE" ? (
+            <p>A data do exame é anterior à primeira ultrassonografia.</p>
+          ) : null}
         </div>
         <p className="text-xs text-text-secondary">
           Resultados quantitativos, sem classificação de crescimento.

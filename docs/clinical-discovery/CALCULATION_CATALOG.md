@@ -55,7 +55,7 @@ Fórmula aprovada clinicamente **não** é o mesmo que referência validada: uma
 | `fetus.efwPercentile` | Percentil do PFE | chart 1991 + dia + z-score; não é a fórmula original de percentil | `EFW_GROWTH_HADLOCK_1991_CHART_Z_INTERP@1` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
 | `fetus.acPercentile` | Percentil da CA | média quadrática Hadlock 1984, DP 1,34 cm | `AC_GROWTH_HADLOCK_1984@1` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
 | `fetus.gestationalAgeByBiometry` | IG estimada geral pela biometria (exame atual) | composição das medidas; método exato pendente | `SOURCE_VALIDATION_PENDING` | `NAMED` |
-| `exam.correctedGestationalAge` | IG corrigida atual (derivada do episódio + data) | política de datação + aritmética de semanas/dias | `SOURCE_VALIDATION_PENDING` (política e interpolação) | `NAMED` |
+| `exam.correctedGestationalAge` | IG corrigida atual (1ª USG + `exam.examDate`) | dias civis; nunca `Exam.createdAt` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` | `IMPLEMENTED_NOT_CLINICALLY_RELEASED` |
 | `reference.weekDayInterpolation` | Interpolação semana + dia em tabelas de referência | **não definir** | `SOURCE_VALIDATION_PENDING` | `NAMED` — proibido inventar |
 
 Nota: o handoff usa **IP** (índice de pulsatilidade); a chave técnica `meanPi` / `pi` permanece estável.
@@ -95,3 +95,13 @@ Detalhe: [`CLINICAL_REFERENCE_VALIDATION_HADLOCK_V0_1.md`](CLINICAL_REFERENCE_VA
 - Faixa 12s 0d–40s 0d. Não classifica crescimento.
 
 `reference.weekDayInterpolation` não é política global. O percentil do PFE declara `INTERPOLATED_TABLE`. O percentil da CA declara `CONTINUOUS_EQUATION`.
+
+### `exam.correctedGestationalAge`
+
+- Status: `IMPLEMENTED_NOT_CLINICALLY_RELEASED`.
+- Entradas: data da primeira ultrassonografia, IG em semanas e dias, e `exam.examDate`.
+- `EXAM CLINICAL DATE != RECORD CREATED AT`.
+- `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`.
+- Sem `examDate`: percentis `UNAVAILABLE_MISSING_EXAM_DATE`; o PFE segue com as quatro medidas.
+- Âncora incompleta: sem percentis e sem fallback de DUM.
+- `examDate` anterior à primeira ultrassonografia: dado inconsistente, sem cálculo silencioso.

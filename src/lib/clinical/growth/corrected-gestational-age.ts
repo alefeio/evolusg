@@ -7,6 +7,8 @@ export type CorrectedGestationalAge =
       weeks: number;
       days: number;
     }
+  | { status: "UNAVAILABLE_MISSING_EXAM_DATE" }
+  | { status: "INCONSISTENT_EXAM_DATE" }
   | { status: "UNAVAILABLE" };
 
 /**
@@ -21,11 +23,11 @@ export function correctedGestationalAge(input: {
   datingUltrasoundGaDays: number | null;
   examDate: string | null;
 }): CorrectedGestationalAge {
-  if (
-    input.datingUltrasoundDate == null ||
-    input.examDate == null ||
-    input.datingUltrasoundGaWeeks == null
-  ) {
+  if (input.examDate == null) {
+    return { status: "UNAVAILABLE_MISSING_EXAM_DATE" };
+  }
+
+  if (input.datingUltrasoundDate == null || input.datingUltrasoundGaWeeks == null) {
     return { status: "UNAVAILABLE" };
   }
 
@@ -42,8 +44,11 @@ export function correctedGestationalAge(input: {
   }
 
   const elapsed = elapsedCivilDays(input.datingUltrasoundDate, input.examDate);
-  if (elapsed == null || elapsed < 0) {
+  if (elapsed == null) {
     return { status: "UNAVAILABLE" };
+  }
+  if (elapsed < 0) {
+    return { status: "INCONSISTENT_EXAM_DATE" };
   }
 
   const totalDays = weeks * 7 + days + elapsed;

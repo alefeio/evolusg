@@ -344,7 +344,7 @@ describe("corrected gestational age", () => {
         datingUltrasoundGaDays: 0,
         examDate: "2026-02-15",
       }).status,
-    ).toBe("UNAVAILABLE");
+    ).toBe("INCONSISTENT_EXAM_DATE");
     expect(
       correctedGestationalAge({
         datingUltrasoundDate: "2026-02-01",
@@ -353,6 +353,90 @@ describe("corrected gestational age", () => {
         examDate: "2026-02-01",
       }),
     ).toEqual({ status: "OK", totalDays: 56, weeks: 8, days: 0 });
+  });
+
+  it("keeps the same age when the exam is on the first-ultrasound day", () => {
+    expect(
+      correctedGestationalAge({
+        datingUltrasoundDate: "2026-05-10",
+        datingUltrasoundGaWeeks: 12,
+        datingUltrasoundGaDays: 4,
+        examDate: "2026-05-10",
+      }),
+    ).toEqual({ status: "OK", totalDays: 88, weeks: 12, days: 4 });
+  });
+
+  it("crosses a month boundary with civil days", () => {
+    expect(
+      correctedGestationalAge({
+        datingUltrasoundDate: "2026-01-31",
+        datingUltrasoundGaWeeks: 10,
+        datingUltrasoundGaDays: 0,
+        examDate: "2026-02-02",
+      }),
+    ).toEqual({ status: "OK", totalDays: 72, weeks: 10, days: 2 });
+    expect(elapsedCivilDays("2026-01-31", "2026-02-02")).toBe(2);
+  });
+
+  it("crosses a year boundary with civil days", () => {
+    expect(
+      correctedGestationalAge({
+        datingUltrasoundDate: "2025-12-30",
+        datingUltrasoundGaWeeks: 18,
+        datingUltrasoundGaDays: 6,
+        examDate: "2026-01-02",
+      }),
+    ).toEqual({ status: "OK", totalDays: 135, weeks: 19, days: 2 });
+    expect(elapsedCivilDays("2025-12-30", "2026-01-02")).toBe(3);
+  });
+
+  it("counts 29 February only in a leap year", () => {
+    expect(elapsedCivilDays("2024-02-28", "2024-03-01")).toBe(2);
+    expect(elapsedCivilDays("2023-02-28", "2023-03-01")).toBe(1);
+    expect(
+      correctedGestationalAge({
+        datingUltrasoundDate: "2024-02-28",
+        datingUltrasoundGaWeeks: 20,
+        datingUltrasoundGaDays: 0,
+        examDate: "2024-03-01",
+      }),
+    ).toEqual({ status: "OK", totalDays: 142, weeks: 20, days: 2 });
+  });
+
+  it("withholds age when the clinical exam date is absent", () => {
+    expect(
+      correctedGestationalAge({
+        datingUltrasoundDate: "2026-02-01",
+        datingUltrasoundGaWeeks: 8,
+        datingUltrasoundGaDays: 2,
+        examDate: null,
+      }).status,
+    ).toBe("UNAVAILABLE_MISSING_EXAM_DATE");
+  });
+
+  it("derives corrected GA from examDate when record creation is another day", () => {
+    const createdAt = "2026-04-10";
+    const examDate = "2026-02-15";
+    const fromExamDate = correctedGestationalAge({
+      datingUltrasoundDate: "2026-02-01",
+      datingUltrasoundGaWeeks: 8,
+      datingUltrasoundGaDays: 2,
+      examDate,
+    });
+    const ifCreatedAtWereUsed = correctedGestationalAge({
+      datingUltrasoundDate: "2026-02-01",
+      datingUltrasoundGaWeeks: 8,
+      datingUltrasoundGaDays: 2,
+      examDate: createdAt,
+    });
+    expect(fromExamDate).toEqual({ status: "OK", totalDays: 72, weeks: 10, days: 2 });
+    expect(ifCreatedAtWereUsed).toEqual({
+      status: "OK",
+      totalDays: 126,
+      weeks: 18,
+      days: 0,
+    });
+    expect(fromExamDate).not.toEqual(ifCreatedAtWereUsed);
   });
 });
 
@@ -366,8 +450,39 @@ describe("biometry growth derivation", () => {
       examDate: null,
     });
     expect(derived.efw.status).toBe("OK");
+    expect(derived.gestationalAge.status).toBe("UNAVAILABLE_MISSING_EXAM_DATE");
+    expect(derived.efwPercentile.status).toBe("UNAVAILABLE_MISSING_EXAM_DATE");
+    expect(derived.efwPercentile.percentile).toBeNull();
+    expect(derived.acPercentile.status).toBe("UNAVAILABLE_MISSING_EXAM_DATE");
+    expect(derived.acPercentile.percentile).toBeNull();
+  });
+
+  it("withholds percentiles when the dating anchor is incomplete", () => {
+    const derived = deriveBiometryGrowth({
+      ...measurements,
+      datingUltrasoundDate: "2026-02-01",
+      datingUltrasoundGaWeeks: null,
+      datingUltrasoundGaDays: null,
+      examDate: "2026-02-15",
+    });
+    expect(derived.efw.status).toBe("OK");
+    expect(derived.gestationalAge.status).toBe("UNAVAILABLE");
     expect(derived.efwPercentile.status).toBe("UNAVAILABLE_GA");
     expect(derived.acPercentile.status).toBe("UNAVAILABLE_GA");
+  });
+
+  it("does not calculate percentiles when the exam date precedes the first ultrasound", () => {
+    const derived = deriveBiometryGrowth({
+      ...measurements,
+      datingUltrasoundDate: "2026-02-20",
+      datingUltrasoundGaWeeks: 12,
+      datingUltrasoundGaDays: 0,
+      examDate: "2026-02-15",
+    });
+    expect(derived.efw.status).toBe("OK");
+    expect(derived.gestationalAge.status).toBe("INCONSISTENT_EXAM_DATE");
+    expect(derived.efwPercentile.percentile).toBeNull();
+    expect(derived.acPercentile.percentile).toBeNull();
   });
 
   it("feeds the raw weight into the percentile", () => {
@@ -431,12 +546,33 @@ describe("biometry growth derivation", () => {
       amnioticValue: null,
       efwGrams: 9999,
       efwPercentile: 50,
+      createdAt: "2026-04-10",
+      examDate: "2026-03-20",
     });
     expect(parsed.success).toBe(true);
     if (parsed.success) {
       expect(parsed.data).not.toHaveProperty("efwGrams");
       expect(parsed.data).not.toHaveProperty("efwPercentile");
+      expect(parsed.data).not.toHaveProperty("createdAt");
+      expect(parsed.data.examDate).toEqual(new Date("2026-03-20T00:00:00.000Z"));
       expect(parsed.data.biparietalDiameterMm).toBe(80);
     }
+
+    const missingDate = updateExamDraftSchema.safeParse({
+      examId: "exam-1",
+      examDate: "",
+      ductusVenosusAssessed: false,
+    });
+    expect(missingDate.success).toBe(true);
+    if (missingDate.success) {
+      expect(missingDate.data.examDate).toBeNull();
+    }
+
+    const invalidDate = updateExamDraftSchema.safeParse({
+      examId: "exam-1",
+      examDate: "2026-02-31",
+      ductusVenosusAssessed: false,
+    });
+    expect(invalidDate.success).toBe(false);
   });
 });

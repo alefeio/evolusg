@@ -152,13 +152,13 @@ Faixa inclusiva 12s 0d a 40s 0d. Fora dela, sem extrapolação. A exibição usa
 
 O PFE não usa idade gestacional. O percentil do PFE usa `INTERPOLATED_TABLE`. O percentil da CA usa `CONTINUOUS_EQUATION` (`semanas + dias / 7`).
 
-A IG corrigida do exame soma os dias civis entre a data da primeira ultrassonografia e a data do exame à IG daquela ultrassonografia. Não há fallback para DUM. Se a âncora ou a data do exame faltarem, ou se o exame for anterior à datação, os percentis ficam indisponíveis e o PFE ainda pode ser calculado.
+A IG corrigida do exame soma os dias civis entre a data da primeira ultrassonografia e `Exam.examDate` à IG daquela ultrassonografia. Não há fallback para DUM. Sem `examDate`, os percentis ficam indisponíveis e o PFE ainda pode ser calculado. Sem âncora completa, os percentis continuam indisponíveis. Data do exame anterior à datação não é calculada em silêncio.
 
-Não existe coluna própria de data do exame. A V1 usa o calendário UTC de `Exam.createdAt`, a mesma convenção `YYYY-MM-DD` já aplicada às datas clínicas date-only. A subtração é de datas civis, sem horário local e sem DST.
+`EXAM CLINICAL DATE != RECORD CREATED AT`. `createdAt MUST NEVER BE USED AS GESTATIONAL-AGE CLINICAL INPUT`. `examDate` é um dia civil PostgreSQL `DATE`, sem hora. Registros anteriores não recebem backfill. A subtração é de datas civis, sem horário local e sem DST.
 
 ## O que este pacote não contém
 
 - Imagens, identificadores ou medidas de exames reais.
 - Classificação clínica de crescimento ou texto de laudo.
-- Migration. Os resultados são derivados dos inputs e da versão da referência.
+- Persistência dos percentis ou do PFE. Eles continuam derivados dos inputs e da versão da referência. A coluna aditiva `exam.examDate` guarda só o dia civil do exame.
 - Liberação clínica. O gate do Voluson E6 continua aberto.

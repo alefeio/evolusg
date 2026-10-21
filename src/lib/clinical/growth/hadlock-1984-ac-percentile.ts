@@ -9,7 +9,13 @@ export type AcPercentileResult = {
   version: typeof reference.version;
   percentile: number | null;
   display: string;
-  status: "OK" | "OUTSIDE_REFERENCE_RANGE" | "UNAVAILABLE_GA" | "UNAVAILABLE_MEASUREMENT";
+  status:
+    | "OK"
+    | "OUTSIDE_REFERENCE_RANGE"
+    | "UNAVAILABLE_GA"
+    | "UNAVAILABLE_MEASUREMENT"
+    | "UNAVAILABLE_MISSING_EXAM_DATE"
+    | "INCONSISTENT_EXAM_DATE";
 };
 
 function unavailable(

@@ -25,21 +25,43 @@ export function deriveBiometryGrowth(input: BiometryGrowthInput) {
   const efw = estimatedFetalWeight(input);
   const weeks = gestationalAge.status === "OK" ? gestationalAge.weeks : null;
   const days = gestationalAge.status === "OK" ? gestationalAge.days : null;
+  const efwPercentileResult = efwPercentile({
+    rawWeightGrams: efw.status === "OK" ? efw.rawWeightGrams : null,
+    weeks,
+    days,
+  });
+  const acPercentileResult = acPercentile({
+    abdominalCircumferenceMm: input.abdominalCircumferenceMm,
+    weeks,
+    days,
+  });
+
+  if (gestationalAge.status === "UNAVAILABLE_MISSING_EXAM_DATE") {
+    efwPercentileResult.status = "UNAVAILABLE_MISSING_EXAM_DATE";
+    efwPercentileResult.percentile = null;
+    efwPercentileResult.display = "—";
+    efwPercentileResult.kind = "UNAVAILABLE";
+    acPercentileResult.status = "UNAVAILABLE_MISSING_EXAM_DATE";
+    acPercentileResult.percentile = null;
+    acPercentileResult.display = "—";
+  }
+
+  if (gestationalAge.status === "INCONSISTENT_EXAM_DATE") {
+    efwPercentileResult.status = "INCONSISTENT_EXAM_DATE";
+    efwPercentileResult.percentile = null;
+    efwPercentileResult.display = "—";
+    efwPercentileResult.kind = "UNAVAILABLE";
+    acPercentileResult.status = "INCONSISTENT_EXAM_DATE";
+    acPercentileResult.percentile = null;
+    acPercentileResult.display = "—";
+  }
 
   return {
     referenceSetId: BIOMETRY_GROWTH_HADLOCK_V1.id,
     gestationalAge,
     efw,
-    efwPercentile: efwPercentile({
-      rawWeightGrams: efw.status === "OK" ? efw.rawWeightGrams : null,
-      weeks,
-      days,
-    }),
-    acPercentile: acPercentile({
-      abdominalCircumferenceMm: input.abdominalCircumferenceMm,
-      weeks,
-      days,
-    }),
+    efwPercentile: efwPercentileResult,
+    acPercentile: acPercentileResult,
   };
 }
 

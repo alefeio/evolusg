@@ -89,7 +89,7 @@ export default async function ExamDraftPage({
               datingUltrasoundGaDays:
                 exam.pregnancyEpisode.datingUltrasoundGaDays,
             },
-            examDate: utcCivilDate(exam.createdAt),
+            examDate: exam.examDate ? utcCivilDate(exam.examDate) : null,
           }}
         />
       </Card>
