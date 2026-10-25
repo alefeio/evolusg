@@ -5,6 +5,7 @@ import {
   signInWithCookies,
 } from "@/lib/auth/test-auth";
 import { AUTH_MESSAGES, mapAuthError } from "@/lib/auth/messages";
+import { passwordSchema } from "@/lib/validation/identity";
 
 const allowed = "piloto@example.com";
 const password = "password-ok-1";
@@ -236,6 +237,50 @@ describe("authentication flows", () => {
       body: { email: allowed, password: "password-ok-2" },
     });
     expect(next.token).toBeTruthy();
+  });
+
+  it("puts the reset link on the configured base URL", async () => {
+    const { auth, inbox } = createMemoryAuth();
+    await signUpAllowed(auth);
+    await verifyLatest(inbox, auth);
+
+    await auth.api.requestPasswordReset({
+      body: { email: allowed, redirectTo: "/redefinir-senha" },
+    });
+
+    const resetMail = inbox.find((item) => item.subject.includes("Redefinir"));
+    expect(resetMail?.subject).toBe("Redefinir senha — evolUSG");
+    const url = new URL(resetMail?.text.match(/https?:\/\/\S+/)?.[0] ?? "");
+    expect(url.protocol).toBe("http:");
+    expect(url.host).toBe("localhost:3000");
+    expect(url.pathname).toBe("/redefinir-senha");
+    expect(url.searchParams.get("token")).toBeTruthy();
+  });
+
+  it("rejects a reset token after the configured one-second expiry", async () => {
+    const { auth, inbox } = createMemoryAuth({ resetPasswordExpiresIn: 1 });
+    await signUpAllowed(auth);
+    await verifyLatest(inbox, auth);
+
+    await auth.api.requestPasswordReset({
+      body: { email: allowed, redirectTo: "/redefinir-senha" },
+    });
+    const resetToken = extractTokenFromEmail(
+      inbox.find((item) => item.subject.includes("Redefinir"))!,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 1100));
+
+    await expect(
+      auth.api.resetPassword({
+        body: { newPassword: "password-ok-2", token: resetToken! },
+      }),
+    ).rejects.toThrow();
+  });
+
+  it("keeps the minimum password length at 8 characters", () => {
+    expect(passwordSchema.safeParse("123456").success).toBe(false);
+    expect(passwordSchema.safeParse("12345678").success).toBe(true);
   });
 
   it("updates the name, starts a verified email change and revokes other sessions on password change", async () => {
