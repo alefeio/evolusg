@@ -38,5 +38,6 @@ export const auth = betterAuth(
     secret: getAuthSecret(),
     baseURL: getBaseURL(),
     plugins: [nextCookies()],
+    resetPasswordExpiresIn: 60 * 60,
   }),
 );
