@@ -39,19 +39,20 @@ export function resolveMigrationDatabaseTarget(env) {
   return env.DIRECT_URL?.trim() || env.POSTGRES_URL?.trim() || env.DATABASE_URL?.trim() || "";
 }
 
+export function shortResourceFingerprint(resourceId) {
+  const hash = createHash("sha256").update(resourceId.trim()).digest("hex");
+  return `${hash.slice(0, 8)}...`;
+}
+
 export function auditDatabaseIsolation(input) {
+  const strict = input.strict === true;
   const productionRuntime = resolveRuntimeDatabaseTarget(input.production);
   const productionMigration = resolveMigrationDatabaseTarget(input.production);
   const previewRuntime = resolveRuntimeDatabaseTarget(input.preview);
   const previewMigration = resolveMigrationDatabaseTarget(input.preview);
-  const resolved = {
-    productionRuntime,
-    productionMigration,
-    previewRuntime,
-    previewMigration,
-  };
+  const resolved = [productionRuntime, productionMigration, previewRuntime, previewMigration];
 
-  if (Object.values(resolved).some((value) => !value)) {
+  if (resolved.some((value) => !value)) {
     return { ok: false, status: "MISSING_TARGET" };
   }
 
@@ -61,26 +62,42 @@ export function auditDatabaseIsolation(input) {
     previewRuntime: shortDatabaseTargetFingerprint(previewRuntime),
     previewMigration: shortDatabaseTargetFingerprint(previewMigration),
   };
-  const full = {
-    productionRuntime: fingerprintDatabaseTarget(productionRuntime),
-    productionMigration: fingerprintDatabaseTarget(productionMigration),
-    previewRuntime: fingerprintDatabaseTarget(previewRuntime),
-    previewMigration: fingerprintDatabaseTarget(previewMigration),
-  };
-  const shared =
-    full.productionRuntime === full.previewRuntime ||
-    full.productionMigration === full.previewMigration;
-  const splitWithinEnvironment =
-    full.productionRuntime !== full.productionMigration ||
-    full.previewRuntime !== full.previewMigration;
+  const full = resolved.map((value) => fingerprintDatabaseTarget(value));
+  const [productionRuntimeFingerprint, productionMigrationFingerprint, previewRuntimeFingerprint, previewMigrationFingerprint] =
+    full;
+  const shared = [
+    [productionRuntimeFingerprint, previewRuntimeFingerprint],
+    [productionRuntimeFingerprint, previewMigrationFingerprint],
+    [productionMigrationFingerprint, previewRuntimeFingerprint],
+    [productionMigrationFingerprint, previewMigrationFingerprint],
+  ].some(([left, right]) => left === right);
 
   if (shared) {
     return { ok: false, status: "FAILED_SHARED_TARGET", fingerprints };
   }
 
-  if (splitWithinEnvironment) {
-    return { ok: false, status: "FAILED_WITHIN_ENVIRONMENT", fingerprints };
+  const productionResourceId = input.productionResourceId?.trim() || "";
+  const previewResourceId = input.previewResourceId?.trim() || "";
+  if (!productionResourceId || !previewResourceId) {
+    return {
+      ok: !strict,
+      status: "DATABASE_RESOURCE_ID_REQUIRED",
+      fingerprints,
+    };
   }
 
-  return { ok: true, status: "PASSED", fingerprints };
+  const resourceFingerprints = {
+    production: shortResourceFingerprint(productionResourceId),
+    preview: shortResourceFingerprint(previewResourceId),
+  };
+  if (productionResourceId === previewResourceId) {
+    return {
+      ok: false,
+      status: "FAILED_SHARED_DATABASE_RESOURCE",
+      fingerprints,
+      resourceFingerprints,
+    };
+  }
+
+  return { ok: true, status: "PASSED", fingerprints, resourceFingerprints };
 }

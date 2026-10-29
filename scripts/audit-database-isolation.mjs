@@ -12,8 +12,10 @@ const preview = {
   DIRECT_URL: process.env.ISOLATION_PREVIEW_DIRECT_URL,
   POSTGRES_URL: process.env.ISOLATION_PREVIEW_POSTGRES_URL,
 };
-const configured = [...Object.values(production), ...Object.values(preview)].some((value) =>
-  value?.trim(),
+const productionResourceId = process.env.ISOLATION_PRODUCTION_DATABASE_ID;
+const previewResourceId = process.env.ISOLATION_PREVIEW_DATABASE_ID;
+const configured = [...Object.values(production), ...Object.values(preview), productionResourceId, previewResourceId].some(
+  (value) => value?.trim(),
 );
 const strict =
   process.env.ISOLATION_AUDIT_REQUIRED === "true" || process.argv.includes("--strict");
@@ -24,13 +26,23 @@ if (!configured) {
 }
 
 try {
-  const result = auditDatabaseIsolation({ production, preview });
+  const result = auditDatabaseIsolation({
+    production,
+    preview,
+    productionResourceId,
+    previewResourceId,
+    strict,
+  });
   console.log(`DATABASE_ENVIRONMENT_ISOLATION=${result.status}`);
   if (result.fingerprints) {
     console.log(`PRODUCTION_RUNTIME=${result.fingerprints.productionRuntime}`);
     console.log(`PRODUCTION_MIGRATION=${result.fingerprints.productionMigration}`);
     console.log(`PREVIEW_RUNTIME=${result.fingerprints.previewRuntime}`);
     console.log(`PREVIEW_MIGRATION=${result.fingerprints.previewMigration}`);
+  }
+  if (result.resourceFingerprints) {
+    console.log(`PRODUCTION_DATABASE_RESOURCE=${result.resourceFingerprints.production}`);
+    console.log(`PREVIEW_DATABASE_RESOURCE=${result.resourceFingerprints.preview}`);
   }
   if (!result.ok) {
     process.exit(1);

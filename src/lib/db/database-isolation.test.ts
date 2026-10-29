@@ -65,35 +65,68 @@ describe("database isolation audit", () => {
     expect(result.fingerprints?.productionRuntime).toBe(result.fingerprints?.previewRuntime);
   });
 
-  it("passes when each environment has its own matching runtime and migration target", () => {
+  it("allows pooled and direct hosts that belong to different database resources", () => {
     const result = auditDatabaseIsolation({
       production: {
-        RUNTIME_DATABASE_URL: "postgres://prod.example:5432/evolusg",
-        POSTGRES_URL: "postgres://prod.example:5432/evolusg",
+        RUNTIME_DATABASE_URL: "postgres://pool-a.example:5432/evolusg",
+        DIRECT_URL: "postgres://direct-b.example:5432/evolusg",
       },
       preview: {
-        RUNTIME_DATABASE_URL: "postgres://preview.example:5432/evolusg",
-        POSTGRES_URL: "postgres://preview.example:5432/evolusg",
+        RUNTIME_DATABASE_URL: "postgres://pool-c.example:5432/evolusg",
+        DIRECT_URL: "postgres://direct-d.example:5432/evolusg",
       },
+      productionResourceId: "prod-resource",
+      previewResourceId: "preview-resource",
     });
 
     expect(result).toMatchObject({ ok: true, status: "PASSED" });
-    expect(result.fingerprints?.productionRuntime).not.toBe(result.fingerprints?.previewRuntime);
+    expect(result.fingerprints?.productionRuntime).not.toBe(result.fingerprints?.productionMigration);
+    expect(result.fingerprints?.previewRuntime).not.toBe(result.fingerprints?.previewMigration);
   });
 
-  it("fails when one environment splits runtime and migration targets", () => {
+  it("rejects the same database resource id", () => {
     const result = auditDatabaseIsolation({
-      production: {
-        RUNTIME_DATABASE_URL: "postgres://prod-runtime.example:5432/evolusg",
-        POSTGRES_URL: "postgres://prod-migration.example:5432/evolusg",
-      },
-      preview: {
-        RUNTIME_DATABASE_URL: "postgres://preview.example:5432/evolusg",
-        POSTGRES_URL: "postgres://preview.example:5432/evolusg",
-      },
+      ...separatedEndpoints(),
+      productionResourceId: "same-resource",
+      previewResourceId: "same-resource",
     });
 
-    expect(result.status).toBe("FAILED_WITHIN_ENVIRONMENT");
+    expect(result.status).toBe("FAILED_SHARED_DATABASE_RESOURCE");
+    expect(JSON.stringify(result)).not.toContain("same-resource");
+  });
+
+  it("rejects a production runtime endpoint reused by preview", () => {
+    const endpoints = separatedEndpoints();
+    const result = auditDatabaseIsolation({
+      ...endpoints,
+      preview: {
+        ...endpoints.preview,
+        RUNTIME_DATABASE_URL: endpoints.production.RUNTIME_DATABASE_URL,
+      },
+      productionResourceId: "prod-resource",
+      previewResourceId: "preview-resource",
+    });
+
+    expect(result.status).toBe("FAILED_SHARED_TARGET");
+  });
+
+  it("rejects a production migration endpoint reused as the preview runtime", () => {
+    const endpoints = separatedEndpoints();
+    const result = auditDatabaseIsolation({
+      ...endpoints,
+      preview: {
+        ...endpoints.preview,
+        RUNTIME_DATABASE_URL: endpoints.production.DIRECT_URL,
+      },
+      productionResourceId: "prod-resource",
+      previewResourceId: "preview-resource",
+    });
+
+    expect(result.status).toBe("FAILED_SHARED_TARGET");
+  });
+
+  it("requires resource ids before calling the result passed", () => {
+    expect(auditDatabaseIsolation(separatedEndpoints()).status).toBe("DATABASE_RESOURCE_ID_REQUIRED");
   });
 
   it("fails closed when a required target is missing", () => {
@@ -124,32 +157,69 @@ describe("isolation audit command", () => {
     expect(byEnv.stdout).toContain("DATABASE_ISOLATION_AUDIT=NOT_CONFIGURED");
   });
 
-  it("accepts only a passed strict audit", () => {
+  it("accepts a strict audit when resources and endpoints are distinct", () => {
     const passed = runAudit(["--strict"], isolatedTargets());
-    const shared = runAudit(["--strict"], isolatedTargets({ shared: true }));
+
+    expect(passed.status).toBe(0);
+    expect(passed.stdout).toContain("DATABASE_ENVIRONMENT_ISOLATION=PASSED");
+    expect(passed.stdout).not.toContain(secret);
+    expect(passed.stdout).not.toContain("prod-resource");
+  });
+
+  it("rejects a shared runtime endpoint in strict mode", () => {
+    const sharedRuntime = runAudit(["--strict"], {
+      ...isolatedTargets(),
+      ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: "postgres://pool-a.example/evolusg",
+    });
+
+    expect(sharedRuntime.status).toBe(1);
+    expect(sharedRuntime.stdout).toContain("FAILED_SHARED_TARGET");
+  });
+
+  it("rejects a migration endpoint reused as another environment runtime", () => {
+    const sharedMigration = runAudit(["--strict"], {
+      ...isolatedTargets(),
+      ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: "postgres://direct-b.example/evolusg",
+    });
+
+    expect(sharedMigration.status).toBe(1);
+    expect(sharedMigration.stdout).toContain("FAILED_SHARED_TARGET");
+  });
+
+  it("rejects the same database resource in strict mode", () => {
+    const sharedResource = runAudit(["--strict"], {
+      ...isolatedTargets(),
+      ISOLATION_PREVIEW_DATABASE_ID: "prod-resource",
+    });
+
+    expect(sharedResource.status).toBe(1);
+    expect(sharedResource.stdout).toContain("FAILED_SHARED_DATABASE_RESOURCE");
+    expect(sharedResource.stdout).not.toContain("prod-resource");
+  });
+
+  it("requires database resource ids in strict mode", () => {
+    const missingIds = runAudit(["--strict"], isolatedTargets({ resourceIds: false }));
+
+    expect(missingIds.status).toBe(1);
+    expect(missingIds.stdout).toContain("DATABASE_RESOURCE_ID_REQUIRED");
+  });
+
+  it("rejects incomplete targets and unparseable URLs in strict mode", () => {
     const missing = runAudit(["--strict"], {
-      ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "postgres://prod.example/evolusg",
-      ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: "postgres://preview.example/evolusg",
+      ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "postgres://pool-a.example/evolusg",
+      ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: "postgres://pool-c.example/evolusg",
+      ISOLATION_PRODUCTION_DATABASE_ID: "prod-resource",
+      ISOLATION_PREVIEW_DATABASE_ID: "preview-resource",
     });
     const unparseable = runAudit(["--strict"], {
       ...isolatedTargets(),
       ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "not a url",
     });
-    const split = runAudit(["--strict"], {
-      ...isolatedTargets(),
-      ISOLATION_PRODUCTION_POSTGRES_URL: "postgres://prod-migration.example/evolusg",
-    });
 
-    expect(passed.status).toBe(0);
-    expect(passed.stdout).toContain("DATABASE_ENVIRONMENT_ISOLATION=PASSED");
-    expect(shared.status).toBe(1);
-    expect(shared.stdout).toContain("FAILED_SHARED_TARGET");
     expect(missing.status).toBe(1);
     expect(missing.stdout).toContain("MISSING_TARGET");
     expect(unparseable.status).toBe(1);
     expect(unparseable.stdout).toContain("DATABASE_TARGET_UNPARSEABLE");
-    expect(split.status).toBe(1);
-    expect(split.stdout).toContain("FAILED_WITHIN_ENVIRONMENT");
   });
 });
 
@@ -168,12 +238,30 @@ function runAudit(args: string[] = [], extra: Record<string, string> = {}) {
   });
 }
 
-function isolatedTargets(options?: { shared?: boolean }) {
-  const previewHost = options?.shared ? "prod.example" : "preview.example";
+function separatedEndpoints() {
   return {
-    ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "postgres://prod.example/evolusg",
-    ISOLATION_PRODUCTION_POSTGRES_URL: "postgres://prod.example/evolusg",
-    ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: `postgres://${previewHost}/evolusg`,
-    ISOLATION_PREVIEW_POSTGRES_URL: `postgres://${previewHost}/evolusg`,
+    production: {
+      RUNTIME_DATABASE_URL: "postgres://pool-a.example:5432/evolusg",
+      DIRECT_URL: "postgres://direct-b.example:5432/evolusg",
+    },
+    preview: {
+      RUNTIME_DATABASE_URL: "postgres://pool-c.example:5432/evolusg",
+      DIRECT_URL: "postgres://direct-d.example:5432/evolusg",
+    },
+  };
+}
+
+function isolatedTargets(options?: { resourceIds?: boolean }) {
+  const targets = {
+    ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: `postgres://app:${secret}@pool-a.example/evolusg`,
+    ISOLATION_PRODUCTION_DIRECT_URL: "postgres://direct-b.example/evolusg",
+    ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: "postgres://pool-c.example/evolusg",
+    ISOLATION_PREVIEW_DIRECT_URL: "postgres://direct-d.example/evolusg",
+  };
+  if (options?.resourceIds === false) return targets;
+  return {
+    ...targets,
+    ISOLATION_PRODUCTION_DATABASE_ID: "prod-resource",
+    ISOLATION_PREVIEW_DATABASE_ID: "preview-resource",
   };
 }

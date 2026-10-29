@@ -43,7 +43,15 @@ O CLI da Vercel não devolve o valor dos secrets. Cada connection string abaixo 
 - `POSTGRES_URL` presente
 - `DIRECT_URL` ausente
 
-Os fingerprints de runtime e de migration são iguais entre os ambientes porque a string é a mesma. O SHA-256 não foi impresso.
+Os fingerprints de endpoint são iguais entre Production e Preview porque as connection strings continuam compartilhadas. Esse fingerprint detecta colisão de endpoint. Ele não prova sozinho que duas URLs pooled e direct são bancos lógicos diferentes.
+
+Conexões pooled e direct do mesmo banco podem ter endpoints diferentes. Endpoint fingerprint não é identidade suficiente do banco lógico.
+
+`ENDPOINT FINGERPRINT = collision detector`
+
+`DATABASE RESOURCE ID = logical isolation proof`
+
+O identificador do recurso vem de `ISOLATION_PRODUCTION_DATABASE_ID` e `ISOLATION_PREVIEW_DATABASE_ID`. Não é connection string, senha, host nem token. O CLI da Vercel não expõe hoje um id estável do banco fora do secret. Sem esse id fornecido pelo provider, o gate estrito fica `DATABASE_RESOURCE_ID_REQUIRED`. Não se inventa um nome local como prova.
 
 Nenhuma contagem foi consultada. Nenhum dado foi copiado ou apagado.
 
@@ -61,7 +69,9 @@ Gate obrigatório:
 
 ou `ISOLATION_AUDIT_REQUIRED=true`.
 
-No modo estrito, só `PASSED` sai com código 0. `NOT_CONFIGURED`, `MISSING_TARGET`, `FAILED_SHARED_TARGET`, `FAILED_WITHIN_ENVIRONMENT` e `DATABASE_TARGET_UNPARSEABLE` saem com código 1.
+No modo estrito, só `PASSED` sai com código 0. `NOT_CONFIGURED`, `MISSING_TARGET`, `FAILED_SHARED_TARGET`, `FAILED_SHARED_DATABASE_RESOURCE`, `DATABASE_RESOURCE_ID_REQUIRED` e `DATABASE_TARGET_UNPARSEABLE` saem com código 1.
+
+O modo estrito compara os quatro pares de endpoint entre Production e Preview. Hosts diferentes de pooled e direct no mesmo ambiente não são falha. A prova lógica exige os dois database resource ids, diferentes entre si.
 
 `NOT_CONFIGURED` não é aprovação.
 
@@ -109,7 +119,7 @@ Executar só depois da autorização de Alexandre:
 4. Manter `DATABASE_ENV=production`.
 5. Redeploy de Production.
 6. Rodar o audit estrito.
-7. Exigir runtime e migration do mesmo ambiente no mesmo target lógico, e Production diferente de Preview.
+7. Exigir resource ids diferentes e nenhum endpoint de Production igual a um endpoint de Preview. Hosts pooled e direct do mesmo banco podem diferir.
 8. Só então classificar `PRODUCTION DATABASE ISOLATION — VERIFIED`.
 
 Depois do corte, Alexandre e a Dra. Karen se cadastram de novo pelo fluxo normal, dentro da allowlist. Continuar só com dados fictícios.
