@@ -14,7 +14,8 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:audit-isolation": "node scripts/audit-database-isolation.mjs"
+    "db:audit-isolation": "node scripts/audit-database-isolation.mjs",
+    "db:audit-isolation:strict": "node scripts/audit-database-isolation.mjs --strict"
   },
   "dependencies": {
     "@better-auth/memory-adapter": "^1.7.4",

@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import { getDirectDatabaseUrl, getRuntimeDatabaseUrl } from "@/lib/db/urls";
 import {
@@ -104,3 +105,75 @@ describe("database isolation audit", () => {
     ).toBe("MISSING_TARGET");
   });
 });
+
+describe("isolation audit command", () => {
+  it("stays optional when no targets are configured", () => {
+    const result = runAudit();
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("DATABASE_ISOLATION_AUDIT=NOT_CONFIGURED");
+  });
+
+  it("fails the strict gate when no targets are configured", () => {
+    const byFlag = runAudit(["--strict"]);
+    const byEnv = runAudit([], { ISOLATION_AUDIT_REQUIRED: "true" });
+
+    expect(byFlag.status).toBe(1);
+    expect(byFlag.stdout).toContain("DATABASE_ISOLATION_AUDIT=NOT_CONFIGURED");
+    expect(byEnv.status).toBe(1);
+    expect(byEnv.stdout).toContain("DATABASE_ISOLATION_AUDIT=NOT_CONFIGURED");
+  });
+
+  it("accepts only a passed strict audit", () => {
+    const passed = runAudit(["--strict"], isolatedTargets());
+    const shared = runAudit(["--strict"], isolatedTargets({ shared: true }));
+    const missing = runAudit(["--strict"], {
+      ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "postgres://prod.example/evolusg",
+      ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: "postgres://preview.example/evolusg",
+    });
+    const unparseable = runAudit(["--strict"], {
+      ...isolatedTargets(),
+      ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "not a url",
+    });
+    const split = runAudit(["--strict"], {
+      ...isolatedTargets(),
+      ISOLATION_PRODUCTION_POSTGRES_URL: "postgres://prod-migration.example/evolusg",
+    });
+
+    expect(passed.status).toBe(0);
+    expect(passed.stdout).toContain("DATABASE_ENVIRONMENT_ISOLATION=PASSED");
+    expect(shared.status).toBe(1);
+    expect(shared.stdout).toContain("FAILED_SHARED_TARGET");
+    expect(missing.status).toBe(1);
+    expect(missing.stdout).toContain("MISSING_TARGET");
+    expect(unparseable.status).toBe(1);
+    expect(unparseable.stdout).toContain("DATABASE_TARGET_UNPARSEABLE");
+    expect(split.status).toBe(1);
+    expect(split.stdout).toContain("FAILED_WITHIN_ENVIRONMENT");
+  });
+});
+
+function runAudit(args: string[] = [], extra: Record<string, string> = {}) {
+  const env = { ...process.env, ...extra };
+  for (const key of Object.keys(env)) {
+    if (key.startsWith("ISOLATION_") && !(key in extra)) {
+      delete env[key];
+    }
+  }
+
+  return spawnSync(process.execPath, ["scripts/audit-database-isolation.mjs", ...args], {
+    cwd: process.cwd(),
+    env,
+    encoding: "utf8",
+  });
+}
+
+function isolatedTargets(options?: { shared?: boolean }) {
+  const previewHost = options?.shared ? "prod.example" : "preview.example";
+  return {
+    ISOLATION_PRODUCTION_RUNTIME_DATABASE_URL: "postgres://prod.example/evolusg",
+    ISOLATION_PRODUCTION_POSTGRES_URL: "postgres://prod.example/evolusg",
+    ISOLATION_PREVIEW_RUNTIME_DATABASE_URL: `postgres://${previewHost}/evolusg`,
+    ISOLATION_PREVIEW_POSTGRES_URL: `postgres://${previewHost}/evolusg`,
+  };
+}

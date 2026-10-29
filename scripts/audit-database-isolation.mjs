@@ -15,10 +15,12 @@ const preview = {
 const configured = [...Object.values(production), ...Object.values(preview)].some((value) =>
   value?.trim(),
 );
+const strict =
+  process.env.ISOLATION_AUDIT_REQUIRED === "true" || process.argv.includes("--strict");
 
 if (!configured) {
   console.log("DATABASE_ISOLATION_AUDIT=NOT_CONFIGURED");
-  process.exit(0);
+  process.exit(strict ? 1 : 0);
 }
 
 try {
