@@ -16,6 +16,7 @@ O evolUSG tratará dados pessoais de saúde. Isso exige minimização, acesso au
 - backups com exercício de restore por release
 - documentos só com autorização; object storage, não anexo eterno em e-mail de log
 - arquivo público não clínico pode ir para a APIMG; arquivo de paciente exige storage privado ainda não implementado. Uma URL pública da APIMG nunca deve ser tratada como autorização de acesso a dado clínico. Ver [`../architecture/PUBLIC_STORAGE.md`](../architecture/PUBLIC_STORAGE.md).
+- Production e Preview ainda compartilham o mesmo PostgreSQL. `REAL_PATIENT_DATA_ALLOWED = false`. Ver [`DATABASE_ISOLATION.md`](DATABASE_ISOLATION.md).
 
 ## Evolução antes do piloto
 
