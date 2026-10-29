@@ -27,7 +27,7 @@ Pergunta de controle a cada decisão da primeira vertical slice: *existe aqui al
 2. **API da aplicação** — no mesmo monólito. Orquestra auth, autorização, auditoria.
 3. **Domínio** — `identity`, `professional-profile`, `patients`, `exams`, `reports`, `protocol-engine`, `form-runtime`, `text-engine`, `documents`, `audit`.
 4. **Persistência** — relacional + JSONB para findings e snapshots de protocolo.
-5. **Object storage** — documentos emitidos, não só disco local.
+5. **Object storage** — documentos emitidos, não só disco local. Arquivo público não clínico usa APIMG; arquivo clínico continua sem storage. Ver [`PUBLIC_STORAGE.md`](PUBLIC_STORAGE.md).
 6. **Observabilidade** — log técnico distinto de auditoria clínica.
 
 Stack candidata (familiaridade vs adequação, ainda `PROPOSED`): Next.js + TypeScript + PostgreSQL, Auth.js, Docker. NestJS e microserviços **não** no ciclo 1.
